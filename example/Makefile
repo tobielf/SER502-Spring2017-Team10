@@ -20,11 +20,18 @@ SRC = main.c \
 
 OBJ	=	$(SRC:.c=.o)
 
-BINS	=	$(SRC:.c=)
+BINS	=	compiler \
+			runtime
 
-main: $(OBJ)
-	$Q echo [link]
+all: compiler runtime
+
+compiler: $(OBJ)
+	$Q echo [linking compiler]
 	$Q $(CC) -o $@ $(OBJ) $(LDFLAGS) $(LDLIBS)
+
+runtime: runtime.o
+	$Q echo [linking runtime]
+	$Q $(CC) -o $@ runtime.o $(LDFLAGS) $(LDLIBS)
 
 .c.o:
 	$Q echo [CC] $<
@@ -33,6 +40,7 @@ main: $(OBJ)
 clean:
 	$Q echo "[Clean]"
 	$Q rm -f $(OBJ) *~ core tags $(BINS)
+	$Q rm -f runtime.o
 
 tags:	$(SRC)
 	$Q echo [ctags]
