@@ -48,6 +48,5 @@ int insert(char s[], int tok) {
     symtable[lastentry].lexptr = &lexemes[lastchar + 1];
     lastchar = lastchar + len + 1;
     strcpy(symtable[lastentry].lexptr, s);
-    printf("%s %d %d\n", s, tok, lastentry);
     return lastentry;
 }
