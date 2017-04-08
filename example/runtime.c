@@ -17,6 +17,7 @@ int operands_index = 0;         /**< The position of the stack */
  */
 int main() {
     char input[255];
+    int i;
     while (fgets(input, 255, stdin) != NULL) {
         if (isdigit(input[0])) {
             operands_stack[operands_index++] = atoi(input);
@@ -51,6 +52,8 @@ int main() {
             }
         }
     }
-    printf("%d\n", operands_stack[--operands_index]);
+    for (i = 0; i < operands_index; i++) {
+        printf("%d\n", operands_stack[i]);
+    }
     return 0;
 }
