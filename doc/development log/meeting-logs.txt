@@ -1,0 +1,19 @@
+April 13(Thursday).
+Meeting input:
+Task 4, Language Design and Grammar Rule.
+Task 5, Coding Style.
+
+Meeting output:
+
+
+April 11(Tuesday).
+Meeting input:
+Task1, get familiar with GitHub.
+Task2, prerequisite studying.
+Task3, project specification documentation.
+
+Meeting output:
+Everyone understand how to cooperate on the GitHub.
+Everyone have a brief overview and concept of the compiler and runtime.
+Assigned tasks to each team member. -> doc/contribution.txt
+Development plan -> doc/developmet-plan.txt

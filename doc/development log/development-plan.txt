@@ -1,0 +1,21 @@
+Meeting time:
+Tuesday  12:30-13:30
+Thursday 12:30-13:30
+
+Dev phases:
+Dev1: April 15(Sat)-17(Mon)
+Dev2: April 18(Tue)-21(Fri)
+Dev3: April 22(Sat)-24(Mon)
+Dev4: April 25(Tue)-28(Mon)
+
+Two phases per week.
+
+Details of the phases:
+
+Saturday - Monday : developing the code.
+Monday night      : send out the Pull/Request.
+Tuesday noon      : review/change & merge (meeting time)
+Tuesday - Thursday: developing the code.
+Thursday noon     : resolving problems (meeting time)
+Thursday night    : send out the Pull/Request.
+Friday            : review/change & merge
