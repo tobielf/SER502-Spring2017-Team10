@@ -1,4 +1,25 @@
-Ximing Feng
-Xiangyu Guo
-Rundong Zhu
-Katie MacArthur
+Tracking details on:
+https://github.com/tobielf/SER502-Spring2017-Team10/projects/1
+https://github.com/tobielf/SER502-Spring2017-Team10/issues?q=is%3Aissue+is%3Aclosed
+And doc/development-log
+
+Week 0: (April 5-8)
+Ximing Feng:
+    Leaning how to use GitHub.
+    Studying on the prerequisites.
+Xiangyu Guo:
+    Setting up the GitHub repository.
+    Distributing learning materials to team members.
+Rundong Zhu:
+    Leaning how to use GitHub.
+    Studying on the prerequisites.
+Katie MacArthur:
+    Leaning how to use GitHub.
+    Studying on the prerequisites.
+
+Week 1: (April 9-14)
+Meeting 1(April 11)
+Katie MacArthur: Lexical Analyser.
+Ximing Feng: Syntax Parser.
+Rundong Zhu: Intermediate Code Generator.
+Xiangyu Guo: Runtime Environment.
