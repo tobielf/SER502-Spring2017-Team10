@@ -1,6 +1,6 @@
-DEC i integer
-DEC j integer
-DEC sum integer
+DEC i
+DEC j
+DEC sum
 MOV i 3
 MOV sum 0
 
@@ -9,13 +9,13 @@ MOV sum 0
     CMP j 5
     JE loop1_end
 
-      DEC temp1 integer
+      DEC temp1
       MOV temp1 j
       MOD temp1 2
       CMP temp1 0
       JNE else1
         
-        DEC temp2 integer
+        DEC temp2
         MOV temp2 sum
         ADD temp2 1
         MOV sum temp2

@@ -1,5 +1,5 @@
 Type 1: declare
-DEC var1, type			; declare a variable with type
+DEC var1			; declare a variable
 
 Type 2: assignment
 MOV var1, var2/value		; assign var2/value to var1

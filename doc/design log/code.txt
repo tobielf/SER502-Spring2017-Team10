@@ -1,6 +1,6 @@
-var i as integer;
-var j as integer;
-var sum as integer;
+var i;
+var j;
+var sum;
 i is 3;
 sum is 0;
 for j from i to 5 step 1 {
