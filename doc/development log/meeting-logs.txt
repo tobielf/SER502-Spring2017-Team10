@@ -4,7 +4,8 @@ Task 4, Language Design and Grammar Rule.
 Task 5, Coding Style.
 
 Meeting output:
-
+Everyone understand how to design a language step by step.
+Everyone unified in the same coding style.
 
 April 11(Tuesday).
 Meeting input:
