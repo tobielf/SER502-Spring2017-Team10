@@ -23,11 +23,14 @@ MOV sum 0
         JMP endif1
       else1:
 
-        SUB sum 1
+        DEC temp3
+        MOV temp3 sum
+        SUB temp3 1
+        MOV sum temp3
 
       endif1:
 
-  ADD j 2
+  ADD j 1
   JMP loop1
   loop1_end:
 OUT sum
