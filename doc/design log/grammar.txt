@@ -1,4 +1,4 @@
-grammar Hello;
+grammar ten;
 program : stmt_list ;
 stmt_list : stmt ';' stmt_list | stmt ';' ;
 stmt : decl_stmt | assign_stmt | if_stmt | for_stmt | print_stmt | ;
