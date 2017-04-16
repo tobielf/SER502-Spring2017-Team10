@@ -5,8 +5,8 @@ count is 1;
 sum is 0;
 
 for i from count to 10 step 1 {
-    if((count % 3) <> 0) then {
-        sum is sum + count;
+    if((i % 3) <> 0) then {
+        sum is sum + i;
     };
 };
 
