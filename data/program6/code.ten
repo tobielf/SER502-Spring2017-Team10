@@ -1,0 +1,9 @@
+var count;
+
+for i from 1 to 5 step 1 {
+    count is 0;
+    for j from i to 5 step 1 {
+        count is count + 1;
+    };
+    print count;
+};
