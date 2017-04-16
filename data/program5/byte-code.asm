@@ -3,6 +3,7 @@ DEC sum
 MOV count 1
 MOV sum 0
 
+  DEC i
   MOV i count
     loop1:
     CMP i 10
