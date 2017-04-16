@@ -1,3 +1,5 @@
-Purpose: calculate the sum of numbers which can NOT divided by 3 from 1 to 10
+Purpose:
+  test for loop and nested if statement and the not equal '<>' token
 
-Expecting Output: 27
+Expecting Output:
+27
