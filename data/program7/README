@@ -1,3 +1,14 @@
 Purpose:
+Calculate the Fibonacci sequence up to 7.
+This program will test about the simple "for" loop.
+And decleare a variable inside the "for" loop.
 
 Expecting Output:
+The compiler will compiler it into expected byte code indicated in byte-code.asm
+And the byte code executed by the runtime will produce:
+1
+1
+2
+3
+5
+7
