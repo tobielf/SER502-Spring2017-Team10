@@ -1,0 +1,25 @@
+Type 1: declare
+DEC var1			; declare a variable
+
+Type 2: assignment
+MOV var1, var2/value		; assign var2/value to var1
+
+Type 3: arithmetic operation
+ADD var1, var2/value		; add var2/value to var1
+SUB var1, var2/value		; sub var2/value from var1
+MUL var1, var2/value		; mul var2/value to var1
+DIV var1, var2/value		; div var2/value from var1
+MOD var1, var2/value		; mod var1 with var2/value
+
+Type 4: compare and jump operation
+CMP var1, var2/value		; CMP var1 and var2/value, set $flag = var1 - var2/value.
+JE  label			; Jump to label if $flag Equal to zero.
+JNE label			; Jump to label if $flag Not Equal to zero.
+JL  label			; Jump to label if $flag Less than zero.
+JLE label			; Jump to label if $flag Less than or Equal to zero.
+JG  label			; Jump to label if $flag Great than zero.
+JGE label			; Jump to label if $flag Great than or Equal to zero.
+JMP label			; Jump to label, always.
+
+Type 5: output result
+OUT var1/value			; Output var1/value.
