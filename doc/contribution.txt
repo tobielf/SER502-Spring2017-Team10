@@ -17,9 +17,32 @@ Katie MacArthur:
     Leaning how to use GitHub.
     Studying on the prerequisites.
 
-Week 1: (April 9-14)
+Week 1: (April 9-15)
 Meeting 1(April 11)
 Katie MacArthur: Lexical Analyser.
 Ximing Feng: Syntax Parser.
 Rundong Zhu: Intermediate Code Generator.
 Xiangyu Guo: Runtime Environment.
+
+Meeting 2(April 13)
+Ximing Feng:
+    Study the coding style.
+    Verified the grammar rule using ANTLR.
+    Produce 2 test case for the grammar rule under the data folder.
+    (Didn’t create a test-case branch, please check the instructions in Task 6)
+Xiangyu Guo:
+    Unified the coding style.
+    Design the grammar rule and byte code.
+    Produce 2 test cases for the grammar rule under the data folder.
+Rundong Zhu:
+    Study the coding style.
+    Verified the grammar rule using ANTLR.
+    Produce 2 test cases for the grammar rule under the data folder.
+Katie MacArthur:
+    Study the coding style.
+    Verified the grammar rule using ANTLR.
+    Produce 2 test cases for the grammar rule under the data folder.
+    (Have assignment from other course due in Monday night, reschedule Task 6 due date to Tuesday)
+
+Week 2: (April 16-22)
+Meeting 1(April 18)
