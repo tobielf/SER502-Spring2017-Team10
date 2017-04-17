@@ -29,7 +29,7 @@ Ximing Feng:
     Study the coding style.
     Verified the grammar rule using ANTLR.
     Produce 2 test case for the grammar rule under the data folder.
-    (Didn’t create a test-case branch, please check the instructions in Task 6)
+    (Didn’t send out the Pull/Request of your test-case branch, please check the instructions in Task 6)
 Xiangyu Guo:
     Unified the coding style.
     Design the grammar rule and byte code.
