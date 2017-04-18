@@ -1,4 +1,6 @@
 var count;
+var i;
+var j;
 
 for i from 0 to 5 step 1 {
     count is 0;
