@@ -1,13 +1,13 @@
 DEC count
+DEC i
+DEC j
 
-  DEC i
   MOV i 0
     loop1:
     CMP i 5
     JE loop1_end
     MOV count 0
 
-      DEC j
       MOV j i
         loop2:
         CMP j 5
