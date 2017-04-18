@@ -1,29 +1,29 @@
-DEC i
-DEC sum
-DEC temp
-MOV i, 1
+DEC _i
+DEC _sum
+DEC _temp
+MOV _i, 1
 
 loop:
-	MOV temp, i
-	MOD temp, 2
-	CMP temp, 0
+	MOV _temp, _i
+	MOD _temp, 2
+	CMP _temp, 0
 	JE even
 	JNE nextStep
 
 even:
-	MOV temp, i
-	MOD temp, 3
-	CMP temp, 0
+	MOV _temp, _i
+	MOD _temp, 3
+	CMP _temp, 0
 	JE factor3
 	JNE nextStep
 
 
 factor3:
-	ADD sum, i
+	ADD _sum, _i
 	JMP nextStep	
 
 nextStep:
-	ADD i, 1
-	CMP i, 100
+	ADD _i, 1
+	CMP _i, 100
 	JG endLoop
 	JLE loop

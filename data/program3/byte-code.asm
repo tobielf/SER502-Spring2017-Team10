@@ -1,32 +1,32 @@
-DEC i
-DEC num
-DEC temp
-MOV num, 0
+DEC _i
+DEC _num
+DEC _temp
+MOV _num, 0
 
 
 loop:
-	MOV temp, i
-	MOD temp, 5
-	CMP temp, 0
+	MOV _temp, _i
+	MOD _temp, 5
+	CMP _temp, 0
 	JE found
 	JNE notFound
 
 found:
-	ADD num, 1
-	ADD i, 1
+	ADD _num, 1
+	ADD _i, 1
 	JMP checkContinue
 	
 notFound:
-	ADD i, 1
+	ADD _i, 1
 	JMP checkContinue
 
 checkContinue:
-	CMP i, 100
+	CMP _i, 100
 	JG endLoop
 	JLE loop
 
 endLoop:
-	OUT num
+	OUT _num
 
 
 
