@@ -1,7 +1,7 @@
 DEC i
 DEC sum
 DEC temp
-i is 1
+MOV i, 1
 
 loop:
 	MOV temp, i
