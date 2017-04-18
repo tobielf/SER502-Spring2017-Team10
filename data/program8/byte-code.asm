@@ -16,24 +16,25 @@ JE loop1_end
         DIV _temp1 2
     CMP j _temp1
     JE loop2_end
+        if1:
             DEC _temp2
             MOV _temp2 i
             MOD _temp2 j
         CMP _temp2 0
-        JNE endif1
+        JNE if1_end
             MOV flag 1
-        endif1:
+        if1_end:
     ADD j 1
     JMP loop2
     loop2_end:
-
+    if2:
     CMP flag 0
-    JNE endif2
+    JNE if2_end
         DEC _temp3
         MOV _temp3 sum
         ADD _temp3 i
         MOV sum _temp3
-    endif2:
+    if2_end:
 
 ADD i 1
 JMP loop1
