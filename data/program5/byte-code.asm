@@ -1,10 +1,8 @@
-DEC count
 DEC sum
-MOV count 1
+DEC i
 MOV sum 0
 
-  DEC i
-  MOV i count
+  MOV i 0
     loop1:
     CMP i 10
     JE loop1_end
