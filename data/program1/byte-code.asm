@@ -1,14 +1,13 @@
 DEC x
 DEC i
 MOV i 1
-MOV x i
 
 DEC even
 DEC odd
-
-loop1:
+MOV x i
+for1:
 CMP x 26
-JE loop1_end
+JE for1_end
     if1:
         DEC _temp1
         MOV _temp1 x
@@ -27,7 +26,7 @@ JE loop1_end
         MOV odd _temp3
     if1_end:
         ADD x 1
-        JMP loop1
-loop1_end:
+        JMP for1
+for1_end:
     OUT even
     OUT odd
