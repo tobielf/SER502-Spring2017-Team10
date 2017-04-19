@@ -1,3 +1,6 @@
 Purpose:
-
+  test for loop and nested if statement and the not equal '<>' token
+  calculate the sum of numbers which can't fully divided by 3
+  
 Expecting Output:
+27
