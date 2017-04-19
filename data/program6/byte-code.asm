@@ -16,8 +16,10 @@ DEC j
           ADD count 1
 
         ADD j 1
+        JMP loop2
         loop2_end:
 
     OUT count
     ADD i 1
+    JMP loop1
     loop1_end:
