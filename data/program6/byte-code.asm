@@ -12,8 +12,10 @@ DEC j
         loop2:
         CMP j 5
         JE loop2_end
-
-          ADD count 1
+          DEC _temp1
+          MOV _temp1 count
+          ADD _temp1 1
+          MOV count _temp1
 
         ADD j 1
         JMP loop2
