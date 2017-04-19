@@ -1,3 +1,10 @@
 Purpose:
-
+  Test iteration times of nested for loop
 Expecting Output:
+  The compiler will compiler it into expected byte code indicated in byte-code.asm
+And the byte code executed by the runtime will produce:
+5
+4
+3
+2
+1

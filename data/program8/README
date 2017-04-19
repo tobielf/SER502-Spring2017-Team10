@@ -1,3 +1,7 @@
 Purpose:
+Calculate the sum of all prime numbers from 1 to 100.
+This program will test about the nested for loop as well as nested if.
 
 Expecting Output:
+The compiler will compiler it into expected byte code indicated in byte-code.asm
+And the byte code executed by the runtime will produce: 1060

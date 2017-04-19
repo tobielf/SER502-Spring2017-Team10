@@ -1,0 +1,13 @@
+var x;
+var i;
+i is 0;
+for x from i to 101 step 1 {
+   if (x % 10 = 0) then {
+       var y;
+       for y from 0 to x / 10 step 1 {
+           print 1;
+       };
+   }  else  {
+       print 0;
+   };
+};
