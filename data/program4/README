@@ -1,4 +1,4 @@
 Purpose:
-calculate the sum of the even numbers from 1 to 100 
+calculate the sum of the even numbers that can be divided by 3 from 1 to 100 
 Expecting Output:
 2550

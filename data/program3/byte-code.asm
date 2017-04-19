@@ -1,14 +1,14 @@
-DEC _i
-DEC _num
-MOV _num 0
+DEC i
+DEC num
+MOV num 0
 
-MOV _i 1
+MOV i 1
 loop1:
-	CMP _i 100
+	CMP i 100
 	JE loop1_end
 		if1:
 			DEC _temp1
-			MOV _temp1 _i
+			MOV _temp1 i
 			MOD _temp1 5
 			CMP _temp1 0
 			JNE	if1_end
@@ -16,11 +16,11 @@ loop1:
 		
 		if1_end:
 
-		ADD _i 1
+		ADD i 1
 		JMP loop1
 
 loop1_end:
-	OUT _num
+	OUT num
 
 
 
