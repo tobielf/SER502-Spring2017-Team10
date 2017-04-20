@@ -1,8 +1,8 @@
 /**
  * @file lexical.h
  * @brief Purpose: Interface for the lexical analysis for the code
- * @version 0.1
- * @date 04.17.2017
+ * @version 0.2
+ * @date 04.20.2017
  * @author Katie MacArthur
  */
 
@@ -16,6 +16,7 @@
  * @param symbol_table
  * @return A linked list, NULL is symbol table is NULL
  */
-link_list_st lexical_analysis(symbol_table);
+link_list_st *lexical_analysis(symbol_table_st *symbol_table);
 
 
+#endif
