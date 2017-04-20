@@ -1,8 +1,8 @@
 /**
  * @file lexical.h
  * @brief Purpose: provide the lexical analysis for the code
- * @version 0.1
- * @date 04.18.2017
+ * @version 0.2
+ * @date 04.20.2017
  * @author Katie MacArthur
  */
 
@@ -24,7 +24,7 @@ void test_case_one() {
 * @return link_list_st
 */
 
-link_list_st lexical_analysis(symbol_table) {
+link_list_st *lexical_analysis(symbol_table_st) {
 
     if (symbol_table == NULL) {
         return N
@@ -38,3 +38,4 @@ int main() {
 
     return 0;
 }
+#endif
