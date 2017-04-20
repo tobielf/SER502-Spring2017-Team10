@@ -1,0 +1,13 @@
+var a;
+var b;
+var i;
+a is 0;
+b is 1;
+
+for i from 1 to 7 step 1 {
+    var temp;
+    print b;
+    temp is b;
+    b is a + b;
+    a is temp;
+};
