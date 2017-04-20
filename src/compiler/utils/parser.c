@@ -6,6 +6,9 @@
  * @date 04.18.2017
  * @author Ximing
  */
+
+
+
 #include "parser.h"
 
 
@@ -20,9 +23,10 @@ parsing_tree_st *parse_tree = syntax_analysis(token_list, symbol_table){
 
 
 
-#ifdef PARSERTEST
+#ifdef XTEST
 
 void test_case_one() {
+	syntax_analysis()
 }
 
 void test_case_two() {

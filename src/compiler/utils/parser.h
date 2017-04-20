@@ -6,8 +6,14 @@
  * @author Ximing
  */
 
+#ifndef __PARSER_H__
+#define __PARSER_H__
+
 #include "parser.c"
-#include "parse_tree.h"
+#include "parsing_tree.h"
+#include "symbol_table.h"
+#include "link_list.h"
+
 
 
 /**
@@ -16,3 +22,5 @@
 * @return: the pointer to generated parsing tree
 */
 parsing_tree_st *parse_tree = syntax_analysis(token_list, symbol_table);
+
+#endif
