@@ -7,8 +7,8 @@
  */
 
 #include <stdio.h>
-#include <"lexical.h">
-#include <"symboltable.h">
+
+#include "lexical.h"
 
 
 /**

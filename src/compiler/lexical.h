@@ -11,6 +11,9 @@
 
 #include <stdio.h>
 
+#include "utils/symbol_table.h"
+#include "utils/link_list.h"
+
 /**
  *@brief takes in symbol table and returns a linked list structure
  * @param symbol_table
