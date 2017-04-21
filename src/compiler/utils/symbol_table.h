@@ -12,10 +12,16 @@ typedef struct symbol_table symbol_table_st;
 struct symbol_table;
 
 /**
- * @brief get one instance of the symbol table.
+ * @brief initialize the symbol table.
  * @return a valid symbol table object.
  */
-symbol_table_st *symbol_table_get_instance();
+symbol_table_st *symbol_table_init();
+
+/**
+ * @brief clean up the symbol table.
+ * @param symbol_table a valid symbol table object.
+ */
+void symbol_table_fini(symbol_table_st *);
 
 /**
  * @brief look up the symbol on symbol table
