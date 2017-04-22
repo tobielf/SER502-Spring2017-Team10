@@ -8,7 +8,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
+#include "error.h"
 #include "link_node.h"
 #include "link_list.h"
 
@@ -23,6 +25,8 @@ struct link_list {
  */
 link_list_st *link_list_init() {
     link_list_st *list = (link_list_st *)malloc(sizeof(link_list_st));
+    if (list == NULL)
+        error_errno(ENOMEM);
     list->head = link_node_new(NULL, NULL);
     list->tail = list->head;
     return list;
