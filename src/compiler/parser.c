@@ -10,6 +10,9 @@
 
 
 #include "parser.h"
+#include "/utils/parsing_tree.h"
+#include "/utils/symbol_table.h"
+#include "/utils/link_list.h"
 
 
 /**
@@ -17,19 +20,36 @@
 * @arg: pointers to token_list and symbol table
 * @return: the pointer to generated parsing tree
 */
-parsing_tree_st *parse_tree = syntax_analysis(token_list, symbol_table){
-	return Null;
+parsing_tree_st *parse_tree = syntax_analysis(token_list* tl, symbol_table* st){
+	if(tl == NULL || st == NULL){
+		return NULL
+	}
 }
 
 
 
 #ifdef XTEST
 
+void test_one_setup(void*){
+}
+
+void test_two_setup(void*){
+
+}
+
 void test_case_one() {
-	syntax_analysis()
+	printf("Begin of test case of one\n");
+	test_one_setup(NULL);
+	syntax_analysis(NULL);
+	return 0;
 }
 
 void test_case_two() {
+	printf("Begin of test case of two\n");
+	test_two_setup(NULL);
+	syntax_analysis(NULL);
+	return 0;
+
 }
 
 int main()
