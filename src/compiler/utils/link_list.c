@@ -83,14 +83,14 @@ link_node_st *link_list_append(link_list_st *list, link_node_st *node) {
  * @param call_back, call back function going to perform, can be NULL.
  * @return 1 on success, 0 on stoped.
  */
-int link_list_traverse(link_list_st *list, cb_func callback) {
+int link_list_traverse(link_list_st *list, cb_func callback, void *cb_data) {
     link_node_st *work = NULL;
     if (list == NULL || callback == NULL)
         return LINK_LIST_STOP;
 
     work = link_node_get_next(list->head);
     while (work != NULL) {
-        if (callback(work) == LINK_LIST_STOP)
+        if (callback(work, cb_data) == LINK_LIST_STOP)
             return LINK_LIST_STOP;
         work = link_node_get_next(work);
     }
@@ -99,7 +99,10 @@ int link_list_traverse(link_list_st *list, cb_func callback) {
 
 #ifdef LINK_LIST_TEST
 
-int test_print(link_node_st *node) {
+int test_print(link_node_st *node, void *data) {
+    if (data != NULL) {
+        (*((int *)data))++;
+    }
     printf("%s\n", (char *)link_node_get_data(node));
     return LINK_LIST_CONTINUE;
 }
@@ -109,7 +112,7 @@ void test_suite_three() {
     printf("test suite three\n");
     link_list_free(NULL);
 
-    link_list_traverse(NULL, test_print);
+    link_list_traverse(NULL, test_print, NULL);
 
     link_list_pop(NULL);
     printf("test suite three passed!\n");
@@ -119,6 +122,7 @@ void test_suite_two() {
     link_list_st *list;
     link_node_st *node;
     char *str = NULL;
+    int counter = 0;
 
     printf("test suite two\n");
     list = link_list_init();
@@ -137,7 +141,8 @@ void test_suite_two() {
     printf("data in node:%s\n\n", (char *)link_node_get_data(node));
     link_node_free(node);
 
-    link_list_traverse(list, test_print);
+    link_list_traverse(list, test_print, &counter);
+    printf("Count result: %d\n", counter);
 
     link_list_free(list);
     printf("test suite two passed!\n");
@@ -147,6 +152,7 @@ void test_suite_one() {
     link_list_st *list;
     link_node_st *node;
     char *str = NULL;
+    int counter = 0;
 
     printf("test suite one\n");
     list = link_list_init();
@@ -161,7 +167,8 @@ void test_suite_one() {
     node = link_node_new(str, free);
     link_list_append(list, node);
 
-    link_list_traverse(list, test_print);
+    link_list_traverse(list, test_print, &counter);
+    printf("Count result: %d\n", counter);
     link_list_free(list);
     printf("test suite one passed!\n");
 }

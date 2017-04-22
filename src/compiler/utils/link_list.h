@@ -16,7 +16,7 @@
 typedef struct link_list link_list_st;
 struct link_list;
 
-typedef int (*cb_func)(link_node_st *); /**< call back function */
+typedef int (*cb_func)(link_node_st *, void *); /**< call back function */
 
 /**
  * @brief initialize the link list.
@@ -52,6 +52,6 @@ link_node_st *link_list_append(link_list_st *, link_node_st *);
  * @param call_back, call back function going to perform, can be NULL.
  * @return 1 on success, 0 on stoped.
  */
-int link_list_traverse(link_list_st *, cb_func callback);
+int link_list_traverse(link_list_st *, cb_func callback, void *cb_data);
 
 #endif
