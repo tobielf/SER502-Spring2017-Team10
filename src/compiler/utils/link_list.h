@@ -1,7 +1,7 @@
 /**
  * @file link_list.h
  * @brief Purpose: link_list data structure
- * @version 0.1
+ * @version 1.0
  * @date 04.15.2017
  * @author Xiangyu Guo
  */
@@ -42,7 +42,7 @@ link_node_st *link_list_pop(link_list_st *);
  * @param list, a valid list head.
  * @param node, a valid list node.
  * @return NULL on failed, otherwise a cursor point to
- *         the previous tail of the list.
+ *         the tail of the list.
  */
 link_node_st *link_list_append(link_list_st *, link_node_st *);
 

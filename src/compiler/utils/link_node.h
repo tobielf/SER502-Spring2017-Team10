@@ -1,7 +1,7 @@
 /**
  * @file link_node.h
  * @brief Purpose: link_node data structure
- * @version 0.1
+ * @version 1.0
  * @date 04.15.2017
  * @author Xiangyu Guo
  */
@@ -41,5 +41,18 @@ void *link_node_get_data(link_node_st *);
  * @return cursor, the latter one as cursor.
  */
 link_node_st *link_node_append(link_node_st *, link_node_st *);
+
+/**
+ * @brief get next node after current node.
+ * @param current_node, a valid node object.
+ * @return next_node, next node of current node, otherwise NULL.
+ */
+link_node_st *link_node_get_next(link_node_st *);
+
+/**
+ * @brief remove all node start from current node.
+ * @param head current node as head.
+ */
+void link_node_remove_all(link_node_st **);
 
 #endif
