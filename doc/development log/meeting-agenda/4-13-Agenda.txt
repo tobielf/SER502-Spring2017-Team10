@@ -1,0 +1,14 @@
+Before tomorrow meeting:
+0. Review the Chapter12 on the textbook. (All)
+1. The name of our language. (All)
+2. Grammar rule of the Language. (All)
+3. Grammar of the Byte-Code. (@xiangyu )
+-------below are based on the knowledge we learned last week------
+4. Parsing technique. (@xfeng ).
+5. Intermediate Code Generating technique. (@bobbyzhu).
+6. Data Structures going to use. (@kkmacart ).
+7. Runtime Environment. (@xiangyu).
+
+We will introduce the coding style(10min), discuss on the Grammar Rule(30min) and more about the parsing technique and the data structure (20min) tomorrow.
+
+In Friday, I will bring out the overall design of the software. (@xiangyu)
