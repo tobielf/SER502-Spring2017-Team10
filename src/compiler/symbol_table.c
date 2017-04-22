@@ -11,7 +11,7 @@
 #include <errno.h>
 #include <string.h>
 #include <stdbool.h>
-#include "/Users/katiemacarthur/Documents/SER502-Spring2017-Team10/src/compiler/utils/symbol_table.h"
+#include "symbol_table.h"
 
 #define DEFAULT_ARRAY_SIZE     (16)
 #define ENLARGE_FACTOR           (2)
