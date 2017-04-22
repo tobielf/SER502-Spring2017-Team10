@@ -20,6 +20,17 @@
  * @param table, a valid symbol table object
  * @return NULL on failed, otherwise a valid link list.
  */
-link_list_st *semantic_analysis(parsing_tree *, symbol_table_st *) {
-  return NULL;
+link_list_st *semantic_analysis(parsing_tree_st *parsing_tree_node, symbol_table_st *symbol_table) {
+    return NULL;
 }
+
+#ifdef XTEST
+void test_case_one() {
+    printf("Case One");
+}
+
+int main() {
+    test_case_one();
+}
+
+#endif // XTEST

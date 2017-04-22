@@ -20,6 +20,6 @@
  * @param table, a valid symbol table object
  * @return NULL on failed, otherwise a valid link list.
  */
-link_list_st *semantic_analysis(parsing_tree *, symbol_table_st *);
+link_list_st *semantic_analysis(parsing_tree_st *, symbol_table_st *);
 
 #endif
