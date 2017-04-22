@@ -1,6 +1,7 @@
 /**
  * @file byte_code.h
  * @brief Purpose: byte code operation
+ * @version 0.2
  * @date 04.18.2017
  * @author Rundong Zhu
  */

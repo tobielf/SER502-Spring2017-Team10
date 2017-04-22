@@ -1,10 +1,11 @@
 /**
  * @file byte_code.c
  * @brief Purpose: byte code operation
+ * @version 0.2
  * @date 04.18.2017
  * @author Rundong Zhu
  */
-
+#include <stdio.h>
 
 #include "utils/link_list.h"
 #include "utils/symbol_table.h"
