@@ -1,0 +1,16 @@
+Before today's meeting:
+0. Review Task 5: Coding Style and follow it through the coding phase.
+1. Finish Task 6: Testing Data, and it’s review work.
+2. Finish Task 7: Developing Phase One.
+--------below are meeting agenda of this Tuesday’s meeting--------
+3. Converting syntax tree to intermediate code. (From the Task 6 review work)(20min)
+3.a. simple instruction. (decl_stmt , assign_stmt[with only number or var] and out_stmt[with only number or var]).(2min)
+3.b. median instruction. (expression, assign_stmt/out[with expression]).(3min).
+3.c. complex instruction.(if_stmt, for_stmt)(15min).
+4. Review the test cases.(10min).
+5. Review the code of Dev Phase One.(30min[7min/member]).
+5.a. Follow the coding style or not. (If the code commit in Monday night will assign a reviewer to go through this first, otherwise on meeting time).
+5.b. Properly organized the file structure and defined the API.
+5.c. Provide any unit test entrance for your component.
+5.d. [Optional] Clearly defined the interface inside the component.
+6. After review, do the modification on test case and code, then merge.

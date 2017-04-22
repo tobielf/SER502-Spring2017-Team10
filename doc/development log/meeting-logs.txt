@@ -1,3 +1,14 @@
+April 18(Tuesday).
+Meeting input:
+Task 6, Testing Data.
+Task 7, Developing phase one.
+
+Meeting output:
+Everyone understand how to translate high-level code into byte code.
+Everyone understand how to write the correct test case.
+Everyone understand how to construct interface of their component.
+Everyone understand how to do the unit test for component.(Need more detail explain on next Meeting).
+
 April 13(Thursday).
 Meeting input:
 Task 4, Language Design and Grammar Rule.
