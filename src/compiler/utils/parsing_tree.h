@@ -74,6 +74,7 @@ void *parsing_tree_get_data(parsing_tree_st *);
  * @param node, a valid node.
  * @param cb_func, call back function on the node.
  * @param cb_data, data of the call back function.
+ * @return 1, on continue; 0, on stopped.
  */
 int parsing_tree_prefix_traverse(parsing_tree_st *, tree_traversal_cb, void *);
 
