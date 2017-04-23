@@ -21,7 +21,7 @@ typedef struct operation {
     eval eval_func;                                 /**< evaluate funcion on this operation code */
 } operation_st;
 
-static machine_memory_st *s_machine_store;
+static machine_memory_st *s_machine_store;          /**< environment storage during run time */
 
 /**
  * @brief evaluate function of all binary operations
@@ -118,7 +118,6 @@ static operation_st g_operations[] = { {"DEC", eval_dec},
 /**
  * @brief evaluate the ASM program.
  * @param instruct_set [in] loaded instruction sequence.
- * @param machine_store [in/out] the storage of the virtual machine.
  */
 static void s_evaluate(instruction_set_st *);
 
@@ -127,6 +126,12 @@ static void s_evaluate(instruction_set_st *);
  */
 static void s_usage();
 
+/**
+ * @brief main entrance of runtime.
+ * @param argc arguments count.
+ * @param argv arguments vector.
+ * @return 0 on success; otherwise errno.
+ */
 int main(int argc, char *argv[])
 {
     if (argc != 2) {
@@ -159,7 +164,6 @@ static void s_usage() {
 /**
  * @brief evaluate the ASM program.
  * @param instruct_set [in] loaded instruction sequence.
- * @param machine_store [in/out] the storage of the virtual machine.
  */
 static void s_evaluate(instruction_set_st *instructions) {
     instruction_st *next_inst = NULL;

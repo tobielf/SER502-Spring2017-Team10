@@ -13,8 +13,8 @@
 #include "instruction.h"
 
 #define BUFFER_SIZE         (255)                   /**< input buffer size */
-#define DEFAULT_ARRAY_SIZE  (64)                    /**<  */
-#define RESIZE_FACTOR       (2)                     /**<  */
+#define DEFAULT_ARRAY_SIZE  (64)                    /**< dynamic array default size */
+#define RESIZE_FACTOR       (2)                     /**< resize factor when dynamic array is too small */
 
 struct label_table {
     char *label_name;                               /**< label name without ":" */
@@ -37,6 +37,7 @@ struct instruction_set {
 
 /**
  * @brief load an ASM program into the runtime.
+ * @param file_path ASM file path. 
  * @param instruct_set [out] loaded instruction sequence.
  * @return total count of instructions.
  */
@@ -201,6 +202,7 @@ char *instruction_get_op_second(instruction_st *instruction) {
 
 /**
  * @brief load an ASM program into the runtime.
+ * @param file_path ASM file path.
  * @param instruct_set [out] loaded instruction sequence.
  * @return total count of instructions.
  */

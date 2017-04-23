@@ -1,5 +1,5 @@
 /**
- * @file storage.h
+ * @file storage.c
  * @brief Purpose: implementation of the machine storage.
  * @version 0.5
  * @date 04.23.2017
@@ -65,6 +65,7 @@ machine_memory_st *machine_memory_init() {
 
 /**
  * @brief clean up the machine memory, release all resources.
+ * @param machine_store a valid machine storage object.
  */
 void machine_memory_fini(machine_memory_st *machine_store) {
     int i;

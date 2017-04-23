@@ -41,6 +41,8 @@ static void s_usage();
 
 /**
  * @brief main entrance of the compiler.
+ * @param argc arguments count.
+ * @param argv arguments vector.
  * @return 0 on success; otherwise errno.
  */
 int main(int argc, char *argv[])
@@ -80,6 +82,9 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+/**
+ * @brief output the usage information about the compiler
+ */
 static void s_usage() {
     printf("Usage:\n");
     printf("./compiler <input file> <output file>\n");

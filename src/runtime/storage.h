@@ -8,8 +8,8 @@
 #ifndef __STORAGE_H__
 #define __STORAGE_H__
 
-#define MEMORY_CURRENT_SCOPE        (0)
-#define MEMORY_ALL_SCOPE            (-1)
+#define MEMORY_CURRENT_SCOPE        (0)             /**< Search on current scope */
+#define MEMORY_ALL_SCOPE            (-1)            /**< Search on all scope */
 
 typedef struct memory memory_st;
 struct memory;
@@ -25,6 +25,7 @@ machine_memory_st *machine_memory_init();
 
 /**
  * @brief clean up the machine memory, release all resources.
+ * @param machine_store a valid machine storage object.
  */
 void machine_memory_fini(machine_memory_st *);
 
