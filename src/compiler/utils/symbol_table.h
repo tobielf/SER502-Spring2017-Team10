@@ -35,9 +35,9 @@ int symbol_table_lookup(symbol_table_st *, char *symbol);
  * @brief insert the symbol to symbol table
  * @param table a valid symbol table object.
  * @param symbol a symbol going to insert.
- * @param token_val the value of the token.
+ * @param token_type the type of the token.
  * @return -1, failed; otherwise the index inserted in symbol table.
  */
-int symbol_table_insert(symbol_table_st *, char *symbol, int token_value);
+int symbol_table_insert(symbol_table_st *, char *symbol, int token_type);
 
 #endif

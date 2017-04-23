@@ -35,11 +35,26 @@ int print_byte_code(link_node_st *node)
 }
 
 /**
+ * @brief output the usage information about the compiler
+ */
+static void s_usage();
+
+/**
  * @brief main entrance of the compiler.
+ * @param argc arguments count.
+ * @param argv arguments vector.
  * @return 0 on success; otherwise errno.
  */
-int main()
+int main(int argc, char *argv[])
 {
+    if (argc != 3) {
+        s_usage();
+        return 0;
+    }
+
+    freopen(argv[1], "r", stdin);
+    freopen(argv[2], "w", stdout);
+
     symbol_table_st *symbol_table = symbol_table_init();
     if (symbol_table == NULL)
         return ENOMEM;
@@ -65,4 +80,13 @@ int main()
     link_list_free(byte_code);
 
     return 0;
+}
+
+/**
+ * @brief output the usage information about the compiler
+ */
+static void s_usage() {
+    printf("Usage:\n");
+    printf("./compiler <input file> <output file>\n");
+    printf("e.g ./compiler program1.ten program1.asm\n");
 }
