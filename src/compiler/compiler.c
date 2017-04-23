@@ -11,7 +11,6 @@
 #include "utils/link_list.h"
 #include "utils/symbol_table.h"
 #include "utils/parsing_tree.h"
-#include "utils/parser.h"
 
 #include "utils/error.h"
 
@@ -49,11 +48,6 @@ int main()
     if (token_list == NULL)
         return ENOMEM;
 
-    /**
-    * @brief: get the token_list and symbol_table parse it into a parsing tree 
-    * @arg: pointers to token_list and symbol table
-    * @return: the pointer to generated parsing tree
-    */
     parsing_tree_st *parse_tree = syntax_analysis(token_list, symbol_table);
     if (parse_tree == NULL)
         return ENOMEM;
