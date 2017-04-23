@@ -16,7 +16,8 @@
 
 /**
 * @brief: get the token_list and symbol_table parse it into a parsing tree 
-* @arg: pointers to token_list and symbol table
+* @arg: pointers to token list 
+* @arg: pointers to symbol table
 * @return: the pointer to generated parsing tree
 */
 parsing_tree_st *parse_tree = syntax_analysis(token_list_st* token_list, symbol_table_st* symbol_table) {
@@ -39,14 +40,12 @@ void test_case_one() {
     printf("Begin of test case of one\n");
     test_one_setup(NULL);
     syntax_analysis(NULL, NULL);
-    return 0;
 }
 
 void test_case_two() {
     printf("Begin of test case of two\n");
     test_two_setup(NULL);
     syntax_analysis(NULL, NULL);
-    return 0;
 
 }
 

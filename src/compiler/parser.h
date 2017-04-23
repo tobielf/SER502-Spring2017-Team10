@@ -19,7 +19,8 @@
 
 /**
 * @brief: get the token_list and symbol_table parse it into a parsing tree 
-* @arg: pointers to token_list and symbol table
+* @arg: pointer to token list 
+* @arg: pointer to symbol table
 * @return: the pointer to generated parsing tree
 */
 parsing_tree_st *syntax_analysis (link_list_st *token_list, symbol_table_st *symbol_table);
