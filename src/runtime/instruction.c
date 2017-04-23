@@ -86,6 +86,30 @@ instruction_set_st *instruction_load_program(const char *file_path) {
 }
 
 /**
+ * @brief clean up the instruction set.
+ * @param instructions, a valid instruction set object.
+ */
+void instruction_clean_up(instruction_set_st *instructions) {
+    int i;
+    if (instructions == NULL)
+        return;
+
+    for (i = 0; i < instructions->count; i++) {
+        free(instructions->instructs[i].op_code);
+        free(instructions->instructs[i].op_first);
+        free(instructions->instructs[i].op_second);
+    }
+
+    free(instructions->instructs);
+
+    // todo: clean up label table
+
+    free(instructions->labels);
+
+    free(instructions);
+}
+
+/**
  * @brief get next instruction from instruction set
  * @param instruction_set a valid instruction_set object.
  * @return NULL, failed or no more instructions; otherwise a pointer to the instruction.
@@ -229,7 +253,7 @@ static int s_load_program(const char *file_path, instruction_set_st *instruction
             instructions->instructs[count].op_second = NULL;
         count++;
     }
-
+    fclose(fin);
     s_replace_label(instructions->instructs, instructions->labels);
     return count;
 }

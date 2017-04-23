@@ -74,6 +74,7 @@ void machine_memory_fini(machine_memory_st *machine_store) {
         }
 
         free(machine_store->static_memory);
+        free(s_scope_boundary);
         free(machine_store);
     }
 }

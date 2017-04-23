@@ -127,8 +127,6 @@ static void s_evaluate(instruction_set_st *);
  */
 static void s_usage();
 
-#ifndef XTEST
-
 int main(int argc, char *argv[])
 {
     if (argc != 2) {
@@ -143,28 +141,12 @@ int main(int argc, char *argv[])
     instructions = instruction_load_program(argv[1]);
 
     s_evaluate(instructions);
+
+    instruction_clean_up(instructions);
+
+    machine_memory_fini(s_machine_store);
     return 0;
 }
-
-#else
-
-int main(int argc, char *argv[])
-{
-    if (argc != 2) {
-        s_usage();
-        return 0;
-    }
-
-    instruction_set_st *instructions = NULL;
-
-    s_machine_store = machine_memory_init();
-
-    instructions = instruction_load_program(argv[1]);
-
-    s_evaluate(instructions);
-    return 0;
-}
-#endif
 /**
  * @brief print out the usage information of runtime.
  */

@@ -25,6 +25,12 @@ struct instruction_set;
 instruction_set_st *instruction_load_program(const char *);
 
 /**
+ * @brief clean up the instruction set.
+ * @param instructions, a valid instruction set object.
+ */
+void instruction_clean_up(instruction_set_st *);
+
+/**
  * @brief get next instruction from instruction set
  * @param instruction_set a valid instruction_set object.
  * @return NULL, failed or no more instructions; otherwise a pointer to the instruction.
