@@ -1,0 +1,12 @@
+var i;
+var sum;
+
+for i from 1 to 100 step 1{
+	if (i % 2 = 0) then{
+		if (i % 3 = 0) then{
+			sum is i + sum;
+		};
+	};
+};
+
+print sum;
