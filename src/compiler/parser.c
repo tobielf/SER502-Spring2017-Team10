@@ -15,12 +15,12 @@
 
 
 /**
-* @brief: get the token_list and symbol_table parse it into a parsing tree 
-* @arg: pointers to token list 
-* @arg: pointers to symbol table
-* @return: the pointer to generated parsing tree
+  * @brief: get the token_list and symbol_table parse it into a parsing tree 
+  * @param: pointers to token list 
+  * @param: pointers to symbol table
+  * @return: the pointer to generated parsing tree
 */
-parsing_tree_st *parse_tree = syntax_analysis(token_list_st* token_list, symbol_table_st* symbol_table) {
+syntax_analysis(token_list_st* token_list, symbol_table_st* symbol_table) {
     if (token_list == NULL || symbol_table == NULL) {
         return NULL;
     }
@@ -30,10 +30,10 @@ parsing_tree_st *parse_tree = syntax_analysis(token_list_st* token_list, symbol_
 
 #ifdef XTEST
 
-void test_one_setup(void*) {
+void test_one_setup(void* data) {
 }
 
-void test_two_setup(void*) {
+void test_two_setup(void* data) {
 }
 
 void test_case_one() {
