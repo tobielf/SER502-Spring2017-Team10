@@ -9,10 +9,9 @@
 
 
 
-#include "parser.h"
-#include "/utils/parsing_tree.h"
-#include "/utils/symbol_table.h"
-#include "/utils/link_list.h"
+#include "utils/parsing_tree.h"
+#include "utils/symbol_table.h"
+#include "utils/link_list.h"
 
 
 /**
@@ -40,14 +39,14 @@ void test_two_setup(void*){
 void test_case_one() {
 	printf("Begin of test case of one\n");
 	test_one_setup(NULL);
-	syntax_analysis(NULL);
+	syntax_analysis(NULL, NULL);
 	return 0;
 }
 
 void test_case_two() {
 	printf("Begin of test case of two\n");
 	test_two_setup(NULL);
-	syntax_analysis(NULL);
+	syntax_analysis(NULL, NULL);
 	return 0;
 
 }
