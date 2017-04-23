@@ -5,6 +5,8 @@
  * @date 04.23.2017
  * @author Xiangyu Guo
  */
+#ifndef __STORAGE_H__
+#define __STORAGE_H__
 
 #define MEMORY_CURRENT_SCOPE        (0)
 #define MEMORY_ALL_SCOPE            (-1)
@@ -58,3 +60,5 @@ int memory_get_value(memory_st *);
  * @param variable_value a new value.
  */
 void memory_set_value(memory_st *, int);
+
+#endif

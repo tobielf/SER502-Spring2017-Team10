@@ -12,27 +12,7 @@
 #include <string.h>
 
 #include "storage.h"
-
-typedef struct label_table
-{
-    char *label_name;                               /**< label name without ":" */
-    unsigned int address;                           /**< the address of the label */
-} label_table_st;
-
-typedef struct instruction
-{
-    char *op_code;                                  /**< operation code */
-    char *op_first;                                 /**< first operands */
-    char *op_second;                                /**< second operands */
-} instruction;
-
-typedef struct instruction_set
-{
-    instruction *instructs;                         /**< all instructions */
-    int count;                                      /**< total of instructions */
-    int program_counter;                            /**< program counter(PC) */
-
-} instruction_set_st;
+#include "instruction.h"
 
 typedef void (*eval)(void *, void *);               /**< function pointer of eval functions */
 
@@ -136,57 +116,62 @@ static operation_st g_operations[] = { {"DEC", eval_dec},
                                        {NULL , NULL} };
 
 /**
- * @brief load an ASM program into the runtime.
- * @param instruct_set [out] loaded instruction sequence.
- * @param labels [out] loaded labels.
- */
-static void s_load_program(instruction_set_st *, label_table_st *);
-
-/**
- * @brief replace label in ASM program into real address.
- * @param instruct_set [in/out] instructions going to replace.
- * @param labels [in] label table with real address.
- */
-static void s_replace_label(instruction_set_st *, label_table_st *);
-
-/**
  * @brief evaluate the ASM program.
  * @param instruct_set [in] loaded instruction sequence.
  * @param machine_store [in/out] the storage of the virtual machine.
  */
 static void s_evaluate(instruction_set_st *);
 
-int main()
+/**
+ * @brief print out the usage information of runtime.
+ */
+static void s_usage();
+
+#ifndef XTEST
+
+int main(int argc, char *argv[])
 {
+    if (argc != 2) {
+        s_usage();
+        return 0;
+    }
+
     instruction_set_st *instructions = NULL;
-    label_table_st *labels = NULL;
 
     s_machine_store = machine_memory_init();
 
-    s_load_program(instructions, labels);
-
-    s_replace_label(instructions, labels);
+    instructions = instruction_load_program(argv[1]);
 
     s_evaluate(instructions);
     return 0;
 }
 
-/**
- * @brief load an ASM program into the runtime.
- * @param instruct_set [out] loaded instruction sequence.
- * @param labels [out] loaded labels.
- */
-static void s_load_program(instruction_set_st *instructions, label_table_st *lables) {
+#else
 
+int main(int argc, char *argv[])
+{
+    if (argc != 2) {
+        s_usage();
+        return 0;
+    }
+
+    instruction_set_st *instructions = NULL;
+
+    s_machine_store = machine_memory_init();
+
+    instructions = instruction_load_program(argv[1]);
+
+    s_evaluate(instructions);
+    return 0;
 }
-
+#endif
 /**
- * @brief replace label in ASM program into real address.
- * @param instruct_set [in/out] instructions going to replace.
- * @param labels [in] label table with real address.
+ * @brief print out the usage information of runtime.
  */
-static void s_replace_label(instruction_set_st *instructions, label_table_st *lables) {
-
+static void s_usage() {
+    printf("Usage:\n");
+    printf("./runtime <input file>\n");
+    printf("e.g ./runtime program1.asm\n");
 }
 
 /**
