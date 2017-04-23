@@ -32,6 +32,7 @@ struct instruction_set {
     label_table_st *labels;                         /**< labels in instructions */
     int count;                                      /**< total of instructions */
     int program_counter;                            /**< program counter(PC) */
+    int flag_register;                              /**< flag register for cmp result */
 };
 
 /**
@@ -79,7 +80,99 @@ instruction_set_st *instruction_load_program(const char *file_path) {
 
     instructions->program_counter = 0;
 
+    instructions->flag_register = 0;
+
     return instructions;
+}
+
+/**
+ * @brief get next instruction from instruction set
+ * @param instruction_set a valid instruction_set object.
+ * @return NULL, failed or no more instructions; otherwise a pointer to the instruction.
+ */
+instruction_st *instruction_set_get_instruction(instruction_set_st *instructions) {
+    int old_pc = 0;
+    if (instructions == NULL)
+        return NULL;
+
+    if (instructions->program_counter >= instructions->count)
+        return NULL;
+
+    old_pc = instructions->program_counter;
+    instructions->program_counter++;
+#ifdef DEBUG
+    fprintf(stderr, "pc: %d\n", old_pc);
+#endif
+    return &(instructions->instructs[old_pc]);
+}
+
+/**
+ * @brief set a new program counter
+ * @param instruction_set a valid instruction_set object.
+ * @param new_pc new program counter address.
+ */
+void instruction_set_set_pc(instruction_set_st *instructions, int new_pc) {
+    if (instructions == NULL)
+        return;
+
+    instructions->program_counter = new_pc;
+}
+
+/**
+ * @brief get the comparision result
+ * @param instruction_set a valid instruction_set object.
+ * @return flag value.
+ */
+int instruction_set_get_flag(instruction_set_st *instructions) {
+    if (instructions == NULL)
+        return 0;
+    return instructions->flag_register;
+}
+
+/**
+ * @brief set a new comparision result
+ * @param instruction_set a valid instruction_set object.
+ * @param new_flag new flag value.
+ */
+void instruction_set_set_flag(instruction_set_st *instructions, int new_flag) {
+    if (instructions == NULL)
+        return;
+
+    instructions->flag_register = new_flag;
+}
+
+/**
+ * @brief get operation code from an instruction.
+ * @param instruction, a valid instruction object.
+ * @return op_code, operation code
+ */
+char *instruction_get_op_code(instruction_st *instruction) {
+    if (instruction == NULL)
+        return NULL;
+    return instruction->op_code;
+}
+
+/**
+ * @brief get operation code from an instruction.
+ * @param instruction, a valid instruction object.
+ * @return operand, first operand
+ */
+char *instruction_get_op_first(instruction_st *instruction) {
+    if (instruction == NULL)
+        return NULL;
+    return instruction->op_first;
+
+}
+
+/**
+ * @brief get operation code from an instruction.
+ * @param instruction, a valid instruction object.
+ * @return operand, second operand
+ */
+char *instruction_get_op_second(instruction_st *instruction) {
+    if (instruction == NULL)
+        return NULL;
+    return instruction->op_second;
 }
 
 /**
@@ -96,7 +189,10 @@ static int s_load_program(const char *file_path, instruction_set_st *instruction
     int count = 0;
 
     fin = fopen(file_path, "r");
-    printf("load %s\n", file_path);
+    if (!fin) {
+        printf("load %s failed!\n", file_path);
+        exit(ENOENT);
+    }
     while (fgets(input_buff, BUFFER_SIZE, fin)) {
 #ifdef DEBUG
         fprintf(stderr, "line: %d, content: %s\n", count, input_buff);
@@ -125,8 +221,12 @@ static int s_load_program(const char *file_path, instruction_set_st *instruction
         instructions->instructs[count].op_code = strdup(op_code);
         if (op_first != NULL)
             instructions->instructs[count].op_first = strdup(op_first);
+        else
+            instructions->instructs[count].op_first = NULL;
         if (op_second != NULL)
             instructions->instructs[count].op_second = strdup(op_second);
+        else
+            instructions->instructs[count].op_second = NULL;
         count++;
     }
 

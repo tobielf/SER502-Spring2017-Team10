@@ -24,7 +24,6 @@ struct memory
 
 struct machine_memory
 {
-    int flag_register;                              /**< flag register for cmp result */
     int allocated_address;                          /**< usage of static memory */
     int memory_size;                                /**< size of static memroy */
     memory_st *static_memory;                       /**< static memory */
@@ -49,7 +48,6 @@ machine_memory_st *machine_memory_init() {
     if (s_scope_boundary == NULL)
         exit(ENOMEM);
 
-    machine_store->flag_register = 0;
     machine_store->allocated_address = 0;
     machine_store->static_memory = (memory_st *)malloc(STATIC_MEMORY_SIZE *
                                                             sizeof(memory_st));

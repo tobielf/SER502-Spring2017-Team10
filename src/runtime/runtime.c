@@ -180,7 +180,41 @@ static void s_usage() {
  * @param machine_store [in/out] the storage of the virtual machine.
  */
 static void s_evaluate(instruction_set_st *instructions) {
+    instruction_st *next_inst = NULL;
+    char *op_code = NULL;
+    char *op_first = NULL;
+    char *op_second = NULL;
+    int i;
 
+    if (instructions == NULL)
+        exit(EINVAL);
+
+    while ((next_inst = instruction_set_get_instruction(instructions)) != NULL) {
+        op_code = instruction_get_op_code(next_inst);
+        op_first = instruction_get_op_first(next_inst);
+        op_second = instruction_get_op_second(next_inst);
+#ifdef DEBUG
+        fprintf(stderr, "code: %s, first: %s, second: %s\n", op_code, op_first, op_second );
+#endif
+        if (op_code == NULL) {
+            fprintf(stderr, "Fetch failed\n");
+            exit(EINVAL);
+        }
+        // find method for op_code
+        i = 0;
+        while (g_operations[i].op_code != NULL) {
+            if (strcmp(op_code, g_operations[i].op_code) == 0) {
+                g_operations[i].eval_func(op_first, op_second);
+                break;
+            }
+            i++;
+        }
+
+        if (g_operations[i].op_code == NULL) {
+            fprintf(stderr, "Error, unsupported instruction\n");
+            exit(EPERM);
+        }
+    }
 }
 
 /**
