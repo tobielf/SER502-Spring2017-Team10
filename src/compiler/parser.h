@@ -22,6 +22,6 @@
 * @arg: pointers to token_list and symbol table
 * @return: the pointer to generated parsing tree
 */
-parsing_tree_st *parse_tree = syntax_analysis(link_list_st *token_list, symbol_table_st *symbol_table);
+parsing_tree_st *syntax_analysis (link_list_st *token_list, symbol_table_st *symbol_table);
 
 #endif
