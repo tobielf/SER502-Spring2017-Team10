@@ -18,11 +18,11 @@
 
 
 /**
-  * @brief: get the token_list and symbol_table parse it into a parsing tree 
-  * @param: pointer to token list 
-  * @param: pointer to symbol table
-  * @return: the pointer to generated parsing tree
-*/
+ * @brief: get the token_list and symbol_table parse it into a parsing tree 
+ * @param: pointer to token list 
+ * @param: pointer to symbol table
+ * @return: the pointer to generated parsing tree
+ */
 parsing_tree_st *syntax_analysis (link_list_st *token_list, symbol_table_st *symbol_table);
 
 #endif
