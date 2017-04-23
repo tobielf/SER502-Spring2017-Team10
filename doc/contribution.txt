@@ -66,3 +66,26 @@ Katie MacArthur:
     Created the unit test entrance for the lexical analyzer.
 
 Meeting 2(April 20)
+Ximing Feng:
+    Reviewed the phase-one code wrote by Rundong.
+    Start working on phase-two.
+    (Still have 2 days delay[4 hours], until April 22).
+Xiangyu Guo:
+    Explain what's the expectation of symbol table to Katie.
+    Explain how to implement a syntax analysis to Ximing.
+    Explain how to implement a semantics analysis to Rundong.
+    Reviewed the phase-one code wrote by Katie, Ximing and Rundong.
+    Reviewed the phase-one code wrote by Katie.
+    Finishe working on phase-two (basic data structures and simple runtime environment)
+    (The code is under review and needs more modifications before merge.)
+Rundong Zhu:
+    Reviewed the phase-one code wrote by Ximing.
+    Continue working on phase-two.
+    (Still have 1.5 days delay[3 hours], until April 22).
+Katie MacArthur:
+    Reviewed the phase-one code wrote by Xiangyu.
+    Finished working on phase-two (symbol table).
+    (The code is under review and needs more modifications before merge.)
+
+Week 3: (April 23-29)
+Meeting 1(April 25)
