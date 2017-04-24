@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include "error.h"
 #include <string.h>
 #include <stdbool.h>
 #include "symbol_table.h"
@@ -32,8 +33,8 @@ typedef struct symbol
 struct symbol_table
 {
     symbol_st* symbol_array;    /**< symbol_array struct */
-    int array_size;             /**< table size          */
-    int table_size;
+    int array_size;             /**< array size          */
+    int table_size;             /**< table size          */
 };
 
 /**
@@ -79,7 +80,7 @@ void symbol_table_fini(symbol_table_st *symbol_table)
 
     int i;
     for (i = 0; i < symbol_table->table_size; i++) {
-        free(symbol->table[i].symbol);
+        free(symbol_table->symbol_array[i].symbol);
     }
 
     free(symbol_table->symbol_array);
@@ -122,6 +123,8 @@ int symbol_table_lookup(symbol_table_st *symbol_table, char *symbol) {
  * @return -1, failed; otherwise the index inserted in symbol table.
  */
 int symbol_table_insert(symbol_table_st *symbol_table, char *symbol, int token_type) {
+    int index = -1;
+ 
     if (symbol_table == NULL)
         return -1;
 
