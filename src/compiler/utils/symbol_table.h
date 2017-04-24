@@ -11,6 +11,18 @@
 typedef struct symbol_table symbol_table_st;
 struct symbol_table;
 
+enum type {
+    KEYWORD = 0,
+    IDENTIFIER = 1,
+    BIN_OP = 2,
+    NUMBER = 3,
+    DELIMITER = 4,
+    BOOLEAN_OP = 5,
+    ID = 6,
+    PARENTHESES = 7,
+    CURLY_BRACKETS = 8,
+};
+
 /**
  * @brief initialize the symbol table.
  * @return a valid symbol table object.
