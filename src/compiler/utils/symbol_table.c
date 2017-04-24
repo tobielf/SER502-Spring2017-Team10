@@ -171,12 +171,14 @@ void test_case_one() {
 
     symbol_table_st* table = symbol_table_init();
     printf("Index of + symbol (should return 3): %d\n", symbol_table_lookup(table,"+"));
+    symbol_table_fini(table);
 }
 
 void test_case_two() {
 
     symbol_table_st* table = symbol_table_init();
     printf("Index of 'for'(should return 1): %d\n", symbol_table_lookup(table,"for"));
+    symbol_table_fini(table);
 }
 
 void test_case_three() {
@@ -185,6 +187,7 @@ void test_case_three() {
     printf("Table size (should be 7): %d\n",table->table_size);
     symbol_table_insert(table, "var", KEYWORD);
     printf("Table size after attempt to put in 'var' again: %d",table->table_size);
+    symbol_table_fini(table);
 }
 
 #endif
