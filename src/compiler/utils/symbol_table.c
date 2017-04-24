@@ -18,13 +18,6 @@
 #define DEFAULT_ARRAY_SIZE      (16)
 #define ENLARGE_FACTOR          (2)
 
-enum type {
-    KEYWORD = 0,
-    IDENTIFIER = 1,
-    BIN_OP = 2,
-    NUMBER = 3,
-};
-
 typedef struct symbol
 {
     char* symbol;               /**< token string */
@@ -58,13 +51,44 @@ symbol_table_st *symbol_table_init()
 
     symbol_table->table_size = 0;
 
+    //delimiter
+    symbol_table_insert(symbol_table, ";", DELIMITER);
+
+    //keywords
     symbol_table_insert(symbol_table, "is", KEYWORD);
     symbol_table_insert(symbol_table, "var", KEYWORD);
     symbol_table_insert(symbol_table, "print", KEYWORD);
+    symbol_table_insert(symbol_table, "as", KEYWORD);
+    symbol_table_insert(symbol_table, "if", KEYWORD);
+    symbol_table_insert(symbol_table, "then", KEYWORD);
+    symbol_table_insert(symbol_table, "else", KEYWORD);
+    symbol_table_insert(symbol_table, "for", KEYWORD);
+    symbol_table_insert(symbol_table, "from", KEYWORD);
+    symbol_table_insert(symbol_table, "to", KEYWORD);
+    symbol_table_insert(symbol_table, "step", KEYWORD);
+
+    //binary operations
     symbol_table_insert(symbol_table, "+", BIN_OP);
     symbol_table_insert(symbol_table, "-", BIN_OP);
     symbol_table_insert(symbol_table, "*", BIN_OP);
     symbol_table_insert(symbol_table, "/", BIN_OP);
+    symbol_table_insert(symbol_table, "%", BIN_OP);
+
+    //boolean operations
+    symbol_table_insert(symbol_table, "=", BOOLEAN_OP);
+    symbol_table_insert(symbol_table, "<>", BOOLEAN_OP);
+    symbol_table_insert(symbol_table, "<", BOOLEAN_OP);
+    symbol_table_insert(symbol_table, ">", BOOLEAN_OP);
+    symbol_table_insert(symbol_table, "<=", BOOLEAN_OP);
+    symbol_table_insert(symbol_table, ">=", BOOLEAN_OP);
+
+    //parentheses
+    symbol_table_insert(symbol_table, "(", PARENTHESES);
+    symbol_table_insert(symbol_table, ")", PARENTHESES);
+
+    //curly brackets
+    symbol_table_insert(symbol_table, "{", CURLY_BRACKETS);
+    symbol_table_insert(symbol_table, "}", CURLY_BRACKETS);
 
     return symbol_table;
 
@@ -170,21 +194,21 @@ int main() {
 void test_case_one() {
 
     symbol_table_st* table = symbol_table_init();
-    printf("Index of + symbol (should return 3): %d\n", symbol_table_lookup(table,"+"));
+    printf("Index of + symbol (should return 12): %d\n", symbol_table_lookup(table,"+"));
     symbol_table_fini(table);
 }
 
 void test_case_two() {
 
     symbol_table_st* table = symbol_table_init();
-    printf("Index of 'for'(should return -1): %d\n", symbol_table_lookup(table,"for"));
+    printf("Index of 'for'(should return -1): %d\n", symbol_table_lookup(table,"the"));
     symbol_table_fini(table);
 }
 
 void test_case_three() {
 
     symbol_table_st* table = symbol_table_init();
-    printf("Table size (should be 7): %d\n",table->table_size);
+    printf("Table size (should be 27): %d\n",table->table_size);
     symbol_table_insert(table, "var", KEYWORD);
     printf("Table size after attempt to put in 'var' again: %d",table->table_size);
     symbol_table_fini(table);
