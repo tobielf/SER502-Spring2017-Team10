@@ -177,7 +177,7 @@ void test_case_one() {
 void test_case_two() {
 
     symbol_table_st* table = symbol_table_init();
-    printf("Index of 'for'(should return 1): %d\n", symbol_table_lookup(table,"for"));
+    printf("Index of 'for'(should return -1): %d\n", symbol_table_lookup(table,"for"));
     symbol_table_fini(table);
 }
 
