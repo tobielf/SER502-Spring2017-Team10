@@ -9,9 +9,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-#include "error.h"
 #include <string.h>
 #include <stdbool.h>
+
+#include "error.h"
 #include "symbol_table.h"
 
 #define DEFAULT_ARRAY_SIZE      (16)
@@ -128,8 +129,8 @@ int symbol_table_insert(symbol_table_st *symbol_table, char *symbol, int token_t
     if (symbol_table == NULL)
         return -1;
 
-    if (symbol_table_lookup(symbol_table,symbol) == -1) {
-        int index = symbol_table->table_size;
+    if ((index = symbol_table_lookup(symbol_table,symbol)) == -1) {
+        index = symbol_table->table_size;
 
         if (symbol_table->table_size >= symbol_table->array_size) {
             symbol_st *new_symbol_array = realloc(symbol_table->symbol_array,
@@ -146,12 +147,17 @@ int symbol_table_insert(symbol_table_st *symbol_table, char *symbol, int token_t
         symbol_table->symbol_array[index].token_type = token_type;
 
         symbol_table->table_size++;
-
-        return index;
     }
+
+    return index;
 }
 
-#ifdef XTEST
+#ifdef SYMBOL_TABLE_TEST
+
+void test_case_one();
+void test_case_two();
+void test_case_three();
+
 int main() {
 
     test_case_one();
@@ -161,19 +167,19 @@ int main() {
     return 0;
 }
 
-int test_case_one() {
+void test_case_one() {
 
     symbol_table_st* table = symbol_table_init();
     printf("Index of + symbol (should return 3): %d\n", symbol_table_lookup(table,"+"));
 }
 
-int test_case_two() {
+void test_case_two() {
 
     symbol_table_st* table = symbol_table_init();
     printf("Index of 'for'(should return 1): %d\n", symbol_table_lookup(table,"for"));
 }
 
-int test_case_three() {
+void test_case_three() {
 
     symbol_table_st* table = symbol_table_init();
     printf("Table size (should be 7): %d\n",table->table_size);
