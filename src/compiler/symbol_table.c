@@ -1,8 +1,8 @@
 /**
  * @file symboltable.c
  * @brief purpose: to initialize and edit symbol table
- * @version 0.1
- * @date 04.21.2017
+ * @version 0.2
+ * @date 04.23.2017
  * @author Katie MacArthur
  */
 
@@ -13,8 +13,8 @@
 #include <stdbool.h>
 #include "symbol_table.h"
 
-#define DEFAULT_ARRAY_SIZE     (16)
-#define ENLARGE_FACTOR           (2)
+#define DEFAULT_ARRAY_SIZE      (16)
+#define ENLARGE_FACTOR          (2)
 
 enum type {
     KEYWORD = 0,
@@ -25,14 +25,14 @@ enum type {
 
 typedef struct symbol
 {
-    char* symbol;
-    int token_type;
+    char* symbol;               /**< token string */
+    int token_type;             /**< token type   */
 } symbol_st;
 
 struct symbol_table
 {
-    symbol_st* symbol_array;
-    int array_size;
+    symbol_st* symbol_array;    /**< symbol_array struct */
+    int array_size;             /**< table size          */
     int table_size;
 };
 
@@ -43,8 +43,12 @@ struct symbol_table
 symbol_table_st *symbol_table_init()
 {
     symbol_table_st *symbol_table = (symbol_table_st *)malloc(sizeof(symbol_table_st));
+    if (symbol_table == NULL)
+        error_errno(ENOMEM);
 
     symbol_st *symbol_array = (symbol_st *)malloc(sizeof(symbol_st) * DEFAULT_ARRAY_SIZE);
+    if (symbol_array == NULL)
+        error_errno(ENOMEM);
 
     symbol_table->symbol_array = symbol_array;
 
@@ -70,6 +74,14 @@ symbol_table_st *symbol_table_init()
  */
 void symbol_table_fini(symbol_table_st *symbol_table)
 {
+    if (symbol_table == NULL)
+        return;
+
+    int i;
+    for (i = 0; i < symbol_table->table_size; i++) {
+        free(symbol->table[i].symbol);
+    }
+
     free(symbol_table->symbol_array);
     free(symbol_table);
 }
@@ -82,19 +94,19 @@ void symbol_table_fini(symbol_table_st *symbol_table)
  */
 int symbol_table_lookup(symbol_table_st *symbol_table, char *symbol) {
 
-    int index = 0;
-    bool found = false;
+    if (symbol_table == NULL || symbol == NULL)
+        return -1;
 
     if (symbol_table->table_size == 0)
-    {return -1;}
+        return -1;
 
-    while ((found == false) & (index < symbol_table->table_size)){
+    int index = 0;
+    while (index < symbol_table->table_size) {
         if (strcmp(symbol,symbol_table->symbol_array[index].symbol) == 0) {
-            found = true;
             return index;
-        } else{
+        } else {
                 index++;
-            }
+        }
     }
 
     return -1;
@@ -122,6 +134,8 @@ int symbol_table_insert(symbol_table_st *symbol_table, char *symbol, int token_t
             if (new_symbol_array == NULL)
                 exit(ENOMEM);
             symbol_table->symbol_array = new_symbol_array;
+
+            symbol_table->array_size *= ENLARGE_FACTOR;
         }
 
         symbol_table->symbol_array[index].symbol = strdup(symbol);
@@ -137,7 +151,7 @@ int symbol_table_insert(symbol_table_st *symbol_table, char *symbol, int token_t
 #ifdef XTEST
 int main() {
 
-   test_case_one();
+    test_case_one();
     test_case_two();
     test_case_three();
 
