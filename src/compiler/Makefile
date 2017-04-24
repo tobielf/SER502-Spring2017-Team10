@@ -38,6 +38,22 @@ unittest: lexical.o parser.o byte_code.o
 	$Q $(CC) -o test_parser parser.o $(LDFLAGS) $(LDLIBS)
 	$Q $(CC) -o test_bytecode byte_code.o $(LDFLAGS) $(LDLIBS)
 
+test_link_node: CFLAGS += -DLINK_NODE_TEST -DDEBUG -g
+test_link_node: ./utils/error.o ./utils/link_node.o
+	$Q $(CC) -o $@ ./utils/link_node.o ./utils/error.o $(LDFLAGS) $(LDLIBS)
+
+test_link_list: CFLAGS += -DLINK_LIST_TEST -DDEBUG -g
+test_link_list: ./utils/error.o ./utils/link_node.o ./utils/link_list.o
+	$Q $(CC) -o $@ ./utils/link_list.o ./utils/link_node.o ./utils/error.o $(LDFLAGS) $(LDLIBS)
+
+test_symbol_table: CFLAGS += -DSYMBOL_TABLE_TEST -DDEBUG -g
+test_symbol_table: ./utils/error.o ./utils/symbol_table.o 
+	$Q $(CC) -o $@ ./utils/error.o ./utils/symbol_table.o $(LDFLAGS) $(LDLIBS)
+
+test_parsing_tree: CFLAGS += -DPARSING_TREE_TEST -DDEBUG -g
+test_parsing_tree: ./utils/error.o ./utils/parsing_tree.o
+	$Q $(CC) -o $@ ./utils/error.o ./utils/parsing_tree.o $(LDFLAGS) $(LDLIBS)
+
 .c.o:
 	$Q echo [CC] $<
 	$Q $(CC) -c $(CFLAGS) $< -o $@
