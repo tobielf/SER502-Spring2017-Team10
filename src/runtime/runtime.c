@@ -86,6 +86,63 @@ static void eval_div(void *, void *);
  * @param second second operand.
  */
 static void eval_mod(void *, void *);
+
+/**
+ * @brief evaluate function of "CMP" instruction
+ * @param first first operand.
+ * @param second second operand.
+ */
+static void eval_cmp(void *, void *);
+
+/**
+ * @brief evaluate function of "JE" instruction
+ * @param first label.
+ * @param second unused, will ignore.
+ */
+static void eval_je(void *, void *);
+
+/**
+ * @brief evaluate function of "JNE" instruction
+ * @param first label.
+ * @param second unused, will ignore.
+ */
+static void eval_jne(void *, void *);
+
+/**
+ * @brief evaluate function of "JL" instruction
+ * @param first label.
+ * @param second unused, will ignore.
+ */
+static void eval_jl(void *, void *);
+
+/**
+ * @brief evaluate function of "JLE" instruction
+ * @param first label.
+ * @param second unused, will ignore.
+ */
+static void eval_jle(void *, void *);
+
+/**
+ * @brief evaluate function of "JG" instruction
+ * @param first label.
+ * @param second unused, will ignore.
+ */
+static void eval_jg(void *, void *);
+
+/**
+ * @brief evaluate function of "JGE" instruction
+ * @param first label.
+ * @param second unused, will ignore.
+ */
+static void eval_jge(void *, void *);
+
+/**
+ * @brief evaluate function of "JMP" instruction
+ * @param first label.
+ * @param second unused, will ignore.
+ */
+static void eval_jmp(void *, void *);
+
 /**
  * @brief all operations provided by runtime.
  * Type 1: declare
@@ -101,6 +158,15 @@ static void eval_mod(void *, void *);
  * DIV var1, var2/value        ; div var2/value from var1
  * MOD var1, var2/value        ; mod var1 with var2/value
  *
+ * Type 4: compare and jump operation
+ * CMP var1, var2/value        ; CMP var1 and var2/value, set $flag = var1 - var2/value.
+ * JE  label                   ; Jump to label if $flag Equal to zero.
+ * JNE label                   ; Jump to label if $flag Not Equal to zero.
+ * JL  label                   ; Jump to label if $flag Less than zero.
+ * JLE label                   ; Jump to label if $flag Less than or Equal to zero.
+ * JG  label                   ; Jump to label if $flag Great than zero.
+ * JGE label                   ; Jump to label if $flag Great than or Equal to zero.
+ * JMP label                   ; Jump to label, always.
  *
  * Type 5: output result
  * OUT var1/value          ; Output var1/value. 
@@ -113,6 +179,14 @@ static operation_st g_operations[] = { {"DEC", eval_dec},
                                        {"MUL", eval_mul},
                                        {"DIV", eval_div},
                                        {"MOD", eval_mod},
+                                       {"CMP", eval_cmp},
+                                       {"JE" , eval_je },
+                                       {"JNE", eval_jne},
+                                       {"JL" , eval_jl },
+                                       {"JLE", eval_jle},
+                                       {"JG" , eval_jg },
+                                       {"JGE", eval_jge},
+                                       {"JMP", eval_jmp},
                                        {NULL , NULL} };
 
 /**
