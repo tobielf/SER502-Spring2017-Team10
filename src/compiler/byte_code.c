@@ -350,12 +350,76 @@ char *handle_res2(link_list_st *byte_code, parsing_tree_node_st *parsing_tree_no
 
 
 #ifdef XTEST
+//tree structure
+typedef struct TreeNode {  
+    char *data;  
+    struct TreeNode *child  
+}TreeNode;  
+
+typedef struct TreeNode* Tree;  
+
+int i;
+Tree init_tree(Tree t) {
+    i = 0;
+    return t = NULL;
+}
+
+void create_tree(Tree *t, char *s) {
+    char *ch = s[i];
+    i++;
+    if(ch == '#')
+        *t = NULL;
+    else {
+        *t = (TreeNode*)malloc(sizeof(TreeNode));
+        (*t)->data = ch;
+        create_tree(&(*t)->child, s);
+    }
+}
+
 void test_case_one() {
     printf("Case One");
+    //create tree
+    Tree *t;
+    char *ch_list = {"i", "is", "3"};
+    create_tree(t, ch_list);
+
+    parsing_tree_node_st *parsing_tree_node = parsing_tree_new(t, free);
+    link_list_st *byte_code = link_list_init();
+    char *data = handle_assign_stmt(byte_code, parsing_tree_node);
+
+    if(strcmp(data, "i") == 0 && strcmp(byte_code, "MOV i 3") == 0) {
+        printf("test_case_one success");
+        parsing_tree_free(parsing_tree_node);
+        link_list_free(byte_code);
+    }
+    else {
+        prinf("test_case_one failed");
+    }
+}
+
+void test_case_two() {
+    printf("test case Two");
+    //create tree
+    Tree *t;
+    char *ch_list = {"var", "i"};
+    create_tree(t, ch_list);
+    parsing_tree_node_st *parsing_tree_node = parsing_tree_new(t, free);
+    link_list_st *byte_code = link_list_init();
+    char *data = handle_assign_stmt(byte_code, parsing_tree_node);
+
+    if(strcmp(data, "i") == 0 && strcmp(byte_code, "DEC i") == 0) {
+        printf("test_case_two success");
+        parsing_tree_free(parsing_tree_node);
+        link_list_free(byte_code);
+    }
+    else {
+        prinf("test_case_two failed");
+    }
 }
 
 int main() {
     test_case_one();
+    test_case_two();
 }
 
 #endif // XTEST
