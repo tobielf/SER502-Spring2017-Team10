@@ -1,7 +1,7 @@
 /**
  * @file byte_code.c
  * @brief Purpose: byte code operation
- * @version 0.3
+ * @version 4.0
  * @date 04.18.2017
  * @author Rundong Zhu
  */
@@ -26,9 +26,10 @@ link_list_st *semantic_analysis(parsing_tree_st *parsing_tree_node, symbol_table
 
     char *data = parsing_tree_get_data(parsing_tree_node);
 
-    if (data == "stmt_list")
-        stmt_list(child);
+    if (strcmp(data, "stmt_list") == 0)
+        stmt_list(child);  //calling process to handle stmt_list
 
+    return NULL;
 }
 
 /**
@@ -37,15 +38,26 @@ link_list_st *semantic_analysis(parsing_tree_st *parsing_tree_node, symbol_table
  * @param table, a valid symbol table object
  */
 void *handle_stmt_list(parsing_tree_st *parsing_tree_node, symbol_table_st *symbol_table) {
-    parsing_tree_st *child = parsing_tree_get_child(parsing_tree_get_child);
-
+    parsing_tree_st *child = parsing_tree_get_child(parsing_tree_node);
     char *data = parsing_tree_get_data(parsing_tree_node);
 
-    if (data == "stmt_list")
-        handle_stmt_list(child);
-
-    if (data == "stmt")
+    if (strcmp(data, "stmt") == 0) {
         handle_stmt(child);
+    } else {
+        //error();
+    }
+
+    parsing_tree_st *sibling_1 = parsing_tree_get_sibling(child);
+    char *data_sibling_1 = parsing_tree_get_data(sibling_1);
+    parsing_tree_st *sibling_2 = parsing_tree_get_sibling(sibling_1);
+    char *data_sibling_2 = parsing_tree_get_data(sibling_2);
+
+    if (strcmp(data_sibling, ";") == 0 && sibling_2 == NULL)
+        break;
+
+    if (strcmp(data_sibling_2, "stmt_list") != 0) {
+        //error();
+    }
 }
 
 /**
@@ -54,24 +66,28 @@ void *handle_stmt_list(parsing_tree_st *parsing_tree_node, symbol_table_st *symb
  * @param table, a valid symbol table object
  */
 void *handle_stmt(parsing_tree_st *parsing_tree_node, symbol_table_st *symbol_table) {
-    parsing_tree_st *child = parsing_tree_get_child(parsing_tree_get_child);
-
+    parsing_tree_st *child = parsing_tree_get_child(parsing_tree_node);
     char *data = parsing_tree_get_data(parsing_tree_node);
 
-    if (data == "decl_stmt")
-        handle_decl_stmt_list(child);
-
-    if (data == "assign_stmt")
+    if (strcmp(data, "decl_stmt") == 0) {
+        handle_decl_stmt(child);
+    }
+    else if (strcmp(data, "assign_stmt") == 0) {
         handle_assign_stmt(child);
-
-    if (data == "if_stmt")
+    }
+    else if (strcmp(data, "if_stmt") == 0) {
         handle_if_stmt(child);
-
-    if (data == "for_stmt")
+    }
+    else if (strcmp(data, "for_stmt") == 0) {
         handle_for_stmt(child);
-
-    if (data == "print_stmt")
+    }
+    else if (strcmp(data, "print_stmt") == 0) {
         handle_print_stmt(child);
+    }
+    else
+    {
+        //error();
+    }
 }
 
 /**
@@ -85,7 +101,8 @@ char *handle_decl_stmt(link_list_st *byte_code, parsing_tree_st *parsing_tree_no
     int bytecode_len = 0;
     link_node_st *new_node = NULL;
 
-    parsing_tree_st *id_node = parsing_tree_get_child(parsing_tree_node);
+    parsing_tree_st *var_node = parsing_tree_get_child(parsing_tree_node);
+    parsing_tree_st *id_node = parsing_tree_get_sibling(var_node);
     char *operand = parsing_tree_get_data(id_node);
 
     bytecode_len = strlen("DEC ") + strlen(operand);
@@ -110,9 +127,20 @@ char *handle_assign_stmt(link_list_st *byte_code, parsing_tree_node_st *parsing_
     link_node_st *new_node = NULL;
 
     parsing_tree_st *id_node = parsing_tree_get_child(parsing_tree_node);
-    parsing_tree_st *expr_node = parsing_tree_get_child(parsing_tree_node);
+    parsing_tree_st *sibling = parsing_tree_get_sibling(id_node);
+    char *sibling_data = parsing_tree_get_data(sibling);
+    if (strcmp(sibling_data, "is") != 0) {
+        //error();
+    }
+    parsing_tree_st *expr_node = parsing_tree_get_sibling(sibling);
     char *left_operand = parsing_tree_get_data(id_node);
-    char *right_operand = handle_expr(expr_node);
+    char *right_operand = parsing_tree_get_data(expr_node);
+    if (strcmp(right_operand, "expr") == 0) {
+        handle_expr(expr_node);
+    }
+    else {
+        //error();
+    }
 
     bytecode_len = strlen("MOV ") + strlen(left_operand) + strlen(" ") + strlen(right_operand);
     bytecode = (char *)malloc(bytecode_len);
@@ -144,10 +172,17 @@ char *handle_print_stmt(link_list_st *byte_code, parsing_tree_st *parsing_tree_n
     link_node_st *new_node = NULL;
 
     parsing_tree_st *print_node = parsing_tree_get_child(parsing_tree_node);
-    char *operand = parsing_tree_get_data(print_node);
+    char *print_data = parsing_tree_get_data(print_node);
 
-    if (operand == "expr")
+    if (strcmp(print_data, "print") != 0) {
+        //error();
+    }
+
+    parsing_tree_st *operand_node = parsing_tree_get_sibling(print_node);
+    char *operand = parsing_tree_get_data(operand_node);
+    if (strcmp(operand, "expr") == 0) {
         handle_expr(operand);
+    }
 
     bytecode_len = strlen("OUT ") + strlen(operand);
     bytecode = (char *)malloc(bytecode_len);
@@ -162,15 +197,21 @@ char *handle_print_stmt(link_list_st *byte_code, parsing_tree_st *parsing_tree_n
  * @param table, a valid symbol table object
  */
 void *handle_expr(parsing_tree_node_st *parsing_tree_node, symbol_table_st *symbol_table) {
-    parsing_tree_st *child = parsing_tree_get_child(parsing_tree_node);
+    parsing_tree_st *term_node = parsing_tree_get_child(parsing_tree_node);
+    char *term_data = parsing_tree_get_data(term_node);
+    parsing_tree_st *res1_node = parsing_tree_get_sibling(term_node);
+    char *res1_data = parsing_tree_get_data(res1_node);
 
-    char *data = parsing_tree_get_data(parsing_tree_node);
-
-    if (data == "term")
-        handle_term(child);
-
-    if (data == "res1")
-        handle_res1(child);
+    if (strcmp(data, "term") == 0 && strcmp(res1_data, "res1") == 0) {
+        handle_term(term_node);
+    }
+    else {
+        //error();
+    }
+        
+    if (parsing_tree_get_child(res1_node) != NULL) {
+        handle_res1(res1_node);
+    }
 }
 
 /**
@@ -179,15 +220,20 @@ void *handle_expr(parsing_tree_node_st *parsing_tree_node, symbol_table_st *symb
  * @param table, a valid symbol table object
  */
 void *handle_term(parsing_tree_node_st *parsing_tree_node, symbol_table_st *symbol_table) {
-    parsing_tree_st *child = parsing_tree_get_child(parsing_tree_node);
+    parsing_tree_st *factor_node = parsing_tree_get_child(parsing_tree_node);
+    char *factor_data = parsing_tree_get_data(factor);
+    parsing_tree_st *res2_node = parsing_tree_get_sibling(factor_node);
+    char *res2_data = parsing_tree_get_data(res2_node);
 
-    char *data = parsing_tree_get_data(parsing_tree_node);
-
-    if (data == "factor")
-        handle_factor(child);
-
-    if (data == "res2")
+    if (strcmp(factor_data, "factor") == 0 && strcmp(res2_data, "res2") == 0) {
+        handle_factor(factor_node);
+    }
+    else {
+        //error();
+    }
+    if (parsing_tree_get_child(res2_node) != NULL) {
         handle_res2(child);
+    }
 }
 
 /**
@@ -202,9 +248,13 @@ char *handle_res1(link_list_st *byte_code, parsing_tree_node_st *parsing_tree_no
     link_node_st *new_node = NULL;
 
     parsing_tree_st *operator_node = parsing_tree_get_child(parsing_tree_node);
-    parsing_tree_st *term_node = parsing_tree_get_child(parsing_tree_node);
+    parsing_tree_st *term_node = parsing_tree_get_sibling(operator_node);
     char *left_operand = parsing_tree_get_data(operator_node);
-    char *right_operand = handle_term(term_node);
+    char *right_operand = parsing_tree_get_data(term_node);
+
+    if (strcmp(right_operand, "term") == 0) {
+        handle_term(term_node);
+    }
 
     bytecode_len = strlen("ADD ") + strlen(left_operand) + strlen(" ") + strlen(right_operand);
     bytecode = (char *)malloc(bytecode_len);
@@ -235,11 +285,11 @@ char *handle_factor(link_list_st *byte_code, parsing_tree_node_st *parsing_tree_
     link_node_st *new_node = NULL;
 
     parsing_tree_st *node = parsing_tree_get_child(parsing_tree_node);
-
     char *operand = parsing_tree_get_data(node);
 
-    if (operand == "expr")
+    if (strcmp(operand, "expr") == 0) {
         handle_expr(operand);
+    }
 
     bytecode_len = strlen(operand);
     bytecode = (char *)malloc(bytecode_len);
@@ -261,26 +311,35 @@ char *handle_res2(link_list_st *byte_code, parsing_tree_node_st *parsing_tree_no
     link_node_st *new_node = NULL;
 
     parsing_tree_st *operator_node = parsing_tree_get_child(parsing_tree_node);
-    parsing_tree_st *factor_node = parsing_tree_get_child(parsing_tree_node);
+    parsing_tree_st *factor_node = parsing_tree_get_sibling(operator_node);
     char *left_operand = parsing_tree_get_data(operator_node);
-    char *right_operand = handle_factor(factor_node);
+    char *right_operand = parsing_tree_get_data(factor_node);
 
-    if (left_operand == "*") {
+    if (strcmp(right_operand, "factor")) {
+        handle_factor(factor_node);
+    }
+    else {
+        //error();
+    }
+
+    if (strcmp(left_operand, "*") == 0) {
         //bytecode_len = strlen("ADD ") + strlen(left_operand) + strlen(" ") + strlen(right_operand);
         //bytecode = (char *)malloc(bytecode_len);
         //snprintf(bytecode, bytecode_len, "ADD %s %s", left_operand, right_operand);
     }
-
-    if (left_operand == "/") {
+    else if (strcmp(left_operand, "/") == 0) {
         //bytecode_len = strlen("SUB ") + strlen(left_operand) + strlen(" ") + strlen(right_operand);
         //bytecode = (char *)malloc(bytecode_len);
         //snprintf(bytecode, bytecode_len, "SUB %s %s", left_operand, right_operand);
     }
-
-    if (left_operand == "%") {
+    else if (strcmp(left_operand, "%") == 0) {
         //bytecode_len = strlen("SUB ") + strlen(left_operand) + strlen(" ") + strlen(right_operand);
         //bytecode = (char *)malloc(bytecode_len);
         //snprintf(bytecode, bytecode_len, "SUB %s %s", left_operand, right_operand);
+    }
+    else
+    {
+        //error();
     }
 
     new_node = link_node_new(bytecode, free);
