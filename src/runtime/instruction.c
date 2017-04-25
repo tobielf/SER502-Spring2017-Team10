@@ -54,7 +54,7 @@ static int s_load_program(const char *, instruction_set_st *);
  * @param instruct_set [in/out] instructions going to replace.
  * @param labels [in] label table with real address.
  */
-static void s_replace_label(instruction_st *, label_table_st *);
+static void s_replace_label(instruction_set_st *, label_table_st *);
 
 /**
  * @brief insert a label into label table.
@@ -102,6 +102,8 @@ instruction_set_st *instruction_load_program(const char *file_path) {
     instructions->flag_register = 0;
 
     instructions->count = s_load_program(file_path, instructions);
+
+    s_replace_label(instructions, instructions->labels);
 
     return instructions;
 }
@@ -197,7 +199,21 @@ void instruction_set_set_flag(instruction_set_st *instructions, int new_flag) {
  * @return a valid address for program counter, if label doesn't exist, exit.
  */
 unsigned int instruction_set_get_label(instruction_set_st *instructions, char *label) {
-    return 0;
+    int i;
+    int label_len = 0;
+    char *converted_label = NULL;
+    label_len = strlen(label) + strlen(":") + 1;
+
+    converted_label = (char *)malloc(label_len);
+    snprintf(converted_label, label_len, "%s:", label);
+    for (i = 0; i < instructions->labels->label_table_size; i++) {
+        if (strcmp(converted_label, instructions->labels->label_table[i].label_name) == 0) {
+            free(converted_label);
+            return instructions->labels->label_table[i].address;
+        }
+    }
+    fprintf(stderr, "Invalid label.\n");
+    exit(EPERM);
 }
 
 /**
@@ -295,7 +311,7 @@ static int s_load_program(const char *file_path, instruction_set_st *instruction
         count++;
     }
     fclose(fin);
-    s_replace_label(instructions->instructs, instructions->labels);
+
     return count;
 }
 
@@ -304,8 +320,19 @@ static int s_load_program(const char *file_path, instruction_set_st *instruction
  * @param instruct_set [in/out] instructions going to replace.
  * @param labels [in] label table with real address.
  */
-static void s_replace_label(instruction_st *instructions, label_table_st *lables) {
-    // todo: next phase
+static void s_replace_label(instruction_set_st *instructions, label_table_st *labels) {
+    int i, j;
+    char *label;
+
+    for (i = 0; i < instructions->count; i++) {
+        label = instructions->instructs[i].op_code;
+        if (strrchr(label, ':')) {
+            for (j = 0; j < labels->label_table_size; j++) {
+                if (strcmp(label, labels->label_table[j].label_name) == 0)
+                    labels->label_table[i].address = i;
+            }
+        }
+    }
 }
 
 /**

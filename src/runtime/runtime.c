@@ -328,7 +328,9 @@ static void s_evaluate(instruction_set_st *instructions) {
         }
 
         if (g_operations[i].op_code == NULL) {
-            fprintf(stderr, "label\n");
+#ifdef DEBUG
+            fprintf(stderr, "label change scope\n");
+#endif
             // todo: label change scope.(for1: scope++, for1_end: scope--)
         }
     }
@@ -352,8 +354,7 @@ static void eval_dec(void *first_operand, void *second_operand) {
                                                     variable_name,
                                                     MEMORY_CURRENT_SCOPE);
     if (variable_memory != NULL) {
-        fprintf(stderr, "Redeclare variable: %s exit\n", variable_name);
-        exit(EINVAL);
+        return;
     }
 
     // doesn't exist, create a new one.
@@ -485,7 +486,7 @@ static void eval_bin_op_helper(void *first_operand,
     // value_one = from var_one on the storage.
     value_one = memory_get_value(var_mem_one);
 
-    if (isalpha(var_two[0])) {
+    if (!isdigit(var_two[0])) {
         // check var_two on ALL scope, if doesn't exist, warning and exit.
         var_mem_two = machine_memory_get_variable(s_machine_store, 
                                                   var_two, 
@@ -547,7 +548,7 @@ static void eval_cmp(void *first_operand, void *second_operand) {
     var_one = (char *)first_operand;
     var_two = (char *)second_operand;
 
-    if (isalpha(var_one[0])) {
+    if (!isdigit(var_one[0])) {
         // check var_one on ALL scope, if doesn't exist, warning and exit.
         var_mem_one = machine_memory_get_variable(s_machine_store, 
                                                   var_one, 
@@ -562,7 +563,7 @@ static void eval_cmp(void *first_operand, void *second_operand) {
         value_one = atoi(var_one);
     }
 
-    if (isalpha(var_two[0])) {
+    if (!isdigit(var_two[0])) {
         // check var_two on ALL scope, if doesn't exist, warning and exit.
         var_mem_two = machine_memory_get_variable(s_machine_store, 
                                                   var_two, 
@@ -576,7 +577,9 @@ static void eval_cmp(void *first_operand, void *second_operand) {
     } else {
         value_two = atoi(second_operand);
     }
-
+#ifdef DEBUG
+    fprintf(stderr, "cmp result: %d\n", value_one - value_two);
+#endif
     // set $flag using value_one - value_two;
     instruction_set_set_flag(s_instructions, value_one - value_two);
 }
@@ -667,8 +670,12 @@ static void eval_bool_op_helper(void *first_operand,
     new_pc = instruction_set_get_label(s_instructions, label);
 
     // set program counter if condition matched.
-    if (flag_cmp(flag))
+    if (flag_cmp(flag)) {
+#ifdef DEBUG
+        fprintf(stderr, "new_pc: %d\n", new_pc);
+#endif
         instruction_set_set_pc(s_instructions, new_pc);
+    }
 }
 
 /**
