@@ -1,7 +1,7 @@
 /**
  * @file runtime.c
  * @brief Purpose: main entrance of the runtime
- * @version 0.9
+ * @version 1.0
  * @date 04.16.2017
  * @author Xiangyu Guo
  */
@@ -198,7 +198,7 @@ static int cmp_jge(int);
 /**
  * @brief comparison function for "JMP" instruction
  * @param flag the value of flag register.
- * @return compare result.
+ * @return 1, unconditional jump, always be true.
  */
 static int cmp_jmp(int);
 
@@ -281,6 +281,7 @@ int main(int argc, char *argv[])
     instruction_clean_up(s_instructions);
 
     machine_memory_fini(s_machine_store);
+
     return 0;
 }
 /**
@@ -739,7 +740,7 @@ static int cmp_jge(int flag) {
 /**
  * @brief comparison function for "JMP" instruction
  * @param flag the value of flag register.
- * @return compare result.
+ * @return 1, unconditional jump, always be true.
  */
 static int cmp_jmp(int flag) {
     return 1;

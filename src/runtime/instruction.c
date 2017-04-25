@@ -1,7 +1,7 @@
 /**
  * @file instruction.c
  * @brief Purpose: implemetation of the machine instruction.
- * @version 0.9
+ * @version 1.0
  * @date 04.23.2017
  * @author Xiangyu Guo
  */
@@ -24,7 +24,7 @@ typedef struct label_info {
 typedef struct label_table {
     int label_table_capacity;                       /**< the capacity of label table */
     int label_table_size;                           /**< the current size of label table */
-    label_st *label_table;
+    label_st *label_table;                          /**< label table object */
 } label_table_st;
 
 struct instruction {
@@ -90,6 +90,8 @@ instruction_set_st *instruction_load_program(const char *file_path) {
 
     instructions->labels->label_table = (label_st *)malloc(DEFAULT_ARRAY_SIZE *
                                                             sizeof(label_st));
+    if (instructions->labels->label_table == NULL)
+        exit(ENOMEM);
 
     instructions->labels->label_table_capacity = DEFAULT_ARRAY_SIZE;
 
@@ -143,9 +145,11 @@ void instruction_clean_up(instruction_set_st *instructions) {
  */
 instruction_st *instruction_set_get_instruction(instruction_set_st *instructions) {
     int old_pc = 0;
+    // failed.
     if (instructions == NULL)
         return NULL;
 
+    // no more instructions.
     if (instructions->program_counter >= instructions->count)
         return NULL;
 
@@ -202,6 +206,10 @@ unsigned int instruction_set_get_label(instruction_set_st *instructions, char *l
     int i;
     int label_len = 0;
     char *converted_label = NULL;
+
+    if (instructions == NULL || label == NULL)
+        exit(EINVAL);
+
     label_len = strlen(label) + strlen(":") + 1;
 
     converted_label = (char *)malloc(label_len);
@@ -264,11 +272,15 @@ static int s_load_program(const char *file_path, instruction_set_st *instruction
     char *op_second;
     int count = 0;
 
+    if (file_path == NULL || instructions == NULL)
+        exit(EINVAL);
+
     fin = fopen(file_path, "r");
     if (!fin) {
         printf("load %s failed!\n", file_path);
         exit(ENOENT);
     }
+
     while (fgets(input_buff, BUFFER_SIZE, fin)) {
 #ifdef DEBUG
         fprintf(stderr, "line: %d, content: %s\n", count, input_buff);
@@ -328,6 +340,9 @@ static int s_load_program(const char *file_path, instruction_set_st *instruction
 static void s_replace_label(instruction_set_st *instructions, label_table_st *labels) {
     int i, j;
     char *label;
+
+    if (instructions == NULL || labels == NULL)
+        exit(EINVAL);
 
     for (i = 0; i < instructions->count; i++) {
         label = instructions->instructs[i].op_code;

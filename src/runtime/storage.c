@@ -1,7 +1,7 @@
 /**
  * @file storage.c
  * @brief Purpose: implementation of the machine storage.
- * @version 0.9
+ * @version 1.0
  * @date 04.23.2017
  * @author Xiangyu Guo
  */
@@ -93,7 +93,6 @@ void machine_memory_fini(machine_memory_st *machine_store) {
  */
 memory_st* machine_memory_get_variable(machine_memory_st *machine_store,
                                         char *variable_name, int scope) {
-    // todo: scope related work.
     memory_st *variable_memory = NULL;
     int index = 0;
     int boundry = 0;
@@ -103,6 +102,7 @@ memory_st* machine_memory_get_variable(machine_memory_st *machine_store,
 
     index = machine_store->allocated_address - 1;
 
+    // check scope range
     if (scope == MEMORY_CURRENT_SCOPE) {
         boundry = machine_store->scope_boundary[machine_store->current_scope];
     }
@@ -128,8 +128,8 @@ int machine_memory_set_variable(machine_memory_st *machine_store,
                                 char *variable_name, int value, int scope) {
     memory_st *static_memory;
     int index = 0;
-    // todo: scope related work.
-    if (machine_store == NULL)
+
+    if (machine_store == NULL || variable_name == NULL)
         return EINVAL;
     index = machine_store->allocated_address;
 
@@ -194,6 +194,7 @@ void machine_memory_close_scope(machine_memory_st *machine_store) {
 
     boundary = machine_store->scope_boundary[machine_store->current_scope];
 
+    // release all variables on this(active) scope.
     for (index = boundary; index < machine_store->allocated_address; index++) {
         static_memory = &(machine_store->static_memory[index]);
         if (static_memory->scope != machine_store->current_scope) {

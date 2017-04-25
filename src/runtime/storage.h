@@ -1,7 +1,7 @@
 /**
  * @file storage.h
  * @brief Purpose: declaration of the machine storage.
- * @version 0.9
+ * @version 1.0
  * @date 04.23.2017
  * @author Xiangyu Guo
  */
