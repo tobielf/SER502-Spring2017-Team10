@@ -18,13 +18,6 @@
 #define DEFAULT_ARRAY_SIZE      (16)
 #define ENLARGE_FACTOR          (2)
 
-enum type {
-    KEYWORD = 0,
-    IDENTIFIER = 1,
-    BIN_OP = 2,
-    NUMBER = 3,
-};
-
 typedef struct symbol
 {
     char* symbol;               /**< token string */
