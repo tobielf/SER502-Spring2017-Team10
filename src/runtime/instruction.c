@@ -348,10 +348,12 @@ static void s_replace_label(instruction_set_st *instructions, label_table_st *la
         label = instructions->instructs[i].op_code;
         if (strrchr(label, ':')) {
             for (j = 0; j < labels->label_table_size; j++) {
-                if (strcmp(label, labels->label_table[j].label_name) == 0)
+                if (strcmp(label, labels->label_table[j].label_name) == 0) {
                     labels->label_table[j].address = i;
-                if (strstr(label, "_end:") == NULL)
-                    labels->label_table[j].address++;
+                    if (strstr(label, "_end:") == NULL) {
+                        labels->label_table[j].address = i + 1;
+                    }
+                }
             }
         }
     }
