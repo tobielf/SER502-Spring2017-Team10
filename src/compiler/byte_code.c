@@ -17,46 +17,50 @@
 
 #include "byte_code.h"
 
-char *handle_stmt_list(parsing_tree_st *parsing_tree_node, link_list_st *byte_code);
+static void handle_stmt_list(parsing_tree_st *parsing_tree_node, link_list_st *byte_code); 
 
-char *handle_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code);
+static void handle_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code); 
 
-char *handle_if_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code);
+static char *handle_if_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code); 
 
-char *handle_for_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code);
+static char *handle_for_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code); 
 
-char *handle_expr(parsing_tree_st *parsing_tree_node, link_list_st *byte_code);
+static char *handle_expr(parsing_tree_st *parsing_tree_node, link_list_st *byte_code); 
 
-char *handle_term(parsing_tree_st *parsing_tree_node, link_list_st *byte_code);
+static char *handle_term(parsing_tree_st *parsing_tree_node, link_list_st *byte_code); 
 
-char *handle_decl_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code);
+static void handle_decl_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code); 
 
-char *handle_assign_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code);
+static void handle_assign_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code); 
 
-char *handle_print_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code);
+static void handle_print_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code); 
 
-char *handle_res1(parsing_tree_st *parsing_tree_node, link_list_st *byte_code);
+static char *handle_res1(parsing_tree_st *parsing_tree_node, link_list_st *byte_code); 
 
-char *handle_factor(parsing_tree_st *parsing_tree_node, link_list_st *byte_code);
+static char *handle_factor(parsing_tree_st *parsing_tree_node, link_list_st *byte_code); 
 
-char *handle_res2(parsing_tree_st *parsing_tree_node, link_list_st *byte_code);
+static char *handle_res2(parsing_tree_st *parsing_tree_node, link_list_st *byte_code);
 
 
 /**
- * @brief generate byte code form parsing tree and symbol table.
+ * @brief generate byte code from parsing tree and symbol table.
  * @param node, a valid tree node.
  * @param table, a valid symbol table object
  * @return NULL on failed, otherwise a valid link list.
  */
 link_list_st *semantic_analysis(parsing_tree_st *parsing_tree_node, symbol_table_st *symbol_table) {
-    link_list_st *byte_code = link_list_init();
+    link_list_st *byte_code = NULL;
 
-    char *program_data = parsing_tree_get_data(parsing_tree_node);
+    char *program_data = NULL;
 
-    if (strcmp(program_data, "program") != 0) {
-        return byte_code;
-    }
+    if (parsing_tree_node == NULL)
+        return NULL;
 
+    program_data = parsing_tree_get_data(parsing_tree_node);
+    if (strcmp(program_data, "program") != 0)
+        return NULL;
+
+    byte_code = link_list_init();
     parsing_tree_st *stmt_list_node = parsing_tree_get_child(parsing_tree_node);
     char *stmt_list_data = parsing_tree_get_data(stmt_list_node);
     if (strcmp(stmt_list_data, "stmt_list") == 0) {
@@ -70,44 +74,43 @@ link_list_st *semantic_analysis(parsing_tree_st *parsing_tree_node, symbol_table
 }
 
 /**
- * @brief handle stmt_list form parsing tree and symbol table.
+ * @brief handle stmt_list from parsing tree.
  * @param node, a valid tree node.
  * @param byte_code, a valid link list.
- * @return NULL on failed, otherwise a vaild char array
  */
-char *handle_stmt_list(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
+static void handle_stmt_list(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
     parsing_tree_st *stmt_node = parsing_tree_get_child(parsing_tree_node);
     char *stmt_data = parsing_tree_get_data(stmt_node);
 
-    if (strcmp(stmt_data, "stmt") == 0) {
-        handle_stmt(stmt_node, byte_code);
-    } else {
-        //error();
+    while (1) {
+        if (strcmp(stmt_data, "stmt") == 0) {
+            handle_stmt(stmt_node, byte_code);
+        } else {
+            //error();
+        }
+
+        parsing_tree_st *semicolon_node = parsing_tree_get_sibling(stmt_node);
+        char *semicolon_data = parsing_tree_get_data(semicolon_node);
+        parsing_tree_st *stmt_list_node = parsing_tree_get_sibling(semicolon_node);
+
+        if (strcmp(semicolon_data, ";") == 0 && stmt_list_node == NULL) {
+            break;
+        }
+        char *stmt_list_data = parsing_tree_get_data(stmt_list_node);
+
+        if (strcmp(stmt_list_data, "stmt_list") != 0) {
+            stmt_node = parsing_tree_get_child(stmt_list_node);
+            stmt_data = parsing_tree_get_data(stmt_node);
+        }
     }
-
-    parsing_tree_st *semicolon_node = parsing_tree_get_sibling(stmt_node);
-    char *semicolon_data = parsing_tree_get_data(semicolon_node);
-    parsing_tree_st *stmt_list_node = parsing_tree_get_sibling(semicolon_node);
-    char *stmt_list_data = parsing_tree_get_data(stmt_list_node);
-
-    if (strcmp(semicolon_data, ";") == 0 && stmt_list_node == NULL) {
-        return NULL;
-    }
-
-    if (strcmp(stmt_list_data, "stmt_list") != 0) {
-        //error();
-    }
-
-    return NULL;
 }
 
 /**
- * @brief handle stmt form parsing tree and symbol table.
+ * @brief handle stmt from parsing tree.
  * @param node, a valid tree node.
  * @param byte_code, a valid link list.
- * @return NULL on failed, otherwise a vaild char array
  */
-char *handle_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
+static void handle_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
     parsing_tree_st *sub_stmt_node = parsing_tree_get_child(parsing_tree_node);
     char *sub_stmt_data = parsing_tree_get_data(sub_stmt_node);
 
@@ -124,22 +127,20 @@ char *handle_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
     } else {
         //error();
     }
-
-    return NULL;
 }
 
 /**
- * @brief generate decl_stmt byte code form link list and parsing tree.
+ * @brief generate decl_stmt byte code from parsing tree.
  * @param node, a valid tree node
  * @param byte_code, a valid link list.
- * @return NULL on failed, otherwise a char array.
  */
-char *handle_decl_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
+static void handle_decl_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
     char *bytecode = NULL;
     int bytecode_len = 0;
     link_node_st *new_node = NULL;
 
     parsing_tree_st *var_node = parsing_tree_get_child(parsing_tree_node);
+    // todo: check data is "var"
     parsing_tree_st *id_node = parsing_tree_get_sibling(var_node);
     char *id_data = parsing_tree_get_data(id_node);
 
@@ -147,20 +148,16 @@ char *handle_decl_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_co
     bytecode = (char *)malloc(bytecode_len);
     snprintf(bytecode, bytecode_len, "DEC %s", id_data);
 
-    new_node = link_node_new(bytecode, NULL);
+    new_node = link_node_new(bytecode, free);
     link_list_append(byte_code, new_node);
-
-    return id_data;
 }
 
 /**
- * @brief generate assign_stmt byte code form link list and parsing tree.
- * @param byte_code, a valid link list.
+ * @brief generate assign_stmt byte code from parsing tree.
  * @param node, a valid tree node.
- * @return NULL on failed, otherwise a char array.
+ * @param byte_code, a valid link list.
  */
-
-char *handle_assign_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
+static void handle_assign_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
     char *bytecode = NULL;
     int bytecode_len = 0;
     link_node_st *new_node = NULL;
@@ -185,28 +182,25 @@ char *handle_assign_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_
     bytecode = (char *)malloc(bytecode_len);
     snprintf(bytecode, bytecode_len, "MOV %s %s", id_data, expr_data);
 
-    new_node = link_node_new(bytecode, NULL);
+    new_node = link_node_new(bytecode, free);
     link_list_append(byte_code, new_node);
-
-    return id_data;
 }
 
-char *handle_if_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
+static char *handle_if_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
     //TODO
     return NULL;
 }
-char *handle_for_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
+static char *handle_for_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
     //TODO
     return NULL;
 }
 
 /**
- * @brief generate print_stmt byte code form link list and parsing tree.
- * @param byte_code, a valid link list.
+ * @brief generate print_stmt byte code from parsing tree.
  * @param node, a valid tree node.
- * @return NULL on failed, otherwise a char array.
+ * @param byte_code, a valid link list.
  */
-char *handle_print_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
+static void handle_print_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
     char *bytecode = NULL;
     int bytecode_len = 0;
     link_node_st *new_node = NULL;
@@ -230,10 +224,8 @@ char *handle_print_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_c
     bytecode = (char *)malloc(bytecode_len);
     snprintf(bytecode, bytecode_len, "OUT %s", operand);
 
-    new_node = link_node_new(bytecode, NULL);
+    new_node = link_node_new(bytecode, free);
     link_list_append(byte_code, new_node);
-
-    return operand;
 }
 
 /**
