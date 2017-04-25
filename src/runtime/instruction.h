@@ -1,7 +1,7 @@
 /**
  * @file instruction.h
  * @brief Purpose: declaration of the machine instruction.
- * @version 0.5
+ * @version 0.9
  * @date 04.23.2017
  * @author Xiangyu Guo
  */

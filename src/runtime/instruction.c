@@ -1,7 +1,7 @@
 /**
  * @file instruction.c
  * @brief Purpose: implemetation of the machine instruction.
- * @version 0.5
+ * @version 0.9
  * @date 04.23.2017
  * @author Xiangyu Guo
  */
@@ -284,7 +284,12 @@ static int s_load_program(const char *file_path, instruction_set_st *instruction
         }
 
         // spilit by ' ', get first op code or label.
-        op_code = strtok(input_buff, " \n");
+        op_code = strtok(input_buff, " \t\r\n");
+
+        // skip empty lines
+        if (op_code == NULL)
+            continue;
+
         // check op_code is label and put into label table with count(address).
         if (strrchr(op_code, ':') != NULL) {
 #ifdef DEBUG
@@ -293,8 +298,8 @@ static int s_load_program(const char *file_path, instruction_set_st *instruction
             s_insert_label(instructions->labels, op_code, count);
         }
         // spilit by ' ', get first oprand and second oprand.
-        op_first = strtok(NULL, " \n");
-        op_second = strtok(NULL, " \n");
+        op_first = strtok(NULL, " \t\r\n");
+        op_second = strtok(NULL, " \t\r\n");
 
 #ifdef DEBUG
         fprintf(stderr, "code: %s, first %s, second %s\n", op_code, op_first, op_second );
@@ -329,7 +334,7 @@ static void s_replace_label(instruction_set_st *instructions, label_table_st *la
         if (strrchr(label, ':')) {
             for (j = 0; j < labels->label_table_size; j++) {
                 if (strcmp(label, labels->label_table[j].label_name) == 0)
-                    labels->label_table[i].address = i;
+                    labels->label_table[j].address = i;
             }
         }
     }

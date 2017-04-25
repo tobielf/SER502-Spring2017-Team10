@@ -1,7 +1,7 @@
 /**
  * @file storage.c
  * @brief Purpose: implementation of the machine storage.
- * @version 0.5
+ * @version 0.9
  * @date 04.23.2017
  * @author Xiangyu Guo
  */
