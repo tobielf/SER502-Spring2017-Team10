@@ -1,3 +1,14 @@
+April 20(Thursday).
+Meeting input:
+Task 7, Developing phase one.
+Pull/Request related to phase one.
+Task 8, Developing phase two.
+
+Meeting output:
+All pull/requests have been reviewed and merged into the master.
+Everyone understand incremental development driven by test.
+Everyone understand how to clearly defined the interface inside the component.
+
 April 18(Tuesday).
 Meeting input:
 Task 6, Testing Data.
