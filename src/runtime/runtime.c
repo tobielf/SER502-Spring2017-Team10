@@ -331,7 +331,11 @@ static void s_evaluate(instruction_set_st *instructions) {
 #ifdef DEBUG
             fprintf(stderr, "label change scope\n");
 #endif
-            // todo: label change scope.(for1: scope++, for1_end: scope--)
+            // label change scope.(for1: scope++, for1_end: scope--)
+            if (strstr(op_code, "_end:"))
+                machine_memory_close_scope(s_machine_store);
+            else
+                machine_memory_open_scope(s_machine_store);
         }
     }
 }

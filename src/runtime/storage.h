@@ -49,6 +49,18 @@ memory_st* machine_memory_get_variable(machine_memory_st *, char *, int);
 int machine_memory_set_variable(machine_memory_st *, char *, int, int);
 
 /**
+ * @brief open a new scope on the machine memory
+ * @param machine_store a valid machine_store.
+ */
+void machine_memory_open_scope(machine_memory_st *);
+
+/**
+ * @brief close current scope on the machine memory, will release all variables.
+ * @param machine_store a valid machine_store.
+ */
+void machine_memory_close_scope(machine_memory_st *);
+
+/**
  * @brief get a value from memory object.
  * @param variable_memory a valid memory object.
  * @return the value inside the memory object.

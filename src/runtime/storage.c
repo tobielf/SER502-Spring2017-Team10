@@ -5,6 +5,7 @@
  * @date 04.23.2017
  * @author Xiangyu Guo
  */
+#include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
@@ -26,12 +27,11 @@ struct machine_memory
 {
     int allocated_address;                          /**< usage of static memory */
     int memory_size;                                /**< size of static memroy */
+    int current_scope;                              /**< the scope of variable */
+    int *scope_boundary;                            /**< indicate the scope range */
+    int scope_capacity;                             /**< capacity of scope_boundary */
     memory_st *static_memory;                       /**< static memory */
-};
-
-static int s_scope = 0;                             /**< the scope of variable */
-
-static int *s_scope_boundary = NULL;                /**< indicate the scope range */
+};      
 
 /**
  * @brief initialize the machine memory.
@@ -44,9 +44,13 @@ machine_memory_st *machine_memory_init() {
     if (machine_store == NULL)
         exit(ENOMEM);
 
-    s_scope_boundary = (int *)malloc(SCOPE_BOUNDRAY_SIZE);
-    if (s_scope_boundary == NULL)
+    machine_store->scope_boundary = (int *)malloc(SCOPE_BOUNDRAY_SIZE * sizeof(int));
+    if (machine_store->scope_boundary == NULL)
         exit(ENOMEM);
+
+    machine_store->scope_capacity = SCOPE_BOUNDRAY_SIZE;
+    machine_store->current_scope = 0;
+    machine_store->scope_boundary[0] = 0;
 
     machine_store->allocated_address = 0;
     machine_store->static_memory = (memory_st *)malloc(STATIC_MEMORY_SIZE *
@@ -75,7 +79,7 @@ void machine_memory_fini(machine_memory_st *machine_store) {
         }
 
         free(machine_store->static_memory);
-        free(s_scope_boundary);
+        free(machine_store->scope_boundary);
         free(machine_store);
     }
 }
@@ -92,12 +96,18 @@ memory_st* machine_memory_get_variable(machine_memory_st *machine_store,
     // todo: scope related work.
     memory_st *variable_memory = NULL;
     int index = 0;
+    int boundry = 0;
 
     if (machine_store == NULL || variable_name == NULL)
         return NULL;
 
     index = machine_store->allocated_address - 1;
-    for ( ; index >= 0; index--) {
+
+    if (scope == MEMORY_CURRENT_SCOPE) {
+        boundry = machine_store->scope_boundary[machine_store->current_scope];
+    }
+
+    for ( ; index >= boundry; index--) {
         variable_memory = &(machine_store->static_memory[index]);
         if (strcmp(variable_memory->variable_name, variable_name) == 0)
             return variable_memory;
@@ -138,10 +148,71 @@ int machine_memory_set_variable(machine_memory_st *machine_store,
     static_memory = &(machine_store->static_memory[index]);
     static_memory->variable_name = strdup(variable_name);
     static_memory->variable_value = value;
-    static_memory->scope = scope;
+    static_memory->scope = machine_store->current_scope;
     machine_store->allocated_address++;
 
     return 0;
+}
+
+/**
+ * @brief open a new scope on the machine memory
+ * @param machine_store a valid machine_store.
+ */
+void machine_memory_open_scope(machine_memory_st *machine_store) {
+    if (machine_store == NULL)
+        return;
+
+    machine_store->current_scope++;
+#ifdef DEBUG
+    fprintf(stderr, "scope: %d\n", machine_store->current_scope);
+#endif
+    if (machine_store->current_scope >= machine_store->scope_capacity) {
+        machine_store->scope_boundary = (int *)realloc(machine_store->scope_boundary, 
+                                                machine_store->scope_capacity * 
+                                                RESIZE_FACTOR * sizeof(int));
+
+        if (machine_store->scope_boundary == NULL)
+            exit(ENOMEM);
+
+        machine_store->scope_capacity *= RESIZE_FACTOR;
+    }
+
+    machine_store->scope_boundary[machine_store->current_scope] = machine_store->allocated_address;
+}
+
+/**
+ * @brief close current scope on the machine memory, will release all variables.
+ * @param machine_store a valid machine_store.
+ */
+void machine_memory_close_scope(machine_memory_st *machine_store) {
+    int index;
+    int boundary = 0;
+    memory_st *static_memory;
+
+    if (machine_store == NULL)
+        return;
+
+    boundary = machine_store->scope_boundary[machine_store->current_scope];
+
+    for (index = boundary; index < machine_store->allocated_address; index++) {
+        static_memory = &(machine_store->static_memory[index]);
+        if (static_memory->scope != machine_store->current_scope) {
+            fprintf(stderr, "Dirty data in scope %d\n", machine_store->current_scope);
+            exit(EINVAL);
+        }
+#ifdef DEBUG
+        fprintf(stderr, "Releasing: %s, value: %d\n",
+                                    static_memory->variable_name,
+                                    static_memory->variable_value);
+#endif
+        free(static_memory->variable_name);
+    }
+
+    machine_store->allocated_address = boundary;
+
+    machine_store->scope_boundary[machine_store->current_scope] = 0;
+
+    machine_store->current_scope--;
 }
 
 /**
