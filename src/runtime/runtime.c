@@ -15,7 +15,7 @@
 #include "instruction.h"
 
 typedef void (*eval)(void *, void *);               /**< function pointer of eval functions */
-typedef int (*cmp_cb)(int);                     /**< function pointer of compare functions */
+typedef int (*cmp_cb)(int);                         /**< function pointer of compare functions */
 
 typedef struct operation {
     char *op_code;                                  /**< operation code */
@@ -23,7 +23,7 @@ typedef struct operation {
 } operation_st;
 
 static machine_memory_st *s_machine_store;          /**< environment storage during run time */
-static instruction_set_st *s_instructions;          /**<  */
+static instruction_set_st *s_instructions;          /**< instuctions of the assembled asm */
 
 /**
  * @brief evaluate function of all binary operations
@@ -145,22 +145,63 @@ static void eval_jge(void *, void *);
  */
 static void eval_jmp(void *, void *);
 
-
+/**
+ * @brief evaluate function of all boolean operations
+ * @param first_operand, first operand.
+ * @param second_operand, second operand.
+ * @param flag_cmp call back function on different comparing behavior on flag
+ */
 static void eval_bool_op_helper(void *, void *, cmp_cb flag_cmp);
 
+/**
+ * @brief comparison function for "JE" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
 static int cmp_je(int);
 
+/**
+ * @brief comparison function for "JNE" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
 static int cmp_jne(int);
 
+/**
+ * @brief comparison function for "JL" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
 static int cmp_jl(int);
 
+/**
+ * @brief comparison function for "JLE" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
 static int cmp_jle(int);
 
+/**
+ * @brief comparison function for "JG" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
 static int cmp_jg(int);
 
+/**
+ * @brief comparison function for "JGE" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
 static int cmp_jge(int);
 
+/**
+ * @brief comparison function for "JMP" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
 static int cmp_jmp(int);
+
 /**
  * @brief all operations provided by runtime.
  * Type 1: declare
@@ -602,12 +643,22 @@ static void eval_jmp(void *first_operand, void *second_operand) {
     eval_bool_op_helper(first_operand, second_operand, cmp_jmp);
 }
 
+/**
+ * @brief evaluate function of all boolean operations
+ * @param first_operand, first operand.
+ * @param second_operand, second operand.
+ * @param flag_cmp call back function on different comparing behavior on flag
+ */
 static void eval_bool_op_helper(void *first_operand, 
                                void *second_operand, 
                                cmp_cb flag_cmp) {
     char *label = NULL;
     int flag = 0;
     unsigned int new_pc = 0;
+
+    if (first_operand == NULL || flag_cmp == NULL)
+        return;
+
     // get flag from instructions set.
     flag = instruction_set_get_flag(s_instructions);
 
@@ -618,4 +669,67 @@ static void eval_bool_op_helper(void *first_operand,
     // set program counter if condition matched.
     if (flag_cmp(flag))
         instruction_set_set_pc(s_instructions, new_pc);
+}
+
+/**
+ * @brief comparison function for "JE" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
+static int cmp_je(int flag) {
+    return (flag == 0);
+}
+
+/**
+ * @brief comparison function for "JNE" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
+static int cmp_jne(int flag) {
+    return (flag != 0);
+}
+
+/**
+ * @brief comparison function for "JL" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
+static int cmp_jl(int flag) {
+    return (flag < 0);
+}
+
+/**
+ * @brief comparison function for "JLE" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
+static int cmp_jle(int flag) {
+    return (flag <= 0);
+}
+
+/**
+ * @brief comparison function for "JG" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
+static int cmp_jg(int flag) {
+    return (flag > 0);
+}
+
+/**
+ * @brief comparison function for "JGE" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
+static int cmp_jge(int flag) {
+    return (flag >= 0);
+}
+
+/**
+ * @brief comparison function for "JMP" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
+static int cmp_jmp(int flag) {
+    return 1;
 }
