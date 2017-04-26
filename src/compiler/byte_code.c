@@ -1,7 +1,7 @@
 /**
  * @file byte_code.c
  * @brief Purpose: byte code operation
- * @version 0.7
+ * @version 0.8
  * @date 04.18.2017
  * @author Rundong Zhu
  */
@@ -632,11 +632,89 @@ void test_suite_four() {
     link_list_free(byte_code);
 }
 
+void test_suite_five() {
+    int counter = 0;
+    link_list_st *byte_code = NULL;
+
+    printf("test suite five\n");
+
+	// Create syntax tree for "i is i + 10 % i;" statement;
+
+    parsing_tree_st *root = parsing_tree_new("program", NULL);
+    parsing_tree_st *node1 = parsing_tree_new("stmt_list", NULL);
+    parsing_tree_st *node2 = parsing_tree_new("stmt", NULL);
+    parsing_tree_set_child(root, node1);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new(";", NULL);
+    parsing_tree_set_sibling(node1, node2);
+    node2 = parsing_tree_new("assign_stmt", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new("i", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = parsing_tree_new("is", NULL);
+    parsing_tree_set_sibling(node2, node1);
+    node2 = parsing_tree_new("expr", NULL);
+    parsing_tree_set_sibling(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new("term", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    parsing_tree_st *node3 = parsing_tree_new("res1", NULL);
+    parsing_tree_set_sibling(node2, node3);
+
+    node1 = node2;
+    node2 = parsing_tree_new("factor", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = parsing_tree_new("res2", NULL);
+    parsing_tree_set_sibling(node2, node1);
+
+    node1 = node2;
+    node2 = parsing_tree_new("i", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = parsing_tree_new("+", NULL);
+    parsing_tree_set_child(node3, node1);
+    node2 = parsing_tree_new("term", NULL);
+    parsing_tree_set_sibling(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new("facotr", NULL);
+    parsing_tree_set_child(node1, node2);
+    node3 = parsing_tree_new("res2", NULL);
+    parsing_tree_set_sibling(node2, node3);
+
+    node1 = node2;
+    node2 = parsing_tree_new("9", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node2 = parsing_tree_new("%", NULL);
+    parsing_tree_set_child(node3, node2);
+    node3 = parsing_tree_new("factor", NULL);
+    parsing_tree_set_sibling(node2, node3);
+
+    node1 = parsing_tree_new("i", NULL);
+    parsing_tree_set_child(node3, node1);
+
+    byte_code = semantic_analysis(root, NULL);
+    link_list_traverse(byte_code, print_byte_code, NULL);
+
+    parsing_tree_free(root);
+    link_list_free(byte_code);
+}
+
 int main() {
     test_suite_one();
     test_suite_two();
     test_suite_three();
     test_suite_four();
+    test_suite_five();
 }
 
 #endif // XTEST
