@@ -64,7 +64,7 @@ test_parsing_tree: ./utils/error.o ./utils/parsing_tree.o
 
 clean:
 	$Q echo "[Clean]"
-	$Q rm -f $(OBJ) *~ core tags $(BINS) test_*
+	$Q rm -f $(OBJ) $(UTILS_OBJ) *~ core tags $(BINS) test_*
 
 tags:	$(SRC)
 	$Q echo [ctags]
