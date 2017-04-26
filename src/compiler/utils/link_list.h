@@ -38,6 +38,13 @@ void link_list_free(link_list_st *list);
 link_node_st *link_list_pop(link_list_st *);
 
 /**
+ * @brief get the top one element from the head of the list.
+ * @param list, a valid list head.
+ * @return NULL on failed, otherwise a valid link node.
+ */
+link_node_st *link_list_top(link_list_st *);
+
+/**
  * @brief append one element to the end of the list.
  * @param list, a valid list head.
  * @param node, a valid list node.
