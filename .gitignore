@@ -30,3 +30,4 @@
 *.exe
 *.out
 *.app
+sftp-config.json

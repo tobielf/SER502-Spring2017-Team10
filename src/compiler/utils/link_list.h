@@ -1,7 +1,7 @@
 /**
  * @file link_list.h
  * @brief Purpose: link_list data structure
- * @version 0.1
+ * @version 1.0
  * @date 04.15.2017
  * @author Xiangyu Guo
  */
@@ -16,7 +16,7 @@
 typedef struct link_list link_list_st;
 struct link_list;
 
-typedef int (*cb_func)(link_node_st *); /**< call back function */
+typedef int (*cb_func)(link_node_st *, void *); /**< call back function */
 
 /**
  * @brief initialize the link list.
@@ -38,11 +38,18 @@ void link_list_free(link_list_st *list);
 link_node_st *link_list_pop(link_list_st *);
 
 /**
+ * @brief get the top one element from the head of the list.
+ * @param list, a valid list head.
+ * @return NULL on failed, otherwise a valid link node.
+ */
+link_node_st *link_list_top(link_list_st *);
+
+/**
  * @brief append one element to the end of the list.
  * @param list, a valid list head.
  * @param node, a valid list node.
  * @return NULL on failed, otherwise a cursor point to
- *         the previous tail of the list.
+ *         the tail of the list.
  */
 link_node_st *link_list_append(link_list_st *, link_node_st *);
 
@@ -52,6 +59,6 @@ link_node_st *link_list_append(link_list_st *, link_node_st *);
  * @param call_back, call back function going to perform, can be NULL.
  * @return 1 on success, 0 on stoped.
  */
-int link_list_traverse(link_list_st *, cb_func callback);
+int link_list_traverse(link_list_st *, cb_func callback, void *cb_data);
 
 #endif
