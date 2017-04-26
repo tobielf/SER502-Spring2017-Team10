@@ -243,7 +243,7 @@ static char *handle_expr(parsing_tree_st *parsing_tree_node, link_list_st *byte_
     }
        
     if (parsing_tree_get_child(res1_node) != NULL) {
-        rc = handle_res1(res1_node, byte_code, term_data);
+        rc = handle_res1(res1_node, byte_code, rc);
     }
 
     return rc;
@@ -266,7 +266,7 @@ static char *handle_term(parsing_tree_st *parsing_tree_node, link_list_st *byte_
     }
 
     if (parsing_tree_get_child(res2_node) != NULL) {
-        rc = handle_res2(res2_node, byte_code, factor_data);
+        rc = handle_res2(res2_node, byte_code, rc);
     }
 
     return rc;
