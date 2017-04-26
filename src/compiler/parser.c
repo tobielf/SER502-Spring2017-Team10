@@ -1,7 +1,7 @@
 /**
  * @file parser.c
  * @brief Purpose: implementation of parser.h 
- 	which generate a parsing tree using token list and symbol table 
+    which generate a parsing tree using token list and symbol table 
  * @version 0.1
  * @date 04.18.2017
  * @author Ximing
@@ -96,13 +96,114 @@ static parsing_tree_st *generate_decl_stmt(link_list_st *token_list, symbol_tabl
 }
 
 /**
+ * @brief: generate the factor accordig to the grammar rule
+ * @param: pointers to token list 
+ * @param: pointers to symbol table
+ * @return: the pointer to generated first term of the expression
+ */
+static parsing_tree_st *generate_factor(link_list_st *token_list, symbol_table_st *symbol_table) {
+    link_node_st *first_element = link_list_pop(token_list);
+    char* first_element_data = link_node_get_data(first_element);
+    if (strcmp(first_element_data, "(") == 0) {
+        parsing_tree_st *left_parenthesis = parsing_tree_new(strdup(first_element_data), free);
+        link_node_free(first_element);
+        parsing_tree_st *expr_tree_node = generate_expre(token_list, symbol_table);
+        link_node_st *right_parenthesis_link_node = link_list_pop(token_list);
+        char* right_parenthesis_link_node_data = link_node_get_data(right_parenthesis_link_node_data);
+        if (strcmp(right_parenthesis_link_node_data, ")") == 0) {
+            parsing_tree_st *right_parnthesis = parsing_tree_new(strdup(right_parnthesis), free);
+            link_node_free(right_parenthesis_link_node);
+            parsing_tree_set_sibling(right_parnthesis, expr_tree_node);
+            parsing_tree_set_sibling(expr_tree_node, left_parenthesis);
+            return left_parenthesis;
+        } else {
+            link_node_free(right_parenthesis_link_node);
+            raise_syntax_error();
+        }
+    } else {
+        int type_index = symbol_table_lookup(symbol_table, first_element_data);
+        if (type_index == 3 || type_index == 1) {
+            parsing_tree_st *number_or_id = parsing_tree_new(strdup(first_element_data), free);
+            link_node_free(strdup(first_element));
+            return number_or_id;
+        } 
+        else {
+            link_node_free(first_element);
+            raise_syntax_error();
+        }
+    }
+}
+
+/**
+ * @brief: generate the res1 accordig to the grammar rule
+ * @param: pointers to token list 
+ * @param: pointers to symbol table
+ * @return: the pointer to generated res1 of the expression
+ */
+static parsing_tree_st *generate_res1(link_list_st *token_list, symbol_table_st *symbol_table) {
+    link_node_st *operator = link_list_pop(token_list);
+    char *operator_data = link_node_get_data(operator);
+    if (strcmp(operator_data, "+") == 0 || strcmp(operator_data, "-")){
+        parsing_tree_st *operator_tree_node = parsing_tree_new(strdup(operator_data), free);
+        link_node_free(operator);
+        parsing_tree_st *term = generate_term(token_list, symbol_table);
+        parsing_tree_set_sibling(operator_tree_node, term);
+        return operator_tree_node;
+    }
+    else {
+        link_node_free(operator);
+        raise_syntax_error;
+    }
+}
+
+/**
+ * @brief: generate the res2 accordig to the grammar rule
+ * @param: pointers to token list 
+ * @param: pointers to symbol table
+ * @return: the pointer to generated res2 of the expression
+ */
+static parsing_tree_st *generate_res2(link_list_st *token_list, symbol_table_st *symbol_table) {
+    link_node_st *operator = link_list_pop(token_list);
+    char *operator_data = link_node_get_data(operator);
+    if (strcmp(operator_data, "*") == 0 || strcmp(operator_data, "/" || strcmp(operator_data, "%"))){
+        parsing_tree_st *operator_tree_node = parsing_tree_new(strdup(operator_data), free);
+        link_node_free(operator);
+        parsing_tree_st *factor = generate_factor(token_list, symbol_table);
+        parsing_tree_set_sibling(operator_tree_node, factor);
+        return operator_tree_node;
+    }
+    else {
+        link_node_free(operator);
+        raise_syntax_error;
+    }
+}
+
+
+
+/**
+ * @brief: generate the term accordig to the grammar rule
+ * @param: pointers to token list 
+ * @param: pointers to symbol table
+ * @return: the pointer to generated first term of the expression
+ */
+static parsing_tree_st *generate_term(link_list_st *token_list, symbol_table_st *symbol_table) {
+    parsing_tree_st *factor = generate_factor(token_list, symbol_table);
+    parsing_tree_st *res2 = generate_res2(token_list, symbol_table);
+    parsing_tree_set_sibling(factor, res2);
+    return factor;
+}
+
+/**
  * @brief: generate the expression accordig to the grammar rule
  * @param: pointers to token list 
  * @param: pointers to symbol table
  * @return: the pointer to generated first term of the expression
  */
 static parsing_tree_st *generate_expre(link_list_st *token_list, symbol_table_st *symbol_table) {
-
+    parsing_tree_st *term = generate_term(token_list, symbol_table);
+    parsing_tree_st *res1 = generate_term(token_list, symbol_table);
+    parsing_tree_set_sibling(term, res1);
+    return term;
 }
 
 /**
@@ -238,10 +339,6 @@ void test_case_two() {
     /* generate the parsing tree */
     parsing_tree_st *decl_stmt = syntax_analysis(token_list, symbol_table);
     parsing_tree_prefix_traverse(decl_stmt, print_data, NULL);
-
-    symbol_table_fini(symbol_table);
-    parsing_tree_free(decl_stmt);
-    link_list_free(token_list);
 }
 
 
@@ -268,10 +365,6 @@ void test_case_one() {
     /* generate the parsing tree */
     parsing_tree_st *decl_stmt = syntax_analysis(token_list, symbol_table);
     parsing_tree_prefix_traverse(decl_stmt, print_data, NULL);
-
-    symbol_table_fini(symbol_table);
-    parsing_tree_free(decl_stmt);
-    link_list_free(token_list);
 }
 
 int main()
