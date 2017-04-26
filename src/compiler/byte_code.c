@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <errno.h>
 
 #include "utils/link_list.h"
 #include "utils/symbol_table.h"
@@ -263,10 +264,14 @@ static char *handle_term(parsing_tree_st *parsing_tree_node, link_list_st *byte_
     char *rc; //return code
     if (strcmp(factor_data, "factor") == 0) {
         rc = handle_factor(factor_node, byte_code);
+    } else {
+        error_errno(EINVAL);
     }
 
     if (parsing_tree_get_child(res2_node) != NULL) {
         rc = handle_res2(res2_node, byte_code, rc);
+    } else {
+        //error_errno()
     }
 
     return rc;
@@ -364,6 +369,8 @@ static char *handle_res2(parsing_tree_st *parsing_tree_node, link_list_st *byte_
 
     if (strcmp(factor_data, "factor") == 0) {
         factor_data = handle_factor(factor_node, byte_code);
+    } else {
+        error_errno(EINVAL);
     }
 
     byte_code_new(byte_code, "DEC", temp_string, "");
@@ -685,13 +692,13 @@ void test_suite_five() {
     parsing_tree_set_sibling(node1, node2);
 
     node1 = node2;
-    node2 = parsing_tree_new("facotr", NULL);
+    node2 = parsing_tree_new("factor", NULL);
     parsing_tree_set_child(node1, node2);
     node3 = parsing_tree_new("res2", NULL);
     parsing_tree_set_sibling(node2, node3);
 
     node1 = node2;
-    node2 = parsing_tree_new("9", NULL);
+    node2 = parsing_tree_new("10", NULL);
     parsing_tree_set_child(node1, node2);
 
     node2 = parsing_tree_new("%", NULL);
