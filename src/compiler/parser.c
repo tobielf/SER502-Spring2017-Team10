@@ -28,6 +28,14 @@ static parsing_tree_st *generate_assign_stmt(link_list_st *, symbol_table_st *);
 
 static parsing_tree_st *generate_expre(link_list_st *, symbol_table_st *);
 
+static parsing_tree_st *generate_term(link_list_st *, symbol_table_st *);
+
+static parsing_tree_st *generate_factor(link_list_st *, symbol_table_st *);
+
+static parsing_tree_st *generate_res1(link_list_st *, symbol_table_st *);
+
+static parsing_tree_st *generate_res2(link_list_st *, symbol_table_st *);
+
 static parsing_tree_st *generate_stmt(link_list_st *, symbol_table_st *);
 
 /**
@@ -109,9 +117,9 @@ static parsing_tree_st *generate_factor(link_list_st *token_list, symbol_table_s
         link_node_free(first_element);
         parsing_tree_st *expr_tree_node = generate_expre(token_list, symbol_table);
         link_node_st *right_parenthesis_link_node = link_list_pop(token_list);
-        char* right_parenthesis_link_node_data = link_node_get_data(right_parenthesis_link_node_data);
+        char* right_parenthesis_link_node_data = link_node_get_data(right_parenthesis_link_node);
         if (strcmp(right_parenthesis_link_node_data, ")") == 0) {
-            parsing_tree_st *right_parnthesis = parsing_tree_new(strdup(right_parnthesis), free);
+            parsing_tree_st *right_parnthesis = parsing_tree_new(strdup(right_parenthesis_link_node_data), free);
             link_node_free(right_parenthesis_link_node);
             parsing_tree_set_sibling(right_parnthesis, expr_tree_node);
             parsing_tree_set_sibling(expr_tree_node, left_parenthesis);
@@ -124,7 +132,7 @@ static parsing_tree_st *generate_factor(link_list_st *token_list, symbol_table_s
         int type_index = symbol_table_lookup(symbol_table, first_element_data);
         if (type_index == 3 || type_index == 1) {
             parsing_tree_st *number_or_id = parsing_tree_new(strdup(first_element_data), free);
-            link_node_free(strdup(first_element));
+            link_node_free(first_element);
             return number_or_id;
         } 
         else {
@@ -152,7 +160,7 @@ static parsing_tree_st *generate_res1(link_list_st *token_list, symbol_table_st 
     }
     else {
         link_node_free(operator);
-        raise_syntax_error;
+        raise_syntax_error();
     }
 }
 
@@ -165,7 +173,7 @@ static parsing_tree_st *generate_res1(link_list_st *token_list, symbol_table_st 
 static parsing_tree_st *generate_res2(link_list_st *token_list, symbol_table_st *symbol_table) {
     link_node_st *operator = link_list_pop(token_list);
     char *operator_data = link_node_get_data(operator);
-    if (strcmp(operator_data, "*") == 0 || strcmp(operator_data, "/" || strcmp(operator_data, "%"))){
+    if (strcmp(operator_data, "*") == 0 || strcmp(operator_data, "/") == 0 || strcmp(operator_data, "%") == 0){
         parsing_tree_st *operator_tree_node = parsing_tree_new(strdup(operator_data), free);
         link_node_free(operator);
         parsing_tree_st *factor = generate_factor(token_list, symbol_table);
@@ -174,7 +182,7 @@ static parsing_tree_st *generate_res2(link_list_st *token_list, symbol_table_st 
     }
     else {
         link_node_free(operator);
-        raise_syntax_error;
+        raise_syntax_error();
     }
 }
 
