@@ -62,6 +62,20 @@ link_node_st *link_list_pop(link_list_st *list) {
 }
 
 /**
+ * @brief get the top one element from the head of the list.
+ * @param list, a valid list head.
+ * @return NULL on failed, otherwise a valid link node.
+ */
+link_node_st *link_list_top(link_list_st *list) {
+    link_node_st *top = NULL;
+    if (list != NULL) {
+        top = link_node_get_next(list->head);
+    }
+
+    return top;
+}
+
+/**
  * @brief append one element to the end of the list.
  * @param list, a valid list head.
  * @param node, a valid list node.
