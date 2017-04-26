@@ -238,6 +238,10 @@ void test_case_two() {
     /* generate the parsing tree */
     parsing_tree_st *decl_stmt = syntax_analysis(token_list, symbol_table);
     parsing_tree_prefix_traverse(decl_stmt, print_data, NULL);
+
+    symbol_table_fini(symbol_table);
+    parsing_tree_free(decl_stmt);
+    link_list_free(token_list);
 }
 
 
@@ -264,6 +268,10 @@ void test_case_one() {
     /* generate the parsing tree */
     parsing_tree_st *decl_stmt = syntax_analysis(token_list, symbol_table);
     parsing_tree_prefix_traverse(decl_stmt, print_data, NULL);
+
+    symbol_table_fini(symbol_table);
+    parsing_tree_free(decl_stmt);
+    link_list_free(token_list);
 }
 
 int main()
