@@ -1,7 +1,7 @@
 /**
  * @file byte_code.c
  * @brief Purpose: byte code operation
- * @version 4.0
+ * @version 0.7
  * @date 04.18.2017
  * @author Rundong Zhu
  */
@@ -16,6 +16,8 @@
 #include "utils/error.h"
 
 #include "byte_code.h"
+
+static void byte_code_new(link_list_st *, char *, char *, char *);
 
 static void handle_stmt_list(parsing_tree_st *parsing_tree_node, link_list_st *byte_code); 
 
@@ -114,11 +116,11 @@ static void handle_stmt_list(parsing_tree_st *parsing_tree_node, link_list_st *b
 
         if (strcmp(semicolon_data, ";") == 0 && stmt_list_node == NULL) {
             break;
-			//error_msg()
+            //error_msg()
         }
         char *stmt_list_data = parsing_tree_get_data(stmt_list_node);
 
-        if (strcmp(stmt_list_data, "stmt_list") != 0) {
+        if (strcmp(stmt_list_data, "stmt_list") == 0) {
             stmt_node = parsing_tree_get_child(stmt_list_node);
             stmt_data = parsing_tree_get_data(stmt_node);
         }
@@ -155,10 +157,6 @@ static void handle_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_c
  * @param byte_code, a valid link list.
  */
 static void handle_decl_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
-    char *bytecode = NULL;
-    int bytecode_len = 0;
-    link_node_st *new_node = NULL;
-
     parsing_tree_st *var_node = parsing_tree_get_child(parsing_tree_node);
     char *var_data = parsing_tree_get_data(var_node);
 	if (strcmp(var_data, "var") != 0) {
@@ -167,12 +165,7 @@ static void handle_decl_stmt(parsing_tree_st *parsing_tree_node, link_list_st *b
     parsing_tree_st *id_node = parsing_tree_get_sibling(var_node);
     char *id_data = parsing_tree_get_data(id_node);
 
-    bytecode_len = strlen("DEC ") + strlen(id_data) + 1;
-    bytecode = (char *)malloc(bytecode_len);
-    snprintf(bytecode, bytecode_len, "DEC %s", id_data);
-
-    new_node = link_node_new(bytecode, free);
-    link_list_append(byte_code, new_node);
+    byte_code_new(byte_code, "DEC", id_data, "");
 }
 
 /**
@@ -181,10 +174,6 @@ static void handle_decl_stmt(parsing_tree_st *parsing_tree_node, link_list_st *b
  * @param byte_code, a valid link list.
  */
 static void handle_assign_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
-    char *bytecode = NULL;
-    int bytecode_len = 0;
-    link_node_st *new_node = NULL;
-
     parsing_tree_st *id_node = parsing_tree_get_child(parsing_tree_node);
     parsing_tree_st *is_node = parsing_tree_get_sibling(id_node);
     char *id_data = parsing_tree_get_data(id_node);
@@ -201,12 +190,7 @@ static void handle_assign_stmt(parsing_tree_st *parsing_tree_node, link_list_st 
         //error();
     }
 
-    bytecode_len = strlen("MOV ") + strlen(id_data) + strlen(" ") + strlen(expr_data) + 1;
-    bytecode = (char *)malloc(bytecode_len);
-    snprintf(bytecode, bytecode_len, "MOV %s %s", id_data, expr_data);
-
-    new_node = link_node_new(bytecode, free);
-    link_list_append(byte_code, new_node);
+    byte_code_new(byte_code, "MOV", id_data, expr_data);
 }
 
 static char *handle_if_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
@@ -224,10 +208,6 @@ static char *handle_for_stmt(parsing_tree_st *parsing_tree_node, link_list_st *b
  * @param byte_code, a valid link list.
  */
 static void handle_print_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
-    char *bytecode = NULL;
-    int bytecode_len = 0;
-    link_node_st *new_node = NULL;
-
     parsing_tree_st *print_node = parsing_tree_get_child(parsing_tree_node);
     char *print_data = parsing_tree_get_data(print_node);
 
@@ -243,12 +223,7 @@ static void handle_print_stmt(parsing_tree_st *parsing_tree_node, link_list_st *
         //error
     }
 
-    bytecode_len = strlen("OUT ") + strlen(operand) + 1;
-    bytecode = (char *)malloc(bytecode_len);
-    snprintf(bytecode, bytecode_len, "OUT %s", operand);
-
-    new_node = link_node_new(bytecode, free);
-    link_list_append(byte_code, new_node);
+    byte_code_new(byte_code, "OUT", operand, "");
 }
 
 /**
@@ -261,18 +236,14 @@ static char *handle_expr(parsing_tree_st *parsing_tree_node, link_list_st *byte_
     parsing_tree_st *term_node = parsing_tree_get_child(parsing_tree_node);
     char *term_data = parsing_tree_get_data(term_node);
     parsing_tree_st *res1_node = parsing_tree_get_sibling(term_node);
-    char *res1_data = parsing_tree_get_data(res1_node);
 
     char *rc;  //return code
     if (strcmp(term_data, "term") == 0) {
-        term_data = handle_term(term_node, byte_code);
-        rc = term_data;
+        rc = handle_term(term_node, byte_code);
     }
        
     if (parsing_tree_get_child(res1_node) != NULL) {
         rc = handle_res1(res1_node, byte_code, term_data);
-
-        //rc = "_temp";
     }
 
     return rc;
@@ -288,18 +259,14 @@ static char *handle_term(parsing_tree_st *parsing_tree_node, link_list_st *byte_
     parsing_tree_st *factor_node = parsing_tree_get_child(parsing_tree_node);
     char *factor_data = parsing_tree_get_data(factor_node);
     parsing_tree_st *res2_node = parsing_tree_get_sibling(factor_node);
-    char *res2_data = parsing_tree_get_data(res2_node);
 
     char *rc; //return code
-
     if (strcmp(factor_data, "factor") == 0) {
-        factor_data = handle_factor(factor_node, byte_code);
-        rc = factor_data;
+        rc = handle_factor(factor_node, byte_code);
     }
 
     if (parsing_tree_get_child(res2_node) != NULL) {
-        res2_data = handle_res2(res2_node, byte_code, factor_data);
-        rc = res2_data;
+        rc = handle_res2(res2_node, byte_code, factor_data);
     }
 
     return rc;
@@ -312,10 +279,6 @@ static char *handle_term(parsing_tree_st *parsing_tree_node, link_list_st *byte_
  * @return NULL on failed, otherwise a char array.
  */
 static char *handle_res1(parsing_tree_st *parsing_tree_node, link_list_st *byte_code, char *terms_data) {
-    char *bytecode = NULL;
-    int bytecode_len = 0;
-    link_node_st *new_node = NULL;
-
     temp_id++;
 
     int temp_length;
@@ -323,53 +286,32 @@ static char *handle_res1(parsing_tree_st *parsing_tree_node, link_list_st *byte_
     temp_length = strlen("_temp") + get_digits_num(temp_id) + 1;
     temp_string = (char *)malloc(temp_length);
     snprintf(temp_string, temp_length, "_temp%d", temp_id);
-	
-	//char *temp_string = "ttp";
 
     parsing_tree_st *operator_node = parsing_tree_get_child(parsing_tree_node);
     parsing_tree_st *term_node = parsing_tree_get_sibling(operator_node);
     char *operator_data = parsing_tree_get_data(operator_node);
     char *term_data = parsing_tree_get_data(term_node);
 
-	//char *rc; //return code
-
     if (strcmp(term_data, "term") == 0) {
         term_data = handle_term(term_node, byte_code);
-		//rc = terms_data;
     }
 
-    bytecode_len = strlen("DEC ") + strlen(temp_string) + 1;
-    bytecode = (char *)malloc(bytecode_len);
-    snprintf(bytecode, bytecode_len, "DEC %s", temp_string);
+    byte_code_new(byte_code, "DEC", temp_string, "");
 
-    new_node = link_node_new(bytecode, NULL);
-    link_list_append(byte_code, new_node);
+    byte_code_new(byte_code, "MOV", temp_string, terms_data);
 
-    bytecode_len = strlen("MOV ") + temp_length + strlen(terms_data) + 1;
-    bytecode = (char *)malloc(bytecode_len);
-    snprintf(bytecode, bytecode_len, "MOV %s %s", temp_string, terms_data);
-
-    new_node = link_node_new(bytecode, NULL);
-    link_list_append(byte_code, new_node);
 
     if (strcmp(operator_data, "+") == 0) {
-        bytecode_len = strlen("ADD ") + temp_length + strlen(term_data) + 1;
-        bytecode = (char *)malloc(bytecode_len);
-        snprintf(bytecode, bytecode_len, "ADD %s %s", temp_string, term_data);
+        byte_code_new(byte_code, "ADD", temp_string, term_data);
     } else if (strcmp(operator_data, "-") == 0) {
-        bytecode_len = strlen("SUB ") + temp_length + strlen(term_data) + 1;
-        bytecode = (char *)malloc(bytecode_len);
-        snprintf(bytecode, bytecode_len, "SUB %s %s", temp_string, term_data);
+        byte_code_new(byte_code, "SUB", temp_string, term_data);
     } else {
         //error
     }
 
     temp_id--;
-    new_node = link_node_new(bytecode, NULL);
-    link_list_append(byte_code, new_node);
 
     return temp_string;
-    //return term_data;
 }
 
 /**
@@ -395,14 +337,7 @@ static char *handle_factor(parsing_tree_st *parsing_tree_node, link_list_st *byt
             operand_data = handle_expr(expr_node, byte_code);
         }
     }
-    /*
-    bytecode_len = strlen(operand_data) + 1;
-    bytecode = (char *)malloc(bytecode_len);
-    snprintf(bytecode, bytecode_len, "%s", operand_data);
 
-    new_node = link_node_new(bytecode, NULL);
-    link_list_append(byte_code, new_node);
-    */
     return operand_data;
 }
 
@@ -414,10 +349,6 @@ static char *handle_factor(parsing_tree_st *parsing_tree_node, link_list_st *byt
 */
 
 static char *handle_res2(parsing_tree_st *parsing_tree_node, link_list_st *byte_code, char *factors_data) {
-    char *bytecode = NULL;
-    int bytecode_len = 0;
-    link_node_st *new_node = NULL;
-
     temp_id++;
 
     int temp_length;
@@ -431,42 +362,43 @@ static char *handle_res2(parsing_tree_st *parsing_tree_node, link_list_st *byte_
     char *operator_data = parsing_tree_get_data(operator_node);
     char *factor_data = parsing_tree_get_data(factor_node);
 
-    if (strcmp(factor_data, "factor")) {
-        handle_factor(factor_node, byte_code);
+    if (strcmp(factor_data, "factor") == 0) {
+        factor_data = handle_factor(factor_node, byte_code);
     }
 
-    bytecode_len = strlen("DEC ") + temp_length + 1;
-    bytecode = (char *)malloc(bytecode_len);
-    snprintf(bytecode, bytecode_len, "DEC %", temp_string);
+    byte_code_new(byte_code, "DEC", temp_string, "");
 
-    new_node = link_node_new(bytecode, NULL);
-    link_list_append(byte_code, new_node);
-
-    bytecode_len = strlen("MOV ") + temp_length + strlen(factors_data) + 1;
-    bytecode = (char *)malloc(bytecode_len);
-    snprintf(bytecode, bytecode_len, "MOV %s %s", temp_string, factors_data);
+    byte_code_new(byte_code, "MOV", temp_string, factors_data);
 
     if (strcmp(operator_data, "*") == 0) {
-        bytecode_len = strlen("MUL _temp") + temp_length + strlen(factor_data) + 1;
-        bytecode = (char *)malloc(bytecode_len);
-        snprintf(bytecode, bytecode_len, "MUL %s %s", temp_string, factor_data);
+        byte_code_new(byte_code, "MUL", temp_string, factor_data);
     } else if (strcmp(operator_data, "/") == 0) {
-        bytecode_len = strlen("DIV _temp") + temp_length + strlen(factor_data) + 1;;
-        bytecode = (char *)malloc(bytecode_len);
-        snprintf(bytecode, bytecode_len, "DIV %s %s", temp_string, factor_data);
+        byte_code_new(byte_code, "DIV", temp_string, factor_data);
     } else if (strcmp(operator_data, "%") == 0) {
-        bytecode_len = strlen("MOD _temp") + temp_length + strlen(factor_data) + 1;
-        bytecode = (char *)malloc(bytecode_len);
-        snprintf(bytecode, bytecode_len, "MOD %s %s", temp_string, factor_data);
+        byte_code_new(byte_code, "MOD", temp_string, factor_data);
     } else {
         //error();
     }
 
     temp_id--;
-    new_node = link_node_new(bytecode, NULL);
-    link_list_append(byte_code, new_node);
 
     return temp_string;
+}
+
+static void byte_code_new(link_list_st *byte_code, char *op_code, char *first_oprand, char *second_oprand) {
+    char *bytecode = NULL;
+    int bytecode_len = 0;
+    link_node_st *new_node = NULL;
+
+    if (byte_code == NULL || op_code == NULL || first_oprand == NULL || second_oprand == NULL)
+        return; // error();
+
+    bytecode_len = strlen(op_code) + 1 + strlen(first_oprand) + 1 + strlen(second_oprand) + 1;
+    bytecode = (char *)malloc(bytecode_len);
+    snprintf(bytecode, bytecode_len, "%s %s %s", op_code, first_oprand, second_oprand);
+
+    new_node = link_node_new(bytecode, free);
+    link_list_append(byte_code, new_node);
 }
 
 
@@ -513,6 +445,8 @@ void test_suite_one() {
 
     byte_code = semantic_analysis(root, NULL);
     link_list_traverse(byte_code, print_byte_code, NULL);
+    parsing_tree_free(root);
+    link_list_free(byte_code);
 }
 
 void test_suite_two() {
@@ -563,6 +497,9 @@ void test_suite_two() {
 	
     byte_code = semantic_analysis(root, NULL);
     link_list_traverse(byte_code, print_byte_code, NULL);
+
+    parsing_tree_free(root);
+    link_list_free(byte_code);
 }
 
 void test_suite_three() {
@@ -614,6 +551,9 @@ void test_suite_three() {
 
     byte_code = semantic_analysis(root, NULL);
     link_list_traverse(byte_code, print_byte_code, NULL);
+
+    parsing_tree_free(root);
+    link_list_free(byte_code);
 }
 
 void test_suite_four() {
@@ -677,8 +617,19 @@ void test_suite_four() {
     node1 = parsing_tree_new("3", NULL);
     parsing_tree_set_child(node2, node1);
 
+    node2 = parsing_tree_new("*", NULL);
+    parsing_tree_set_child(node3, node2);
+    node1 = node2;
+    node2 = parsing_tree_new("factor", NULL);
+    parsing_tree_set_sibling(node1, node2);
+    node3 = parsing_tree_new("2", NULL);
+    parsing_tree_set_child(node2, node3);
+
     byte_code = semantic_analysis(root, NULL);
     link_list_traverse(byte_code, print_byte_code, NULL);
+
+    parsing_tree_free(root);
+    link_list_free(byte_code);
 }
 
 int main() {
