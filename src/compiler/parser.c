@@ -44,6 +44,8 @@ static parsing_tree_st *generate_stmt(link_list_st *, symbol_table_st *);
 
 static parsing_tree_st *generate_boolean_expre(link_list_st *, symbol_table_st *);
 
+static parsing_tree_st *generate_stmt_list(link_node_st *, symbol_table_st *);
+
 /**
  * @brief: generate the if statement accordig to the grammar rule
  * @param: pointers to token list 
@@ -64,7 +66,7 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
     char *left_parenthesis_data = link_node_get_data(left_parenthesis);
     if (strcmp(left_parenthesis_data, "(")) {
         link_node_free(left_parenthesis);
-        raise_syntax_error;
+        raise_syntax_error();
     }
     parsing_tree_st *left_parenthesis_tree_node = parsing_tree_new(strdup(left_parenthesis_data), free);
     link_node_free(left_parenthesis);
@@ -75,22 +77,95 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
     char *right_parenthesis_data = link_node_get_data(right_parenthesis);
     if (strcmp(right_parenthesis_data, ")")) {
         link_node_free(right_parenthesis);
-        raise_syntax_error;
+        raise_syntax_error();
     }
     parsing_tree_st *right_parenthesis_tree_node = parsing_tree_new(strdup(right_parenthesis_data), free);
     link_node_free(right_parenthesis);
+
+    link_node_st *then_link_node = link_list_pop(token_list, symbol_table);
+    char *then_link_node_data = link_node_get_data(then_link_node);
+    if (strcmp(then_link_node_data, "then")) {
+        link_node_free(then_link_node);
+        raise_syntax_error();
+    }
+    parsing_tree_st *then_tree_node = parsing_tree_new(strdup(then_link_node_data), free);
+    link_node_free(then_link_node);
     
     link_node_st *left_bracket = link_list_pop(token_list, symbol_table);
     char *left_bracket_data = link_node_get_data(left_bracket);
     if (strcmp(left_bracket_data, "{")) {
         link_node_free(left_bracket);
-        raise_syntax_error;
+        raise_syntax_error();
     }
     parsing_tree_st *left_bracket_tree_node = parsing_tree_new(strdup(left_bracket_data), free);
     link_node_free(left_bracket);
-
+    parsing_tree_st *stmt_list = generate_stmt_list(token_list, symbol_table);
     
+    link_node_st *right_bracket = link_list_pop(token_list, symbol_table);
+    char *right_bracket_data = link_node_get_data(right_bracket);
+    if (strcmp(right_bracket_data, "}")) {
+        link_node_free(right_bracket);
+        raise_syntax_error();
+    }
+    parsing_tree_st *right_bracket_tree_node = parsing_tree_new(strdup(right_bracket_data), free);
+    link_node_free(right_bracket);
 
+    parsing_tree_st *if_stmt_tree_node = parsing_tree_new("if_stmt", NULL);
+    
+    parsing_tree_set_child(if_stmt_tree_node, left_parenthesis_tree_node);
+    parsing_tree_set_child(if_stmt_tree_node, boolean_expr);
+    parsing_tree_set_child(if_stmt_tree_node, right_parenthesis_tree_node);
+    parsing_tree_set_child(if_stmt_tree_node, then_tree_node);
+    parsing_tree_set_child(if_stmt_tree_node, left_bracket_tree_node);
+    parsing_tree_set_child(if_stmt_tree_node, stmt_list);
+    parsing_tree_set_child(if_stmt_tree_node, right_bracket_tree_node);
+
+    parsing_tree_set_sibling(if_tree_node, left_parenthesis_tree_node);
+    parsing_tree_set_sibling(left_parenthesis_tree_node, boolean_expr);
+    parsing_tree_set_sibling(boolean_expr, right_parenthesis_tree_node);
+    parsing_tree_set_sibling(right_parenthesis, left_bracket_tree_node);
+    parsing_tree_set_sibling(left_bracket_tree_node, stmt_list);
+    parsing_tree_set_sibling(stmt_list, right_bracket_tree_node);
+
+    link_node_st *else_link_node = link_list_top(token_list);
+    char *else_link_node_data = link_node_get_data(else_link_node);
+    if (strcmp(else_link_node_data, "else") == 0) {
+        link_node_st *else_link_node2 = link_list_pop(token_list);
+        parsing_tree_st *else_tree_node = parsing_tree_new(strdup(else_link_node_data), free);
+        link_node_free(else_link_node2);
+
+        link_node_st *left_bracket2 = link_list_pop(token_list, symbol_table);
+        char *left_bracket_data2 = link_node_get_data(left_bracket2);
+        if (strcmp(left_bracket_data2, "{")) {
+            link_node_free(left_bracket2);
+            raise_syntax_error();
+        }
+        parsing_tree_st *left_bracket_tree_node2 = parsing_tree_new(strdup(left_bracket_data2), free);
+        link_node_free(left_bracket2);
+        parsing_tree_st *stmt_list2 = generate_stmt_list(token_list, symbol_table);
+    
+        link_node_st *right_bracket2 = link_list_pop(token_list, symbol_table);
+        char *right_bracket_data2 = link_node_get_data(right_bracket2);
+        if (strcmp(right_bracket_data2, "}")) {
+            link_node_free(right_bracket2);
+            raise_syntax_error();
+        }
+        parsing_tree_st *right_bracket_tree_node2 = parsing_tree_new(strdup(right_bracket_data2), free);
+        link_node_free(right_bracket2);
+
+        parsing_tree_set_child(if_stmt_tree_node, else_tree_node);
+        parsing_tree_set_child(if_stmt_tree_node, left_bracket_tree_node2);
+        parsing_tree_set_child(if_stmt_tree_node, stmt_list2);
+        parsing_tree_set_child(if_stmt_tree_node, right_bracket_tree_node2);
+
+        parsing_tree_set_sibling(right_bracket_tree_node, else_tree_node);
+        parsing_tree_set_sibling(else_tree_node, left_bracket_tree_node2);
+        parsing_tree_set_sibling(left_bracket_tree_node2, stmt_list2);
+        parsing_tree_set_sibling(stmt_list2, right_bracket_tree_node2);
+        
+    }
+
+    return if_stmt_tree_node;
 }
 
 /**
@@ -394,14 +469,17 @@ parsing_tree_st *syntax_analysis(link_list_st *token_list, symbol_table_st *symb
     if (token_list == NULL || symbol_table == NULL) {
         return NULL;
     }
-    
     /* create 'program' node and 'sttm_list' node */
     /* set the 'stmt_list' node as child node of 'program' node */
     parsing_tree_st *program_tree_node = parsing_tree_new("program", NULL);
-    parsing_tree_st *stmt_list_tree_node = parsing_tree_new("stmt_list", NULL);
+    parsing_tree_st *stmt_list_tree_node = generate_stmt_list(token_list, symbol_table);
     parsing_tree_set_child(program_tree_node, stmt_list_tree_node);
-    /* manually set first statement as child of stmt_list node */
-    /* recursively set the rest of statements as the right sibling of previous statement*/
+    
+    return program_tree_node;
+}
+
+parsing_tree_st *generate_stmt_list(link_list_st *token_list, symbol_table_st *symbol_table) {
+    parsing_tree_st *stmt_list_tree_node = parsing_tree_new("stmt_list", NULL);
     while (1) {
         parsing_tree_st *stmt = generate_stmt(token_list, symbol_table);
         parsing_tree_set_child(stmt_list_tree_node, stmt);
@@ -418,7 +496,7 @@ parsing_tree_st *syntax_analysis(link_list_st *token_list, symbol_table_st *symb
         stmt_list_tree_node = parsing_tree_new("stmt_list", NULL);
         parsing_tree_set_sibling(semicolon, stmt_list_tree_node);
     }
-    return program_tree_node;
+    return stmt_list_tree_node;
 }
 
 #ifdef XTEST
