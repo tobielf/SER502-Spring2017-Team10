@@ -129,9 +129,9 @@ int symbol_table_lookup(symbol_table_st *symbol_table, char *symbol) {
     int index = 0;
     while (index < symbol_table->table_size) {
         if (strcmp(symbol,symbol_table->symbol_array[index].symbol) == 0) {
-            return index;
+            return symbol_table->symbol_array[index].token_type;
         } else {
-                index++;
+            index++;
         }
     }
 

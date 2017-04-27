@@ -1,0 +1,9 @@
+Before today’s meeting:
+0. Finish Task 7: Developing Phase One.
+1. Start working on Task8: Developing Phase Two.
+--------below are meeting agenda of this Thursday’s meeting--------
+2. Review the code of Dev Phase One.(10min).
+Explain how unit test work in detail.(10min).
+2.a. Demonstrate on incremental development driven by test.(20min).
+2.b. Clearly defined the interface inside the component.
+3. After meeting, keep working on Task 8.

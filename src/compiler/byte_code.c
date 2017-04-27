@@ -1,11 +1,14 @@
 /**
  * @file byte_code.c
  * @brief Purpose: byte code operation
- * @version 0.2
+ * @version 0.8
  * @date 04.18.2017
  * @author Rundong Zhu
  */
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <errno.h>
 
 #include "utils/link_list.h"
 #include "utils/symbol_table.h"
@@ -15,23 +18,710 @@
 
 #include "byte_code.h"
 
+static void byte_code_new(link_list_st *, char *, char *, char *);
+
+static void handle_stmt_list(parsing_tree_st *parsing_tree_node, link_list_st *byte_code); 
+
+static void handle_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code); 
+
+static char *handle_if_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code); 
+
+static char *handle_for_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code); 
+
+static char *handle_expr(parsing_tree_st *parsing_tree_node, link_list_st *byte_code); 
+
+static char *handle_term(parsing_tree_st *parsing_tree_node, link_list_st *byte_code); 
+
+static void handle_decl_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code); 
+
+static void handle_assign_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code); 
+
+static void handle_print_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code); 
+
+static char *handle_res1(parsing_tree_st *parsing_tree_node, link_list_st *byte_code, char *terms_data); 
+
+static char *handle_factor(parsing_tree_st *parsing_tree_node, link_list_st *byte_code); 
+
+static char *handle_res2(parsing_tree_st *parsing_tree_node, link_list_st *byte_code, char *factors_data);
+
+static int temp_id = 0;
+
+static int loop_id = 0;
+
+static int if_id = 0;
+
+/*
+ * @brief get number of digits from an integer
+ * @para int_num, an integer
+ * @return 0 of failed, otherwise a valid integer
+ */
+int get_digits_num(int int_num) {
+    int count = 0;
+    while (int_num != 0) {
+        int_num /= 10;
+        ++count;
+    }
+    return count;
+}
+
 /**
- * @brief generate byte code form parsing tree and symbol table.
+ * @brief generate byte code from parsing tree and symbol table.
  * @param node, a valid tree node.
  * @param table, a valid symbol table object
  * @return NULL on failed, otherwise a valid link list.
  */
 link_list_st *semantic_analysis(parsing_tree_st *parsing_tree_node, symbol_table_st *symbol_table) {
+    link_list_st *byte_code = NULL;
+
+    char *program_data = NULL;
+
+    if (parsing_tree_node == NULL)
+        return NULL;
+
+    program_data = parsing_tree_get_data(parsing_tree_node);
+    if (strcmp(program_data, "program") != 0)
+        return NULL;
+
+    byte_code = link_list_init();
+    parsing_tree_st *stmt_list_node = parsing_tree_get_child(parsing_tree_node);
+    char *stmt_list_data = parsing_tree_get_data(stmt_list_node);
+    if (strcmp(stmt_list_data, "stmt_list") == 0) {
+        handle_stmt_list(stmt_list_node, byte_code);
+    } else {
+        printf("program error");
+        return NULL;
+    }
+
+    return byte_code;
+}
+
+/**
+ * @brief handle stmt_list from parsing tree.
+ * @param node, a valid tree node.
+ * @param byte_code, a valid link list.
+ */
+static void handle_stmt_list(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
+    parsing_tree_st *stmt_node = parsing_tree_get_child(parsing_tree_node);
+    char *stmt_data = parsing_tree_get_data(stmt_node);
+
+    while (1) {
+        if (strcmp(stmt_data, "stmt") == 0) {
+            handle_stmt(stmt_node, byte_code);
+        } else {
+            //error();
+        }
+
+        parsing_tree_st *semicolon_node = parsing_tree_get_sibling(stmt_node);
+        char *semicolon_data = parsing_tree_get_data(semicolon_node);
+        parsing_tree_st *stmt_list_node = parsing_tree_get_sibling(semicolon_node);
+
+        if (strcmp(semicolon_data, ";") == 0 && stmt_list_node == NULL) {
+            break;
+            //error_msg()
+        }
+        char *stmt_list_data = parsing_tree_get_data(stmt_list_node);
+
+        if (strcmp(stmt_list_data, "stmt_list") == 0) {
+            stmt_node = parsing_tree_get_child(stmt_list_node);
+            stmt_data = parsing_tree_get_data(stmt_node);
+        }
+    }
+}
+
+/**
+ * @brief handle stmt from parsing tree.
+ * @param node, a valid tree node.
+ * @param byte_code, a valid link list.
+ */
+static void handle_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
+    parsing_tree_st *sub_stmt_node = parsing_tree_get_child(parsing_tree_node);
+    char *sub_stmt_data = parsing_tree_get_data(sub_stmt_node);
+
+    if (strcmp(sub_stmt_data, "decl_stmt") == 0) {
+        handle_decl_stmt(sub_stmt_node, byte_code);
+    } else if (strcmp(sub_stmt_data, "assign_stmt") == 0) {
+        handle_assign_stmt(sub_stmt_node, byte_code);
+    } else if (strcmp(sub_stmt_data, "if_stmt") == 0) {
+        //handle_if_stmt(sub_stmt_node, byte_code);
+    } else if (strcmp(sub_stmt_data, "for_stmt") == 0) {
+        //handle_for_stmt(sub_stmt_node, byte_code);
+    } else if (strcmp(sub_stmt_data, "print_stmt") == 0) {
+        handle_print_stmt(sub_stmt_node, byte_code);
+    } else {
+        //error();
+    }
+}
+
+/**
+ * @brief generate decl_stmt byte code from parsing tree.
+ * @param node, a valid tree node
+ * @param byte_code, a valid link list.
+ */
+static void handle_decl_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
+    parsing_tree_st *var_node = parsing_tree_get_child(parsing_tree_node);
+    char *var_data = parsing_tree_get_data(var_node);
+	if (strcmp(var_data, "var") != 0) {
+        //error
+    }
+    parsing_tree_st *id_node = parsing_tree_get_sibling(var_node);
+    char *id_data = parsing_tree_get_data(id_node);
+
+    byte_code_new(byte_code, "DEC", id_data, "");
+}
+
+/**
+ * @brief generate assign_stmt byte code from parsing tree.
+ * @param node, a valid tree node.
+ * @param byte_code, a valid link list.
+ */
+static void handle_assign_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
+    parsing_tree_st *id_node = parsing_tree_get_child(parsing_tree_node);
+    parsing_tree_st *is_node = parsing_tree_get_sibling(id_node);
+    char *id_data = parsing_tree_get_data(id_node);
+    char *is_data = parsing_tree_get_data(is_node);
+    if (strcmp(is_data, "is") != 0) {
+        //error();
+    }
+    parsing_tree_st *expr_node = parsing_tree_get_sibling(is_node);
+
+    char *expr_data = parsing_tree_get_data(expr_node);
+    if (strcmp(expr_data, "expr") == 0) {
+       expr_data = handle_expr(expr_node, byte_code);
+    } else {
+        //error();
+    }
+
+    byte_code_new(byte_code, "MOV", id_data, expr_data);
+}
+
+static char *handle_if_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
+    //TODO
+    return NULL;
+}
+static char *handle_for_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
+    //TODO
     return NULL;
 }
 
+/**
+ * @brief generate print_stmt byte code from parsing tree.
+ * @param node, a valid tree node.
+ * @param byte_code, a valid link list.
+ */
+static void handle_print_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
+    parsing_tree_st *print_node = parsing_tree_get_child(parsing_tree_node);
+    char *print_data = parsing_tree_get_data(print_node);
+
+    if (strcmp(print_data, "print") != 0) {
+        //error();
+    }
+
+    parsing_tree_st *operand_node = parsing_tree_get_sibling(print_node);
+    char *operand = parsing_tree_get_data(operand_node);
+    if (strcmp(operand, "expr") == 0) {
+        operand = handle_expr(operand_node, byte_code);
+    } else {
+        //error
+    }
+
+    byte_code_new(byte_code, "OUT", operand, "");
+}
+
+/**
+ * @brief handle expr form parsing tree and symbol table.
+ * @param byte_code, a valid link list.
+ * @param node, a valid tree node.
+ * @return NULL on failed, otherwise a char array.
+ */
+static char *handle_expr(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
+    parsing_tree_st *term_node = parsing_tree_get_child(parsing_tree_node);
+    char *term_data = parsing_tree_get_data(term_node);
+    parsing_tree_st *res1_node = parsing_tree_get_sibling(term_node);
+
+    char *rc;  //return code
+    if (strcmp(term_data, "term") == 0) {
+        rc = handle_term(term_node, byte_code);
+    }
+       
+    if (parsing_tree_get_child(res1_node) != NULL) {
+        rc = handle_res1(res1_node, byte_code, rc);
+    }
+
+    return rc;
+}
+
+/**
+ * @brief handle term form parsing tree and symbol table.
+ * @param byte_code, a valid link list.
+ * @param node, a valid tree node.
+ * @return NULL on failed, otherwise a char array.
+ */
+static char *handle_term(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
+    parsing_tree_st *factor_node = parsing_tree_get_child(parsing_tree_node);
+    char *factor_data = parsing_tree_get_data(factor_node);
+    parsing_tree_st *res2_node = parsing_tree_get_sibling(factor_node);
+
+    char *rc; //return code
+    if (strcmp(factor_data, "factor") == 0) {
+        rc = handle_factor(factor_node, byte_code);
+    } else {
+        error_errno(EINVAL);
+    }
+
+    if (parsing_tree_get_child(res2_node) != NULL) {
+        rc = handle_res2(res2_node, byte_code, rc);
+    } else {
+        //error_errno()
+    }
+
+    return rc;
+}
+
+/**
+ * @brief generate res1 byte code form link list and parsing tree.
+ * @param byte_code, a valid link list.
+ * @param node, a valid tree node.
+ * @return NULL on failed, otherwise a char array.
+ */
+static char *handle_res1(parsing_tree_st *parsing_tree_node, link_list_st *byte_code, char *terms_data) {
+    temp_id++;
+
+    int temp_length;
+    char *temp_string;
+    temp_length = strlen("_temp") + get_digits_num(temp_id) + 1;
+    temp_string = (char *)malloc(temp_length);
+    snprintf(temp_string, temp_length, "_temp%d", temp_id);
+
+    parsing_tree_st *operator_node = parsing_tree_get_child(parsing_tree_node);
+    parsing_tree_st *term_node = parsing_tree_get_sibling(operator_node);
+    char *operator_data = parsing_tree_get_data(operator_node);
+    char *term_data = parsing_tree_get_data(term_node);
+
+    if (strcmp(term_data, "term") == 0) {
+        term_data = handle_term(term_node, byte_code);
+    }
+
+    byte_code_new(byte_code, "DEC", temp_string, "");
+
+    byte_code_new(byte_code, "MOV", temp_string, terms_data);
+
+
+    if (strcmp(operator_data, "+") == 0) {
+        byte_code_new(byte_code, "ADD", temp_string, term_data);
+    } else if (strcmp(operator_data, "-") == 0) {
+        byte_code_new(byte_code, "SUB", temp_string, term_data);
+    } else {
+        //error
+    }
+
+    temp_id--;
+
+    return temp_string;
+}
+
+/**
+ * @brief generate factor byte code form link list and parsing tree.
+ * @param byte_code, a valid link list.
+ * @param node, a valid tree node.
+ * @return NULL on failed, otherwise a char array.
+ */
+static char *handle_factor(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
+    //char *bytecode = NULL;
+    //int bytecode_len = 0;
+    //link_node_st *new_node = NULL;
+
+    parsing_tree_st *operand_node = parsing_tree_get_child(parsing_tree_node);
+    char *operand_data = parsing_tree_get_data(operand_node);
+
+    if (strcmp(operand_data, "(") == 0) {
+        parsing_tree_st *expr_node = parsing_tree_get_sibling(operand_node);
+        char *expr_data = parsing_tree_get_data(expr_node);
+        parsing_tree_st *brace_node = parsing_tree_get_sibling(expr_node);
+        char *brace_data = parsing_tree_get_data(brace_node);
+        if (strcmp(expr_data, "expr") == 0 && strcmp(brace_data, ")") == 0) {
+            operand_data = handle_expr(expr_node, byte_code);
+        }
+    }
+
+    return operand_data;
+}
+
+/**
+* @brief generate res2 byte code form link list and parsing tree.
+* @param byte_code, a valid link list.
+* @param node, a valid tree node.
+* @return NULL on failed, otherwise a valid link list.
+*/
+
+static char *handle_res2(parsing_tree_st *parsing_tree_node, link_list_st *byte_code, char *factors_data) {
+    temp_id++;
+
+    int temp_length;
+    char *temp_string;
+    temp_length = strlen("_temp") + get_digits_num(temp_id) + 1;
+    temp_string = (char *)malloc(temp_length);
+    snprintf(temp_string, temp_length, "_temp%d", temp_id);
+
+    parsing_tree_st *operator_node = parsing_tree_get_child(parsing_tree_node);
+    parsing_tree_st *factor_node = parsing_tree_get_sibling(operator_node);
+    char *operator_data = parsing_tree_get_data(operator_node);
+    char *factor_data = parsing_tree_get_data(factor_node);
+
+    if (strcmp(factor_data, "factor") == 0) {
+        factor_data = handle_factor(factor_node, byte_code);
+    } else {
+        error_errno(EINVAL);
+    }
+
+    byte_code_new(byte_code, "DEC", temp_string, "");
+
+    byte_code_new(byte_code, "MOV", temp_string, factors_data);
+
+    if (strcmp(operator_data, "*") == 0) {
+        byte_code_new(byte_code, "MUL", temp_string, factor_data);
+    } else if (strcmp(operator_data, "/") == 0) {
+        byte_code_new(byte_code, "DIV", temp_string, factor_data);
+    } else if (strcmp(operator_data, "%") == 0) {
+        byte_code_new(byte_code, "MOD", temp_string, factor_data);
+    } else {
+        //error();
+    }
+
+    temp_id--;
+
+    return temp_string;
+}
+
+static void byte_code_new(link_list_st *byte_code, char *op_code, char *first_oprand, char *second_oprand) {
+    char *bytecode = NULL;
+    int bytecode_len = 0;
+    link_node_st *new_node = NULL;
+
+    if (byte_code == NULL || op_code == NULL || first_oprand == NULL || second_oprand == NULL)
+        return; // error();
+
+    bytecode_len = strlen(op_code) + 1 + strlen(first_oprand) + 1 + strlen(second_oprand) + 1;
+    bytecode = (char *)malloc(bytecode_len);
+    snprintf(bytecode, bytecode_len, "%s %s %s", op_code, first_oprand, second_oprand);
+
+    new_node = link_node_new(bytecode, free);
+    link_list_append(byte_code, new_node);
+}
+
+
 #ifdef XTEST
-void test_case_one() {
-    printf("Case One");
+//tree structure
+int print_byte_code(link_node_st *node, void *cb_data) {
+    char *str = link_node_get_data(node);
+
+    if (str != NULL) {
+        printf("%s\n", str);
+        return LINK_LIST_CONTINUE;
+    }
+
+    return LINK_LIST_STOP;
+}
+
+void test_suite_one() {
+    int counter = 0;
+    link_list_st *byte_code = NULL;
+
+    printf("test suite one\n");
+
+    // Create syntax tree for "var i;" statement;
+
+    parsing_tree_st *root = parsing_tree_new("program", NULL);;
+    parsing_tree_st *node1 = parsing_tree_new("stmt_list", NULL);
+    parsing_tree_st *node2 = parsing_tree_new("stmt", NULL);
+    parsing_tree_set_child(root, node1);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new(";", NULL);
+    parsing_tree_set_sibling(node1, node2);
+    node2 = parsing_tree_new("decl_stmt", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new("var", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new("i", NULL);
+    parsing_tree_set_sibling(node1, node2);
+
+    byte_code = semantic_analysis(root, NULL);
+    link_list_traverse(byte_code, print_byte_code, NULL);
+    parsing_tree_free(root);
+    link_list_free(byte_code);
+}
+
+void test_suite_two() {
+    int counter = 0;
+    link_list_st *byte_code = NULL;
+
+    printf("test suite two\n");
+
+    // Create syntax tree for "print i;" statement;
+
+    parsing_tree_st *root = parsing_tree_new("program", NULL);;
+    parsing_tree_st *node1 = parsing_tree_new("stmt_list", NULL);
+    parsing_tree_st *node2 = parsing_tree_new("stmt", NULL);
+    parsing_tree_set_child(root, node1);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new(";", NULL);
+    parsing_tree_set_sibling(node1, node2);
+    node2 = parsing_tree_new("print_stmt", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new("print", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new("expr", NULL);
+    parsing_tree_set_sibling(node1, node2);
+	
+    node1 = node2;
+    node2 = parsing_tree_new("term", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = parsing_tree_new("res1", NULL);
+    parsing_tree_set_sibling(node2, node1);
+
+    node1 = node2;
+    node2 = parsing_tree_new("factor", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = parsing_tree_new("res2", NULL);
+    parsing_tree_set_sibling(node2, node1);
+
+    node1 = node2;
+    node2 = parsing_tree_new("i", NULL);
+    parsing_tree_set_child(node1, node2);
+	
+    byte_code = semantic_analysis(root, NULL);
+    link_list_traverse(byte_code, print_byte_code, NULL);
+
+    parsing_tree_free(root);
+    link_list_free(byte_code);
+}
+
+void test_suite_three() {
+    int counter = 0;
+    link_list_st *byte_code = NULL;
+
+    printf("test suite three\n");
+
+    // Create syntax tree for "i is 3;" statement;
+
+    parsing_tree_st *root = parsing_tree_new("program", NULL);
+    parsing_tree_st *node1 = parsing_tree_new("stmt_list", NULL);
+    parsing_tree_st *node2 = parsing_tree_new("stmt", NULL);
+    parsing_tree_set_child(root, node1);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new(";", NULL);
+    parsing_tree_set_sibling(node1, node2);
+    node2 = parsing_tree_new("assign_stmt", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new("i", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = parsing_tree_new("is", NULL);
+    parsing_tree_set_sibling(node2, node1);
+    node2 = parsing_tree_new("expr", NULL);
+    parsing_tree_set_sibling(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new("term", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = parsing_tree_new("res1", NULL);
+    parsing_tree_set_sibling(node2, node1);
+
+    node1 = node2;
+    node2 = parsing_tree_new("factor", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = parsing_tree_new("res2", NULL);
+    parsing_tree_set_sibling(node2, node1);
+
+    node1 = node2;
+    node2 = parsing_tree_new("3", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    byte_code = semantic_analysis(root, NULL);
+    link_list_traverse(byte_code, print_byte_code, NULL);
+
+    parsing_tree_free(root);
+    link_list_free(byte_code);
+}
+
+void test_suite_four() {
+    int counter = 0;
+    link_list_st *byte_code = NULL;
+
+    printf("test suite four\n");
+
+    // Create syntax tree for "i is i + 3;" statement;
+
+    parsing_tree_st *root = parsing_tree_new("program", NULL);
+    parsing_tree_st *node1 = parsing_tree_new("stmt_list", NULL);
+    parsing_tree_st *node2 = parsing_tree_new("stmt", NULL);
+    parsing_tree_set_child(root, node1);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new(";", NULL);
+    parsing_tree_set_sibling(node1, node2);
+    node2 = parsing_tree_new("assign_stmt", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new("i", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = parsing_tree_new("is", NULL);
+    parsing_tree_set_sibling(node2, node1);
+    node2 = parsing_tree_new("expr", NULL);
+    parsing_tree_set_sibling(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new("term", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    parsing_tree_st *node3 = parsing_tree_new("res1", NULL);
+    parsing_tree_set_sibling(node2, node3);
+
+    node1 = node2;
+    node2 = parsing_tree_new("factor", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = parsing_tree_new("res2", NULL);
+    parsing_tree_set_sibling(node2, node1);
+	
+    node1 = node2;
+    node2 = parsing_tree_new("i", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = parsing_tree_new("-", NULL);
+    parsing_tree_set_child(node3, node1);
+    node2 = parsing_tree_new("term", NULL);
+    parsing_tree_set_sibling(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new("factor", NULL);
+    parsing_tree_set_child(node1, node2);
+    node3 = parsing_tree_new("res2", NULL);
+    parsing_tree_set_sibling(node2, node3);
+
+    node1 = parsing_tree_new("3", NULL);
+    parsing_tree_set_child(node2, node1);
+
+    node2 = parsing_tree_new("*", NULL);
+    parsing_tree_set_child(node3, node2);
+    node1 = node2;
+    node2 = parsing_tree_new("factor", NULL);
+    parsing_tree_set_sibling(node1, node2);
+    node3 = parsing_tree_new("2", NULL);
+    parsing_tree_set_child(node2, node3);
+
+    byte_code = semantic_analysis(root, NULL);
+    link_list_traverse(byte_code, print_byte_code, NULL);
+
+    parsing_tree_free(root);
+    link_list_free(byte_code);
+}
+
+void test_suite_five() {
+    int counter = 0;
+    link_list_st *byte_code = NULL;
+
+    printf("test suite five\n");
+
+	// Create syntax tree for "i is i + 10 % i;" statement;
+
+    parsing_tree_st *root = parsing_tree_new("program", NULL);
+    parsing_tree_st *node1 = parsing_tree_new("stmt_list", NULL);
+    parsing_tree_st *node2 = parsing_tree_new("stmt", NULL);
+    parsing_tree_set_child(root, node1);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new(";", NULL);
+    parsing_tree_set_sibling(node1, node2);
+    node2 = parsing_tree_new("assign_stmt", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new("i", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = parsing_tree_new("is", NULL);
+    parsing_tree_set_sibling(node2, node1);
+    node2 = parsing_tree_new("expr", NULL);
+    parsing_tree_set_sibling(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new("term", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    parsing_tree_st *node3 = parsing_tree_new("res1", NULL);
+    parsing_tree_set_sibling(node2, node3);
+
+    node1 = node2;
+    node2 = parsing_tree_new("factor", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = parsing_tree_new("res2", NULL);
+    parsing_tree_set_sibling(node2, node1);
+
+    node1 = node2;
+    node2 = parsing_tree_new("i", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = parsing_tree_new("+", NULL);
+    parsing_tree_set_child(node3, node1);
+    node2 = parsing_tree_new("term", NULL);
+    parsing_tree_set_sibling(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new("factor", NULL);
+    parsing_tree_set_child(node1, node2);
+    node3 = parsing_tree_new("res2", NULL);
+    parsing_tree_set_sibling(node2, node3);
+
+    node1 = node2;
+    node2 = parsing_tree_new("10", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node2 = parsing_tree_new("%", NULL);
+    parsing_tree_set_child(node3, node2);
+    node3 = parsing_tree_new("factor", NULL);
+    parsing_tree_set_sibling(node2, node3);
+
+    node1 = parsing_tree_new("i", NULL);
+    parsing_tree_set_child(node3, node1);
+
+    byte_code = semantic_analysis(root, NULL);
+    link_list_traverse(byte_code, print_byte_code, NULL);
+
+    parsing_tree_free(root);
+    link_list_free(byte_code);
 }
 
 int main() {
-    test_case_one();
+    test_suite_one();
+    test_suite_two();
+    test_suite_three();
+    test_suite_four();
+    test_suite_five();
 }
 
 #endif // XTEST
