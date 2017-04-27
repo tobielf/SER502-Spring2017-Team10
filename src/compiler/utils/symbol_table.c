@@ -51,14 +51,44 @@ symbol_table_st *symbol_table_init()
 
     symbol_table->table_size = 0;
 
+    //delimiter
+    symbol_table_insert(symbol_table, ";", DELIMITER);
+
+    //keywords
     symbol_table_insert(symbol_table, "is", KEYWORD);
     symbol_table_insert(symbol_table, "var", KEYWORD);
     symbol_table_insert(symbol_table, "print", KEYWORD);
+    symbol_table_insert(symbol_table, "as", KEYWORD);
+    symbol_table_insert(symbol_table, "if", KEYWORD);
+    symbol_table_insert(symbol_table, "then", KEYWORD);
+    symbol_table_insert(symbol_table, "else", KEYWORD);
+    symbol_table_insert(symbol_table, "for", KEYWORD);
+    symbol_table_insert(symbol_table, "from", KEYWORD);
+    symbol_table_insert(symbol_table, "to", KEYWORD);
+    symbol_table_insert(symbol_table, "step", KEYWORD);
+
+    //binary operations
     symbol_table_insert(symbol_table, "+", BIN_OP);
     symbol_table_insert(symbol_table, "-", BIN_OP);
     symbol_table_insert(symbol_table, "*", BIN_OP);
     symbol_table_insert(symbol_table, "/", BIN_OP);
+    symbol_table_insert(symbol_table, "%", BIN_OP);
 
+    //boolean operations
+    symbol_table_insert(symbol_table, "=", BOOLEAN_OP);
+    symbol_table_insert(symbol_table, "<>", BOOLEAN_OP);
+    symbol_table_insert(symbol_table, "<", BOOLEAN_OP);
+    symbol_table_insert(symbol_table, ">", BOOLEAN_OP);
+    symbol_table_insert(symbol_table, "<=", BOOLEAN_OP);
+    symbol_table_insert(symbol_table, ">=", BOOLEAN_OP);
+
+    //parentheses
+    symbol_table_insert(symbol_table, "(", OPEN_PARENTHESES);
+    symbol_table_insert(symbol_table, ")", CLOSE_PARENTHESES);
+
+    //curly brackets
+    symbol_table_insert(symbol_table, "{", OPEN_CURLY_BRACKETS);
+    symbol_table_insert(symbol_table, "}", CLOSE_CURLY_BRACKETS);
     return symbol_table;
 
 }
