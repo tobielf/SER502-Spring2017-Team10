@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
 
     parsing_tree_free(parse_tree);
 
-    link_list_traverse(byte_code, print_byte_code);
+    link_list_traverse(byte_code, print_byte_code, NULL);
 
     link_list_free(byte_code);
 
