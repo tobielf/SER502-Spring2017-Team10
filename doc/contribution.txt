@@ -89,3 +89,25 @@ Katie MacArthur:
 
 Week 3: (April 23-29)
 Meeting 1(April 25)
+Ximing Feng:
+    No review activity in these days.
+    Complete working on phase-two, writing test cases for `generate_decl_stmt`, `generate_print_stmt`, `generate_assign_stmt`, `generate_stmt_list`.
+    Start working on phase-three. Coding on `generate_expr_stmt`
+    (Originally, he has 4 days delay[8 hours], until April 25).
+    (Reschedule the development plan, half day[1 hour] delay so far).
+Xiangyu Guo:
+    Reviewed the phase-two code wrote by Katie, Ximing and Rundong.
+    Helping Ximing catch up some delays, implement `generate_decl_stmt`, `generate_print_stmt`, `generate_assign_stmt`, `generate_stmt_list` in syntax analysis.
+    Helping Rundong catch up some delays, implement `handle_decl_stmt` and refactor the code in semantic analysis.
+    Explain how to implement `handle_expr` in semantic analysis to Rundong.
+    Finished working on phase-three (fully functional runtime environment)
+Rundong Zhu:
+    Reviewed the phase-two code wrote by Xiangyu.
+    Complete working on phase-two. `handle_print_stmt`, `handle_assign_stmt`.
+    Complete working on phase-three. `handle_expr_stmt`.
+    (Originally, he has 2 days delay[4 hours], until April 25).
+    (Reschedule the development plan, no delay so far).
+Katie MacArthur:
+    Reviewed the phase-two code wrote by Xiangyu.
+    Still working on phase-three, lexical analysis.
+    (She didn’t publish her branch, so I can’t evaluate her progress accurately, right now she has 1 day delay[2 hours] on phase-three).
