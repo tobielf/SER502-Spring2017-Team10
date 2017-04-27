@@ -44,6 +44,8 @@ static parsing_tree_st *generate_stmt(link_list_st *, symbol_table_st *);
 
 static parsing_tree_st *generate_boolean_expre(link_list_st *, symbol_table_st *);
 
+static parsing_tree_st *generate_boolean_value(link_list_st *, symbol_table_st *);
+
 static parsing_tree_st *generate_stmt_list(link_node_st *, symbol_table_st *);
 
 /**
@@ -184,9 +186,51 @@ static parsing_tree_st *generate_for_stmt(link_list_st *, symbol_table_st *) {
  * @param: pointers to symbol table
  * @return: the pointer to generated boolean expression
  */
-static parsing_tree_st *generate_boolean_expre(link_list_st *, symbol_table_st *) {
-    
+static parsing_tree_st *generate_boolean_expre(link_list_st *token_list, symbol_table_st *symbol_table) {
+    parsing_tree_st *boolean_expr = parsing_tree_new("boolean_expr", NULL);
+    link_node_st *first_element = link_list_top(token_list);
+    char *first_element_data = link_node_get_data(first_element_data);
+    if (strcmp(first_element_data, "true") == 0 || strcmp(first_element_data, "false") == 0) {
+        parsing_tree_st *boolean_value = generate_boolean_value(token_list, symbol_table);
+        parsing_tree_set_child(boolean_expr, boolean_value);
+        return boolean_expr;
+    } else {
+        parsing_tree_st *left_expre = generate_expre(token_list, symbol_table);
+        parsing_tree_st *operator_link_node = link_list_pop(token_list);
+        char *operator_link_node_data = link_node_get_data(operator_link_node);
+        if (strcmp(operator_link_node_data, ">") != 0 && strcmp(operator_link_node_data, "<") != 0 && strcmp(operator_link_node_data, "<>") != 0 && strcmp(operator_link_node_data, "=") != 0 && strcmp(operator_link_node_data, ">=") != 0 && strcmp(operator_link_node_data, "<=") != 0) {
+            raise_syntax_error();
+        }
+        parsing_tree_st *operator_tree_node = parsing_tree_new(strdup(operator_link_node_data), free);
+        parsing_tree_st *right_expre = generate_expre(token_list, symbol_table);
+        parsing_tree_set_child(boolean_expr, left_expre);
+        parsing_tree_set_child(boolean_expr, operator_tree_node);
+        parsing_tree_set_child(boolean_expr, right_expre);
+
+        parsing_tree_set_sibling(left_expre, operator_tree_node);
+        parsing_tree_set_sibling(operator_tree_node, right_expre);
+        return boolean_expr;
+
+    }
 }
+
+/**
+ * @brief: generate the boolean value accordig to the grammar rule
+ * @param: pointers to token list 
+ * @param: pointers to symbol table
+ * @return: the pointer to generated boolean value
+ */
+static parsing_tree_st *generate_boolean_expre(link_list_st *token_list, symbol_table_st *symbol_table) {
+
+    parsing_tree_st *boolean_value = parsing_tree_new("boolean_value", NULL);
+    link_node_st *value_link_node = link_list_pop(token_list);
+    char *value_link_node_data = link_node_get_data(value_link_node);
+    parsing_tree_st *value_tree_node = parsing_tree_new(strdup(value_link_node_data), free);
+    link_node_free(value_link_node);
+    parsing_tree_set_child(boolean_value, value_tree_node);
+}
+
+
 
 
 /**
