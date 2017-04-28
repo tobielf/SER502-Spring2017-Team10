@@ -46,7 +46,7 @@ static parsing_tree_st *generate_boolean_expre(link_list_st *, symbol_table_st *
 
 static parsing_tree_st *generate_boolean_value(link_list_st *, symbol_table_st *);
 
-static parsing_tree_st *generate_stmt_list(link_node_st *, symbol_table_st *);
+static parsing_tree_st *generate_stmt_list(link_list_st *, symbol_table_st *);
 
 /**
  * @brief: generate the if statement accordig to the grammar rule
@@ -55,16 +55,16 @@ static parsing_tree_st *generate_stmt_list(link_node_st *, symbol_table_st *);
  * @return: the pointer to generated if statement
  */
 static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_st *symbol_table) {
-    link_node_st *if_link_node = link_list_pop(token_list, symbol_table);
+    link_node_st *if_link_node = link_list_pop(token_list);
     char *if_link_node_data = link_node_get_data(if_link_node);
     if (strcmp(if_link_node_data, "if") != 0) {
         link_node_free(if_link_node);
         raise_syntax_error();
     }
-    parsing_tree_st if_tree_node = parsing_tree_new(strdup(if_link_node_data), free);
+    parsing_tree_st *if_tree_node = parsing_tree_new(strdup(if_link_node_data), free);
     link_node_free(if_link_node);
 
-    link_node_st *left_parenthesis = link_list_pop(token_list, symbol_table);
+    link_node_st *left_parenthesis = link_list_pop(token_list);
     char *left_parenthesis_data = link_node_get_data(left_parenthesis);
     if (strcmp(left_parenthesis_data, "(")) {
         link_node_free(left_parenthesis);
@@ -75,7 +75,7 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
 
     parsing_tree_st *boolean_expr = generate_boolean_expre(token_list, symbol_table);
 
-    link_node_st *right_parenthesis = link_list_pop(token_list, symbol_table);
+    link_node_st *right_parenthesis = link_list_pop(token_list);
     char *right_parenthesis_data = link_node_get_data(right_parenthesis);
     if (strcmp(right_parenthesis_data, ")")) {
         link_node_free(right_parenthesis);
@@ -84,7 +84,7 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
     parsing_tree_st *right_parenthesis_tree_node = parsing_tree_new(strdup(right_parenthesis_data), free);
     link_node_free(right_parenthesis);
 
-    link_node_st *then_link_node = link_list_pop(token_list, symbol_table);
+    link_node_st *then_link_node = link_list_pop(token_list);
     char *then_link_node_data = link_node_get_data(then_link_node);
     if (strcmp(then_link_node_data, "then")) {
         link_node_free(then_link_node);
@@ -93,7 +93,7 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
     parsing_tree_st *then_tree_node = parsing_tree_new(strdup(then_link_node_data), free);
     link_node_free(then_link_node);
     
-    link_node_st *left_bracket = link_list_pop(token_list, symbol_table);
+    link_node_st *left_bracket = link_list_pop(token_list);
     char *left_bracket_data = link_node_get_data(left_bracket);
     if (strcmp(left_bracket_data, "{")) {
         link_node_free(left_bracket);
@@ -103,7 +103,7 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
     link_node_free(left_bracket);
     parsing_tree_st *stmt_list = generate_stmt_list(token_list, symbol_table);
     
-    link_node_st *right_bracket = link_list_pop(token_list, symbol_table);
+    link_node_st *right_bracket = link_list_pop(token_list);
     char *right_bracket_data = link_node_get_data(right_bracket);
     if (strcmp(right_bracket_data, "}")) {
         link_node_free(right_bracket);
@@ -115,17 +115,11 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
     parsing_tree_st *if_stmt_tree_node = parsing_tree_new("if_stmt", NULL);
     
     parsing_tree_set_child(if_stmt_tree_node, left_parenthesis_tree_node);
-    parsing_tree_set_child(if_stmt_tree_node, boolean_expr);
-    parsing_tree_set_child(if_stmt_tree_node, right_parenthesis_tree_node);
-    parsing_tree_set_child(if_stmt_tree_node, then_tree_node);
-    parsing_tree_set_child(if_stmt_tree_node, left_bracket_tree_node);
-    parsing_tree_set_child(if_stmt_tree_node, stmt_list);
-    parsing_tree_set_child(if_stmt_tree_node, right_bracket_tree_node);
 
     parsing_tree_set_sibling(if_tree_node, left_parenthesis_tree_node);
     parsing_tree_set_sibling(left_parenthesis_tree_node, boolean_expr);
     parsing_tree_set_sibling(boolean_expr, right_parenthesis_tree_node);
-    parsing_tree_set_sibling(right_parenthesis, left_bracket_tree_node);
+    parsing_tree_set_sibling(right_parenthesis_tree_node, left_bracket_tree_node);
     parsing_tree_set_sibling(left_bracket_tree_node, stmt_list);
     parsing_tree_set_sibling(stmt_list, right_bracket_tree_node);
 
@@ -136,7 +130,7 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
         parsing_tree_st *else_tree_node = parsing_tree_new(strdup(else_link_node_data), free);
         link_node_free(else_link_node2);
 
-        link_node_st *left_bracket2 = link_list_pop(token_list, symbol_table);
+        link_node_st *left_bracket2 = link_list_pop(token_list);
         char *left_bracket_data2 = link_node_get_data(left_bracket2);
         if (strcmp(left_bracket_data2, "{")) {
             link_node_free(left_bracket2);
@@ -146,7 +140,7 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
         link_node_free(left_bracket2);
         parsing_tree_st *stmt_list2 = generate_stmt_list(token_list, symbol_table);
     
-        link_node_st *right_bracket2 = link_list_pop(token_list, symbol_table);
+        link_node_st *right_bracket2 = link_list_pop(token_list);
         char *right_bracket_data2 = link_node_get_data(right_bracket2);
         if (strcmp(right_bracket_data2, "}")) {
             link_node_free(right_bracket2);
@@ -176,7 +170,7 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
  * @param: pointers to symbol table
  * @return: the pointer to generated for statement
  */
-static parsing_tree_st *generate_for_stmt(link_list_st *, symbol_table_st *) {
+static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table_st *symbol_table) {
 
 }
 
@@ -189,14 +183,14 @@ static parsing_tree_st *generate_for_stmt(link_list_st *, symbol_table_st *) {
 static parsing_tree_st *generate_boolean_expre(link_list_st *token_list, symbol_table_st *symbol_table) {
     parsing_tree_st *boolean_expr = parsing_tree_new("boolean_expr", NULL);
     link_node_st *first_element = link_list_top(token_list);
-    char *first_element_data = link_node_get_data(first_element_data);
+    char *first_element_data = link_node_get_data(first_element);
     if (strcmp(first_element_data, "true") == 0 || strcmp(first_element_data, "false") == 0) {
         parsing_tree_st *boolean_value = generate_boolean_value(token_list, symbol_table);
         parsing_tree_set_child(boolean_expr, boolean_value);
         return boolean_expr;
     } else {
         parsing_tree_st *left_expre = generate_expre(token_list, symbol_table);
-        parsing_tree_st *operator_link_node = link_list_pop(token_list);
+        link_node_st *operator_link_node = link_list_pop(token_list);
         char *operator_link_node_data = link_node_get_data(operator_link_node);
         if (strcmp(operator_link_node_data, ">") != 0 && strcmp(operator_link_node_data, "<") != 0 && strcmp(operator_link_node_data, "<>") != 0 && strcmp(operator_link_node_data, "=") != 0 && strcmp(operator_link_node_data, ">=") != 0 && strcmp(operator_link_node_data, "<=") != 0) {
             raise_syntax_error();
@@ -220,7 +214,7 @@ static parsing_tree_st *generate_boolean_expre(link_list_st *token_list, symbol_
  * @param: pointers to symbol table
  * @return: the pointer to generated boolean value
  */
-static parsing_tree_st *generate_boolean_expre(link_list_st *token_list, symbol_table_st *symbol_table) {
+static parsing_tree_st *generate_boolean_value(link_list_st *token_list, symbol_table_st *symbol_table) {
 
     parsing_tree_st *boolean_value = parsing_tree_new("boolean_value", NULL);
     link_node_st *value_link_node = link_list_pop(token_list);
@@ -347,7 +341,7 @@ static parsing_tree_st *generate_factor(link_list_st *token_list, symbol_table_s
         return factor;
     } 
     else {
-        parsing_tree_st *factor = parsing_tree_new("NULL", NULL);
+        parsing_tree_st *factor = parsing_tree_new("factor", NULL);
         parsing_tree_st *number_or_id = parsing_tree_new(strdup(first_element_data), free);
         parsing_tree_set_child(factor, number_or_id);
         link_node_free(first_element);
@@ -368,16 +362,14 @@ static parsing_tree_st *generate_res1(link_list_st *token_list, symbol_table_st 
     char *top_data = link_node_get_data(top);
     printf("The first element of res1 is%s\n", top_data);
     #endif
+    parsing_tree_st *res1 = parsing_tree_new("res1", NULL);
     link_node_st *operator = link_list_pop(token_list);
     char *operator_data = link_node_get_data(operator);
     if (strcmp(operator_data, "+") != 0 && strcmp(operator_data, "-") != 0){
         link_node_free(operator);
-        #ifdef DEBUG
-        printf("There is something wrong while generating res1\n");
-        #endif
-        raise_syntax_error();
+        return res1;
     }
-    parsing_tree_st *res1 = parsing_tree_new("res1", NULL);
+    
     parsing_tree_st *operator_tree_node = parsing_tree_new(strdup(operator_data), free);
     link_node_free(operator);
     parsing_tree_st *term = generate_term(token_list, symbol_table);
@@ -632,16 +624,16 @@ void test_case_three() {
     link_node_st *print_node = link_node_new("print", NULL);
     link_node_st *id_node = link_node_new("i", NULL);
     link_node_st *plus_node = link_node_new("+", NULL);
-    link_node_st *one_node = link_node_new("1", NULL);
-    link_node_st *plus_node2 = link_node_new("+", NULL);
-    link_node_st *one_node2 = link_node_new("1", NULL);
+    link_node_st *one_node = link_node_new("i", NULL);
+    // link_node_st *plus_node2 = link_node_new("+", NULL);
+    // link_node_st *one_node2 = link_node_new("1", NULL);
     link_node_st *semicolon = link_node_new(";", NULL);
     link_list_append(token_list, print_node);
     link_list_append(token_list, id_node);
     link_list_append(token_list, plus_node);
     link_list_append(token_list, one_node);
-    link_list_append(token_list, plus_node2);
-    link_list_append(token_list, one_node2);
+    // link_list_append(token_list, plus_node2);
+    // link_list_append(token_list, one_node2);
     link_list_append(token_list, semicolon);
 
 
