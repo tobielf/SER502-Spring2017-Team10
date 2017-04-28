@@ -15,8 +15,8 @@
 #include "link_list.h"
 
 struct link_list {
-    link_node_st *head;
-    link_node_st *tail;
+    link_node_st *head;                 /**< head of the linked list */
+    link_node_st *tail;                 /**< tail of the linked list */
 };
 
 /**

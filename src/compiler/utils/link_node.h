@@ -11,7 +11,7 @@
 typedef struct link_node link_node_st;
 struct link_node;
 
-typedef void (*free_cb)(void *);
+typedef void (*free_cb)(void *);            /**< call back function on free */
 
 /**
  * @brief creating a new node

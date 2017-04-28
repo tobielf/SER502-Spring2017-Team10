@@ -16,10 +16,10 @@
 
 struct parsing_tree
 {
-    void *data;
-    free_treenode_cb free_func;
-    parsing_tree_st *child;
-    parsing_tree_st *sibling;
+    void *data;                         /**< Data in parsing tree node */
+    free_treenode_cb free_func;         /**< Call back function on free */
+    parsing_tree_st *child;             /**< Pointer to the child node */
+    parsing_tree_st *sibling;           /**< Pointer to the sibling node */
 };
 
 /**
