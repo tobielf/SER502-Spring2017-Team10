@@ -8,13 +8,6 @@
 #ifndef __SYMBOL_TABLE_H__
 #define __SYMBOL_TABLE_H__
 
-enum type {
-    KEYWORD = 0,
-    IDENTIFIER = 1,
-    BIN_OP = 2,
-    NUMBER = 3,
-};
-
 typedef struct symbol_table symbol_table_st;
 struct symbol_table;
 
