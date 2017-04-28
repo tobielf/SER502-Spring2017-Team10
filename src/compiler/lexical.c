@@ -1,20 +1,20 @@
 /**
-* @file lexical.c
-* @brief Purpose: provide the lexical analysis for the code
-* @version 0.3
-* @date 04.27.2017
-* @author Katie MacArthur
-*/
+ * @file lexical.c
+ * @brief Purpose: provide the lexical analysis for the code
+ * @version 0.3
+ * @date 04.27.2017
+ * @author Katie MacArthur
+ */
 
 #include <stdio.h>
 #include "stdlib.h"
 #include <memory.h>
 #include <ctype.h>
-#include "/Users/katiemacarthur/Documents/SER502-Spring2017-Team10/src/compiler/utils/error.h"
+#include "error.h"
 #include <errno.h>
-#include "/Users/katiemacarthur/Documents/SER502-Spring2017-Team10/src/compiler/lexical.h"
-#include "/Users/katiemacarthur/Documents/SER502-Spring2017-Team10/src/compiler/utils/symbol_table.h"
-#include "/Users/katiemacarthur/Documents/SER502-Spring2017-Team10/src/compiler/utils/link_list.h"
+#include "lexical.h"
+#include "symbol_table.h"
+#include "link_list.h"
 
 
 /**
@@ -68,7 +68,7 @@ link_list_st *lexical_analysis(symbol_table_st *symbol_table) {
     }
 
 }
-/**
+
 #ifdef XTEST
 
 void test_case_one() {
@@ -80,12 +80,13 @@ void test_case_one() {
 
  lexical_analysis(symbol_table_init());
  }
-**/
+
 
 int main() {
 
-    //test_case_one();
-    //test_case_two();
+
+    test_case_one();
+    test_case_two();
     return 0;
 }
-//#endif
+#endif
