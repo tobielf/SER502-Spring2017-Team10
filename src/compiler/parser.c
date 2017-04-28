@@ -112,7 +112,8 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
     parsing_tree_set_sibling(if_tree_node, left_parenthesis_tree_node);
     parsing_tree_set_sibling(left_parenthesis_tree_node, boolean_expr);
     parsing_tree_set_sibling(boolean_expr, right_parenthesis_tree_node);
-    parsing_tree_set_sibling(right_parenthesis_tree_node, left_bracket_tree_node);
+    parsing_tree_set_sibling(right_parenthesis_tree_node, then_tree_node);
+    parsing_tree_set_sibling(then_tree_node, left_bracket_tree_node);
     parsing_tree_set_sibling(left_bracket_tree_node, stmt_list);
     parsing_tree_set_sibling(stmt_list, right_bracket_tree_node);
 
