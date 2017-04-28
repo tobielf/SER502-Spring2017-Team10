@@ -7,16 +7,29 @@
  */
 
 #include <stdio.h>
-#include "stdlib.h"
+#include <stdlib.h>
 #include <memory.h>
 #include <ctype.h>
-#include "error.h"
 #include <errno.h>
+
+#include "./utils/error.h" 
+#include "./utils/symbol_table.h"
+#include "./utils/link_list.h"
+#include "./utils/link_node.h"
+
 #include "lexical.h"
-#include "symbol_table.h"
-#include "link_list.h"
 
+#define DEFAULT_TOKEN_BUFF_SIZE     (256)
+#define ENLARGE_FACTOR              (2)
 
+static void emit_token(link_list_st *token_list, char *token_buff) {
+    link_node_st* new_node = link_node_new(strdup(token_buff),free);
+    link_list_append(token_list, new_node);
+}
+
+static void emit_error() {
+
+}
 /**
 * @brief takes in symbol table and returns a linked list structure
 * @param symbol_table
@@ -27,46 +40,86 @@ link_list_st *lexical_analysis(symbol_table_st *symbol_table) {
     if (symbol_table == NULL) {
         return NULL;
     }
-
+    char *token_buff = (char *)malloc(DEFAULT_TOKEN_BUFF_SIZE);
+    int token_buff_size = DEFAULT_TOKEN_BUFF_SIZE;
+    int token_length = 0;
+    int token_type = NONE;
     char char_in = getc(stdin);
 
     link_list_st* link_list = link_list_init();
 
-    while (strcmp(char_in, EOF) != 0) {
-        char *token_buff = (char *)malloc(sizeof(char)*256);
-        int token_length = 0;
+    while ((char_in = getc(stdin)) != EOF) {
 
-        while (strcmp(char_in, " ") != 0 | strcmp(char_in, ";") != 0 | strcmp(char_in, "\n") != 0 |
-               strcmp(char_in, "\t") != 0 | strcmp(char_in, "(") != 0 | strcmp(char_in, ")") != 0 |
-               strcmp(char_in, "{") != 0 | strcmp(char_in, "}") != 0) {
+        if (char_in == ' ' || char_in == '\t' || 
+            char_in == '\r' || char_in == '\n')
+            continue;
 
-            token_buff[token_length] = char_in;
-            token_length++;
-            char_in = getc(stdin);
-        }
-
-        token_buff[token_length] = '\0';
-
-        if (strcmp(char_in, ";") == 0 | strcmp(char_in, "(") == 0 | strcmp(char_in, ")") == 0 |
-            strcmp(char_in, "{") == 0 | strcmp(char_in, "}") == 0) {
-            link_list_st* new_node = link_node_new(strdup(char_in),free);
-            link_list_append(link_list,new_node);
-        } else {
-            link_list_st* new_node = link_node_new(strdup(token_buff),free);
-            link_list_append(link_list,new_node);
-
-            int search = symbol_table_lookup(symbol_table, strdup(token_buff));
-            if (search == -1) {
-                if (isalpha(token_buff)) {
-                    symbol_table_insert(symbol_table, strdup(token_buff), IDENTIFIER);
-                } else {
-                    symbol_table_insert(symbol_table, strdup(token_buff), NUMBER);
+        if (char_in == '(' || char_in == ')' || 
+            char_in == '{' || char_in == '}' ||
+            char_in == ';') {
+            // Special symbols.
+            token_buff[token_length++] = char_in;
+            token_buff[token_length++] = '\0';
+            token_type = symbol_table_lookup(symbol_table, token_buff);
+            emit_token(link_list, token_buff);
+        } else if (isalpha(char_in)) {
+            // Starting from alpha, possible: KEYWORD or IDENTIFIER.
+            while (isalpha(char_in)) {
+                token_buff[token_length++] = char_in;
+                char_in = getchar();
+                if (token_length >= token_buff_size) {
+                    //todo realloc
                 }
             }
+            token_buff[token_length++] = '\0';
+            if (symbol_table_lookup(symbol_table, token_buff) == NONE) {
+                symbol_table_insert(symbol_table, token_buff, IDENTIFIER);
+            }
+            emit_token(link_list, token_buff);
+        } else if (char_in == '=' || char_in == '<' || char_in == '>') {
+            token_buff[token_length++] = char_in;
+            char_in = getchar();
+            if (char_in == '=' || char_in == '<' || char_in == '>') {
+                token_buff[token_length++] = char_in;
+            } else {
+                ungetc(char_in, stdin);
+            }
+            token_buff[token_length++] = '\0';
+            if (symbol_table_lookup(symbol_table, token_buff) == NONE) {
+                emit_error();
+            }
+            emit_token(link_list, token_buff);
+        } else if (char_in == '+' || char_in == '%' || 
+                   char_in == '*' || char_in == '/' ) {
+            token_buff[token_length++] = char_in;
+            token_buff[token_length++] = '\0';
+            emit_token(link_list, token_buff);
+        } else if (char_in == '-') {
+            int look_ahead = getchar();
+            token_buff[token_length++] = char_in;
+            if (isdigit(look_ahead)) {
+                while (isdigit(look_ahead)) {
+                    token_buff[token_length++] = look_ahead;
+                    look_ahead = getchar();
+                    if (token_length >= token_buff_size) {
+                        //todo realloc
+                    }
+                }
+            } else {
+                ungetc(look_ahead, stdin);
+            }
+            token_buff[token_length++] = '\0';
+            if (symbol_table_lookup(symbol_table, token_buff) == NONE) {
+                symbol_table_insert(symbol_table, token_buff, NUMBER);
+            }
+            emit_token(link_list, token_buff);
         }
-        free(token_buff);
-    }
 
+        token_length = 0;
+    }
+    free(token_buff);
+
+    return link_list;
 }
 
 #ifdef XTEST
