@@ -8,12 +8,12 @@ loop1:
 CMP i 100
 JE loop1_end
     MOV flag 0
-    
+
     MOV j 2
     loop2:
         DEC _temp1
         MOV _temp1 i
-        DIV _temp1 2
+    
     CMP j _temp1
     JE loop2_end
         if1:
