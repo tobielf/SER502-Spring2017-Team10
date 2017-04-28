@@ -242,7 +242,7 @@ static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table
     parsing_tree_st *expre2 = generate_expre(token_list, symbol_table);
 
     link_node_st *step_link_node = link_list_pop(token_list);
-    char *step_link_node_data = link_node_get_data(step_link_node_data);
+    char *step_link_node_data = link_node_get_data(step_link_node);
     if (strcmp(step_link_node_data, "step") != 0) {
         #ifdef DEBUG
         printf("step keyword missing\n");
@@ -270,7 +270,7 @@ static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table
     parsing_tree_st *stmt_list = generate_stmt_list(token_list, symbol_table);
 
     link_node_st *right_bracket_link_node = link_list_pop(token_list);
-    char *right_bracket_link_node_data = link_node_get_data(right_bracket_link_node_data);
+    char *right_bracket_link_node_data = link_node_get_data(right_bracket_link_node);
     if (strcmp(right_bracket_link_node_data, "}") != 0) {
         #ifdef DEBUG
         printf("right bracket missing\n");
@@ -326,9 +326,11 @@ static parsing_tree_st *generate_boolean_expre(link_list_st *token_list, symbol_
             printf("The operator we got is %s\n", operator_link_node_data);
             printf("Invalid boolean operator\n");
             #endif
+            link_node_free(operator_link_node);
             raise_syntax_error();
         }
         parsing_tree_st *operator_tree_node = parsing_tree_new(strdup(operator_link_node_data), free);
+        link_node_free(operator_link_node);
         parsing_tree_st *right_expre = generate_expre(token_list, symbol_table);
         parsing_tree_set_child(boolean_expr, left_expre);
         
@@ -365,6 +367,9 @@ static parsing_tree_st *generate_boolean_value(link_list_st *token_list, symbol_
  * @return: the pointer to generated parsing tree
  */
 static parsing_tree_st *generate_stmt(link_list_st *token_list, symbol_table_st *symbol_table) {
+    // #ifdef DEBUG
+    // printf("Begin to generate statement\n");
+    // #endif
     link_node_st *stmt_type = link_list_top(token_list);
     parsing_tree_st *stmt_root = parsing_tree_new("stmt", NULL);
     parsing_tree_st *stmt_tree = NULL;
@@ -395,6 +400,9 @@ static parsing_tree_st *generate_stmt(link_list_st *token_list, symbol_table_st 
 
     parsing_tree_set_child(stmt_tree, stmt_child);
     parsing_tree_set_child(stmt_root, stmt_tree);
+    // #ifdef DEBUG
+    // printf("Statement generated\n");
+    // #endif
     return stmt_root;
 }
 
@@ -405,6 +413,10 @@ static parsing_tree_st *generate_stmt(link_list_st *token_list, symbol_table_st 
  * @return: the pointer to generated root node of the declare statement subtree
  */
 static parsing_tree_st *generate_decl_stmt(link_list_st *token_list, symbol_table_st *symbol_table) {
+    // #ifdef DEBUG
+    // printf("Begin to generate declare statement\n");
+    // #endif
+
     link_node_st *var_node = link_list_pop(token_list);
     char *node_data = link_node_get_data(var_node);
     if (strcmp(node_data, "var") != 0)
@@ -416,13 +428,22 @@ static parsing_tree_st *generate_decl_stmt(link_list_st *token_list, symbol_tabl
     link_node_st *id_node = link_list_pop(token_list);
     node_data = link_node_get_data(id_node);
 
+    // #ifdef DEBUG
+    // printf("Begin to lookup in symbol_table\n");
+    // #endif
     if (symbol_table_lookup(symbol_table, node_data) != IDENTIFIER)
         raise_syntax_error();
-
+    // #ifdef DEBUG
+    // printf("End lookup in symbol_table\n");
+    // #endif
     parsing_tree_st *id_tree_node = parsing_tree_new(strdup(node_data), free);
+    parsing_tree_st *decl_stmt_tree_node = parsing_tree_new("decl_stmt", NULL);
+    parsing_tree_set_child(decl_stmt_tree_node, var_tree_node);
     parsing_tree_set_sibling(var_tree_node, id_tree_node);
     link_node_free(id_node);
-
+    // #ifdef DEBUG
+    // printf("declare statement generated\n");
+    // #endif
     return var_tree_node;
 }
 
@@ -582,11 +603,11 @@ static parsing_tree_st *generate_expre(link_list_st *token_list, symbol_table_st
     parsing_tree_st *expre = parsing_tree_new("expr", NULL);
     parsing_tree_set_child(expre, term);
     parsing_tree_set_sibling(term, res1);
-    #ifdef DEBUG
-    link_node_st *rest_link_node =  link_list_top(token_list);
-    char *rest_link_node_data = link_node_get_data(rest_link_node);
-    printf("After the generation of expression, the first element of rest token_list is %s\n", rest_link_node_data);
-    #endif
+    // #ifdef DEBUG
+    // link_node_st *rest_link_node =  link_list_top(token_list);
+    // char *rest_link_node_data = link_node_get_data(rest_link_node);
+    // printf("After the generation of expression, the first element of rest token_list is %s\n", rest_link_node_data);
+    // #endif
     
     return expre;
 }
@@ -598,6 +619,9 @@ static parsing_tree_st *generate_expre(link_list_st *token_list, symbol_table_st
  * @return: the pointer to generated root node of the print statement subtree
  */
 static parsing_tree_st *generate_print_stmt(link_list_st *token_list, symbol_table_st *symbol_table) {
+    #ifdef DEBUG
+    printf("Begin to generate statement list\n");
+    #endif
     link_node_st *print_node = link_list_pop(token_list);
     char *node_data = link_node_get_data(print_node);
     if (strcmp(node_data, "print") != 0)
@@ -646,6 +670,9 @@ static parsing_tree_st *generate_assign_stmt(link_list_st *token_list, symbol_ta
  * @return: the pointer to generated parsing tree
  */
 parsing_tree_st *syntax_analysis(link_list_st *token_list, symbol_table_st *symbol_table) {
+    #ifdef DEBUG
+    printf("Begin of syntax analysis\n");
+    #endif
     if (token_list == NULL || symbol_table == NULL) {
         return NULL;
     }
@@ -659,6 +686,9 @@ parsing_tree_st *syntax_analysis(link_list_st *token_list, symbol_table_st *symb
 }
 
 parsing_tree_st *generate_stmt_list(link_list_st *token_list, symbol_table_st *symbol_table) {
+    #ifdef DEBUG
+    printf("Begin to generate statement list\n");
+    #endif
     parsing_tree_st *stmt_list_tree_node = parsing_tree_new("stmt_list", NULL);
     while (1) {
         parsing_tree_st *stmt = generate_stmt(token_list, symbol_table);
@@ -676,6 +706,9 @@ parsing_tree_st *generate_stmt_list(link_list_st *token_list, symbol_table_st *s
         stmt_list_tree_node = parsing_tree_new("stmt_list", NULL);
         parsing_tree_set_sibling(semicolon, stmt_list_tree_node);
     }
+    #ifdef DEBUG
+    printf("Statement list generated\n");
+    #endif
     return stmt_list_tree_node;
 }
 
