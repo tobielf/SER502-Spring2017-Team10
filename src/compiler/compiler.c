@@ -7,6 +7,9 @@
  */
 #include <stdio.h>
 #include <errno.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include "utils/link_list.h"
 #include "utils/symbol_table.h"
@@ -47,9 +50,14 @@ static void s_usage();
  */
 int main(int argc, char *argv[])
 {
+    struct stat file_stat;
     if (argc != 3) {
         s_usage();
         return 0;
+    }
+
+    if (stat(argv[1], &file_stat) != 0) {
+        error_errno(errno);
     }
 
     freopen(argv[1], "r", stdin);
