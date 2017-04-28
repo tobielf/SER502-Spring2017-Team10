@@ -3,9 +3,9 @@ DEC num
 MOV num 0
 
 MOV i 1
-loop1:
+for1:
 	CMP i 100
-	JE loop1_end
+	JE for1_end
 		if1:
 			DEC _temp1
 			MOV _temp1 i
@@ -17,9 +17,9 @@ loop1:
 		if1_end:
 
 		ADD i 1
-		JMP loop1
+		JMP for1
 
-loop1_end:
+for1_end:
 	OUT num
 
 
