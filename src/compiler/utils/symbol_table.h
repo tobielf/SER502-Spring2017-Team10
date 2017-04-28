@@ -12,6 +12,7 @@ typedef struct symbol_table symbol_table_st;
 struct symbol_table;
 
 enum type {
+    NONE = -1,
     KEYWORD = 0,
     IDENTIFIER = 1,
     BIN_OP = 2,
