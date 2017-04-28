@@ -631,17 +631,17 @@ parsing_tree_st *syntax_analysis(link_list_st *token_list, symbol_table_st *symb
 }
 
 parsing_tree_st *generate_stmt_list(link_list_st *token_list, symbol_table_st *symbol_table) {
-    #ifdef DEBUG
-    printf("Begin to generate statement list\n");
-    #endif
+    parsing_tree_st *root = NULL;
     parsing_tree_st *stmt_list_tree_node = parsing_tree_new("stmt_list", NULL);
+    root = stmt_list_tree_node;
     while (1) {
         parsing_tree_st *stmt = generate_stmt(token_list, symbol_table);
         parsing_tree_set_child(stmt_list_tree_node, stmt);
 
         link_node_st *semicolon_node = link_list_pop(token_list);
         char *node_data = link_node_get_data(semicolon_node);
-        // todo lookup node_data on symbol table for "DELIMETER"
+        if (symbol_table_lookup(symbol_table, node_data) != DELIMITER)
+            raise_syntax_error(__LINE__, "expected: DELIMITER");
         link_node_free(semicolon_node);
         parsing_tree_st *semicolon = parsing_tree_new(";", NULL);
         parsing_tree_set_sibling(stmt, semicolon);
@@ -651,10 +651,7 @@ parsing_tree_st *generate_stmt_list(link_list_st *token_list, symbol_table_st *s
         stmt_list_tree_node = parsing_tree_new("stmt_list", NULL);
         parsing_tree_set_sibling(semicolon, stmt_list_tree_node);
     }
-    #ifdef DEBUG
-    printf("Statement list generated\n");
-    #endif
-    return stmt_list_tree_node;
+    return root;
 }
 
 #ifdef XTEST
