@@ -1,7 +1,7 @@
 /**
  * @file runtime.c
  * @brief Purpose: main entrance of the runtime
- * @version 0.5
+ * @version 1.0
  * @date 04.16.2017
  * @author Xiangyu Guo
  */
@@ -15,6 +15,7 @@
 #include "instruction.h"
 
 typedef void (*eval)(void *, void *);               /**< function pointer of eval functions */
+typedef int (*cmp_cb)(int);                         /**< function pointer of compare functions */
 
 typedef struct operation {
     char *op_code;                                  /**< operation code */
@@ -22,6 +23,7 @@ typedef struct operation {
 } operation_st;
 
 static machine_memory_st *s_machine_store;          /**< environment storage during run time */
+static instruction_set_st *s_instructions;          /**< instuctions of the assembled asm */
 
 /**
  * @brief evaluate function of all binary operations
@@ -86,6 +88,120 @@ static void eval_div(void *, void *);
  * @param second second operand.
  */
 static void eval_mod(void *, void *);
+
+/**
+ * @brief evaluate function of "CMP" instruction
+ * @param first first operand.
+ * @param second second operand.
+ */
+static void eval_cmp(void *, void *);
+
+/**
+ * @brief evaluate function of "JE" instruction
+ * @param first label.
+ * @param second unused, will ignore.
+ */
+static void eval_je(void *, void *);
+
+/**
+ * @brief evaluate function of "JNE" instruction
+ * @param first label.
+ * @param second unused, will ignore.
+ */
+static void eval_jne(void *, void *);
+
+/**
+ * @brief evaluate function of "JL" instruction
+ * @param first label.
+ * @param second unused, will ignore.
+ */
+static void eval_jl(void *, void *);
+
+/**
+ * @brief evaluate function of "JLE" instruction
+ * @param first label.
+ * @param second unused, will ignore.
+ */
+static void eval_jle(void *, void *);
+
+/**
+ * @brief evaluate function of "JG" instruction
+ * @param first label.
+ * @param second unused, will ignore.
+ */
+static void eval_jg(void *, void *);
+
+/**
+ * @brief evaluate function of "JGE" instruction
+ * @param first label.
+ * @param second unused, will ignore.
+ */
+static void eval_jge(void *, void *);
+
+/**
+ * @brief evaluate function of "JMP" instruction
+ * @param first label.
+ * @param second unused, will ignore.
+ */
+static void eval_jmp(void *, void *);
+
+/**
+ * @brief evaluate function of all boolean operations
+ * @param first_operand, first operand.
+ * @param second_operand, second operand.
+ * @param flag_cmp call back function on different comparing behavior on flag
+ */
+static void eval_bool_op_helper(void *, void *, cmp_cb flag_cmp);
+
+/**
+ * @brief comparison function for "JE" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
+static int cmp_je(int);
+
+/**
+ * @brief comparison function for "JNE" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
+static int cmp_jne(int);
+
+/**
+ * @brief comparison function for "JL" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
+static int cmp_jl(int);
+
+/**
+ * @brief comparison function for "JLE" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
+static int cmp_jle(int);
+
+/**
+ * @brief comparison function for "JG" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
+static int cmp_jg(int);
+
+/**
+ * @brief comparison function for "JGE" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
+static int cmp_jge(int);
+
+/**
+ * @brief comparison function for "JMP" instruction
+ * @param flag the value of flag register.
+ * @return 1, unconditional jump, always be true.
+ */
+static int cmp_jmp(int);
+
 /**
  * @brief all operations provided by runtime.
  * Type 1: declare
@@ -101,6 +217,15 @@ static void eval_mod(void *, void *);
  * DIV var1, var2/value        ; div var2/value from var1
  * MOD var1, var2/value        ; mod var1 with var2/value
  *
+ * Type 4: compare and jump operation
+ * CMP var1, var2/value        ; CMP var1/value and var2/value, set $flag = var1/value - var2/value.
+ * JE  label                   ; Jump to label if $flag Equal to zero.
+ * JNE label                   ; Jump to label if $flag Not Equal to zero.
+ * JL  label                   ; Jump to label if $flag Less than zero.
+ * JLE label                   ; Jump to label if $flag Less than or Equal to zero.
+ * JG  label                   ; Jump to label if $flag Great than zero.
+ * JGE label                   ; Jump to label if $flag Great than or Equal to zero.
+ * JMP label                   ; Jump to label, always.
  *
  * Type 5: output result
  * OUT var1/value          ; Output var1/value. 
@@ -113,6 +238,14 @@ static operation_st g_operations[] = { {"DEC", eval_dec},
                                        {"MUL", eval_mul},
                                        {"DIV", eval_div},
                                        {"MOD", eval_mod},
+                                       {"CMP", eval_cmp},
+                                       {"JE" , eval_je },
+                                       {"JNE", eval_jne},
+                                       {"JL" , eval_jl },
+                                       {"JLE", eval_jle},
+                                       {"JG" , eval_jg },
+                                       {"JGE", eval_jge},
+                                       {"JMP", eval_jmp},
                                        {NULL , NULL} };
 
 /**
@@ -139,17 +272,16 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    instruction_set_st *instructions = NULL;
-
     s_machine_store = machine_memory_init();
 
-    instructions = instruction_load_program(argv[1]);
+    s_instructions = instruction_load_program(argv[1]);
 
-    s_evaluate(instructions);
+    s_evaluate(s_instructions);
 
-    instruction_clean_up(instructions);
+    instruction_clean_up(s_instructions);
 
     machine_memory_fini(s_machine_store);
+
     return 0;
 }
 /**
@@ -197,8 +329,14 @@ static void s_evaluate(instruction_set_st *instructions) {
         }
 
         if (g_operations[i].op_code == NULL) {
-            fprintf(stderr, "Error, unsupported instruction\n");
-            exit(EPERM);
+#ifdef DEBUG
+            fprintf(stderr, "label change scope\n");
+#endif
+            // label change scope.(for1: scope++, for1_end: scope--)
+            if (strstr(op_code, "_end:"))
+                machine_memory_close_scope(s_machine_store);
+            else
+                machine_memory_open_scope(s_machine_store);
         }
     }
 }
@@ -221,8 +359,7 @@ static void eval_dec(void *first_operand, void *second_operand) {
                                                     variable_name,
                                                     MEMORY_CURRENT_SCOPE);
     if (variable_memory != NULL) {
-        fprintf(stderr, "Redeclare variable: %s exit\n", variable_name);
-        exit(EINVAL);
+        return;
     }
 
     // doesn't exist, create a new one.
@@ -354,7 +491,7 @@ static void eval_bin_op_helper(void *first_operand,
     // value_one = from var_one on the storage.
     value_one = memory_get_value(var_mem_one);
 
-    if (isalpha(var_two[0])) {
+    if (!isdigit(var_two[0])) {
         // check var_two on ALL scope, if doesn't exist, warning and exit.
         var_mem_two = machine_memory_get_variable(s_machine_store, 
                                                   var_two, 
@@ -395,4 +532,216 @@ static void eval_bin_op_helper(void *first_operand,
     
     // put value into the var_one.
     memory_set_value(var_mem_one, value_one);
+}
+
+/**
+ * @brief evaluate function of "CMP" instruction
+ * @param first first operand.
+ * @param second second operand.
+ */
+static void eval_cmp(void *first_operand, void *second_operand) {
+    memory_st *var_mem_one;
+    memory_st *var_mem_two;
+    char *var_one = NULL;
+    char *var_two = NULL;
+    int value_one = 0;
+    int value_two = 0;
+
+    if (first_operand == NULL || second_operand == NULL)
+        return;
+
+    var_one = (char *)first_operand;
+    var_two = (char *)second_operand;
+
+    if (!isdigit(var_one[0])) {
+        // check var_one on ALL scope, if doesn't exist, warning and exit.
+        var_mem_one = machine_memory_get_variable(s_machine_store, 
+                                                  var_one, 
+                                                  MEMORY_ALL_SCOPE);
+        if (var_mem_one == NULL) {
+            fprintf(stderr, "Using undeclared variables %s! Exit\n", var_one);
+            exit(EINVAL);
+        }
+        // value_one = from var_one on the storage.
+        value_one = memory_get_value(var_mem_one);
+    } else {
+        value_one = atoi(var_one);
+    }
+
+    if (!isdigit(var_two[0])) {
+        // check var_two on ALL scope, if doesn't exist, warning and exit.
+        var_mem_two = machine_memory_get_variable(s_machine_store, 
+                                                  var_two, 
+                                                  MEMORY_ALL_SCOPE);
+        if (var_mem_two == NULL) {
+            fprintf(stderr, "Using undeclared variables %s! Exit\n", var_one);
+            exit(EINVAL);
+        }
+        // value_two = from var_two on the storage.
+        value_two = memory_get_value(var_mem_two);
+    } else {
+        value_two = atoi(second_operand);
+    }
+#ifdef DEBUG
+    fprintf(stderr, "cmp result: %d\n", value_one - value_two);
+#endif
+    // set $flag using value_one - value_two;
+    instruction_set_set_flag(s_instructions, value_one - value_two);
+}
+
+/**
+ * @brief evaluate function of "JE" instruction
+ * @param flag flag value.
+ */
+static void eval_je(void *first_operand, void *second_operand) {
+    eval_bool_op_helper(first_operand, second_operand, cmp_je);
+}
+
+/**
+ * @brief evaluate function of "JNE" instruction
+ * @param first label.
+ * @param second unused, will ignore.
+ */
+static void eval_jne(void *first_operand, void *second_operand) {
+    eval_bool_op_helper(first_operand, second_operand, cmp_jne);
+}
+
+/**
+ * @brief evaluate function of "JL" instruction
+ * @param first label.
+ * @param second unused, will ignore.
+ */
+static void eval_jl(void *first_operand, void *second_operand) {
+    eval_bool_op_helper(first_operand, second_operand, cmp_jl);
+}
+
+/**
+ * @brief evaluate function of "JLE" instruction
+ * @param first label.
+ * @param second unused, will ignore.
+ */
+static void eval_jle(void *first_operand, void *second_operand) {
+    eval_bool_op_helper(first_operand, second_operand, cmp_jle);
+}
+
+/**
+ * @brief evaluate function of "JG" instruction
+ * @param first label.
+ * @param second unused, will ignore.
+ */
+static void eval_jg(void *first_operand, void *second_operand) {
+    eval_bool_op_helper(first_operand, second_operand, cmp_jg);
+}
+
+/**
+ * @brief evaluate function of "JGE" instruction
+ * @param first label.
+ * @param second unused, will ignore.
+ */
+static void eval_jge(void *first_operand, void *second_operand) {
+    eval_bool_op_helper(first_operand, second_operand, cmp_jge);
+}
+
+/**
+ * @brief evaluate function of "JMP" instruction
+ * @param first label.
+ * @param second unused, will ignore.
+ */
+static void eval_jmp(void *first_operand, void *second_operand) {
+    eval_bool_op_helper(first_operand, second_operand, cmp_jmp);
+}
+
+/**
+ * @brief evaluate function of all boolean operations
+ * @param first_operand, first operand.
+ * @param second_operand, second operand.
+ * @param flag_cmp call back function on different comparing behavior on flag
+ */
+static void eval_bool_op_helper(void *first_operand, 
+                               void *second_operand, 
+                               cmp_cb flag_cmp) {
+    char *label = NULL;
+    int flag = 0;
+    unsigned int new_pc = 0;
+
+    if (first_operand == NULL || flag_cmp == NULL)
+        return;
+
+    // get flag from instructions set.
+    flag = instruction_set_get_flag(s_instructions);
+
+    // lookup target label.
+    label = (char *)first_operand;
+    new_pc = instruction_set_get_label(s_instructions, label);
+
+    // set program counter if condition matched.
+    if (flag_cmp(flag)) {
+#ifdef DEBUG
+        fprintf(stderr, "new_pc: %d\n", new_pc);
+#endif
+        instruction_set_set_pc(s_instructions, new_pc);
+    }
+}
+
+/**
+ * @brief comparison function for "JE" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
+static int cmp_je(int flag) {
+    return (flag == 0);
+}
+
+/**
+ * @brief comparison function for "JNE" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
+static int cmp_jne(int flag) {
+    return (flag != 0);
+}
+
+/**
+ * @brief comparison function for "JL" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
+static int cmp_jl(int flag) {
+    return (flag < 0);
+}
+
+/**
+ * @brief comparison function for "JLE" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
+static int cmp_jle(int flag) {
+    return (flag <= 0);
+}
+
+/**
+ * @brief comparison function for "JG" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
+static int cmp_jg(int flag) {
+    return (flag > 0);
+}
+
+/**
+ * @brief comparison function for "JGE" instruction
+ * @param flag the value of flag register.
+ * @return compare result.
+ */
+static int cmp_jge(int flag) {
+    return (flag >= 0);
+}
+
+/**
+ * @brief comparison function for "JMP" instruction
+ * @param flag the value of flag register.
+ * @return 1, unconditional jump, always be true.
+ */
+static int cmp_jmp(int flag) {
+    return 1;
 }

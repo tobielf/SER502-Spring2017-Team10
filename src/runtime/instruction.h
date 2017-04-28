@@ -1,15 +1,12 @@
 /**
  * @file instruction.h
  * @brief Purpose: declaration of the machine instruction.
- * @version 0.5
+ * @version 1.0
  * @date 04.23.2017
  * @author Xiangyu Guo
  */
 #ifndef __INSTRUCTION_H__
 #define __INSTRUCTION_H__
-
-typedef struct label_table label_table_st;
-struct label_table;
 
 typedef struct instruction instruction_st;
 struct instruction;
@@ -57,6 +54,14 @@ int instruction_set_get_flag(instruction_set_st *);
  * @param new_flag new flag value.
  */
 void instruction_set_set_flag(instruction_set_st *, int);
+
+/**
+ * @brief look up a label address.
+ * @param instruction_st a valid instruction_set object.
+ * @param label, the label string going to lookup.
+ * @return a valid address for program counter, if label doesn't exist, exit.
+ */
+unsigned int instruction_set_get_label(instruction_set_st *, char *);
 
 /**
  * @brief get operation code from an instruction.
