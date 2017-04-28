@@ -319,6 +319,9 @@ static parsing_tree_st *generate_boolean_expre(link_list_st *token_list, symbol_
         return boolean_expr;
     } else {
         parsing_tree_st *left_expre = generate_expre(token_list, symbol_table);
+        #ifdef DEBUG
+        printf("left_expre generated\n");
+        #endif
         link_node_st *operator_link_node = link_list_pop(token_list);
         char *operator_link_node_data = link_node_get_data(operator_link_node);
         if (strcmp(operator_link_node_data, ">") != 0 && strcmp(operator_link_node_data, "<") != 0 && strcmp(operator_link_node_data, "<>") != 0 && strcmp(operator_link_node_data, "=") != 0 && strcmp(operator_link_node_data, ">=") != 0 && strcmp(operator_link_node_data, "<=") != 0) {
@@ -329,8 +332,12 @@ static parsing_tree_st *generate_boolean_expre(link_list_st *token_list, symbol_
             link_node_free(operator_link_node);
             raise_syntax_error();
         }
+        #ifdef DEBUG
+        printf("Valid boolean operator\n");
+        #endif
         parsing_tree_st *operator_tree_node = parsing_tree_new(strdup(operator_link_node_data), free);
         link_node_free(operator_link_node);
+        
         parsing_tree_st *right_expre = generate_expre(token_list, symbol_table);
         parsing_tree_set_child(boolean_expr, left_expre);
         
