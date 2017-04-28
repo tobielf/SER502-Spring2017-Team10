@@ -6,9 +6,9 @@ MOV a 0
 MOV b 1
 
 MOV i 1
-loop1:
+for1:
 CMP i 7
-JE loop1_end
+JE for1_end
     DEC temp
     OUT b
     MOV temp b
@@ -18,5 +18,5 @@ JE loop1_end
     MOV b _temp1
     MOV a temp
 ADD i 1
-JMP loop1
-loop1_end:
+JMP for1
+for1_end:
