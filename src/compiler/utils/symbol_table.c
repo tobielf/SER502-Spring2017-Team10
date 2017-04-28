@@ -83,13 +83,12 @@ symbol_table_st *symbol_table_init()
     symbol_table_insert(symbol_table, ">=", BOOLEAN_OP);
 
     //parentheses
-    symbol_table_insert(symbol_table, "(", PARENTHESES);
-    symbol_table_insert(symbol_table, ")", PARENTHESES);
+    symbol_table_insert(symbol_table, "(", OPEN_PARENTHESES);
+    symbol_table_insert(symbol_table, ")", CLOSE_PARENTHESES);
 
     //curly brackets
-    symbol_table_insert(symbol_table, "{", CURLY_BRACKETS);
-    symbol_table_insert(symbol_table, "}", CURLY_BRACKETS);
-
+    symbol_table_insert(symbol_table, "{", OPEN_CURLY_BRACKETS);
+    symbol_table_insert(symbol_table, "}", CLOSE_CURLY_BRACKETS);
     return symbol_table;
 
 }

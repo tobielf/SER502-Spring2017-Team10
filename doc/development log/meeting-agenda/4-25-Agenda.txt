@@ -1,0 +1,11 @@
+Before today’s meeting:
+0. Finish Task 8 and start working at Task 9.
+--------below are meeting agenda of this Tuesday’s meeting--------
+1.Run unit test under each component. Summarizing the common problem in coding phase two.[30min] Explain implementation details (e.g, symbol table [insert method], put token types in `.h`; syntax_tree -> byte code[using expr as example]; how to construct unit test case etc)
+2. Review the code of Dev Phase Two.(30min[7min/member]).
+2.a. Follow the coding style or not. (If the code commit in Monday night will assign a reviewer to go through this first, otherwise on meeting time).
+2.b. Properly organized the file structure and defined the API.
+2.c. Provide any unit test entrance for your component.
+2.d. Clearly defined the interface inside the component.
+2.e. [Optional] Tool scan result.
+3. After review, do the modification on code, then merge.
