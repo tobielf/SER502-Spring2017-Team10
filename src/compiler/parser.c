@@ -55,10 +55,10 @@ static parsing_tree_st *generate_stmt_list(link_list_st *, symbol_table_st *);
  * @return: the pointer to generated if statement
  */
 static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_st *symbol_table) {
+    parsing_tree_st *if_stmt_tree_node = parsing_tree_new("if_stmt", NULL);
     link_node_st *if_link_node = link_list_pop(token_list);
     char *if_link_node_data = link_node_get_data(if_link_node);
     if (strcmp(if_link_node_data, "if") != 0) {
-        link_node_free(if_link_node);
         raise_syntax_error(__LINE__, "expected: if");
     }
     parsing_tree_st *if_tree_node = parsing_tree_new(strdup(if_link_node_data), free);
@@ -66,8 +66,7 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
 
     link_node_st *left_parenthesis = link_list_pop(token_list);
     char *left_parenthesis_data = link_node_get_data(left_parenthesis);
-    if (strcmp(left_parenthesis_data, "(")) {
-        link_node_free(left_parenthesis);
+    if (strcmp(left_parenthesis_data, "(") != 0) {
         raise_syntax_error(__LINE__, "expected: (");
     }
     parsing_tree_st *left_parenthesis_tree_node = parsing_tree_new(strdup(left_parenthesis_data), free);
@@ -77,8 +76,7 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
 
     link_node_st *right_parenthesis = link_list_pop(token_list);
     char *right_parenthesis_data = link_node_get_data(right_parenthesis);
-    if (strcmp(right_parenthesis_data, ")")) {
-        link_node_free(right_parenthesis);
+    if (strcmp(right_parenthesis_data, ")") != 0) {
         raise_syntax_error(__LINE__, "expected: )");
     }
     parsing_tree_st *right_parenthesis_tree_node = parsing_tree_new(strdup(right_parenthesis_data), free);
@@ -87,7 +85,6 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
     link_node_st *then_link_node = link_list_pop(token_list);
     char *then_link_node_data = link_node_get_data(then_link_node);
     if (strcmp(then_link_node_data, "then")) {
-        link_node_free(then_link_node);
         raise_syntax_error(__LINE__, "expected: then");
     }
     parsing_tree_st *then_tree_node = parsing_tree_new(strdup(then_link_node_data), free);
@@ -95,8 +92,7 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
     
     link_node_st *left_bracket = link_list_pop(token_list);
     char *left_bracket_data = link_node_get_data(left_bracket);
-    if (strcmp(left_bracket_data, "{")) {
-        link_node_free(left_bracket);
+    if (strcmp(left_bracket_data, "{") != 0) {
         raise_syntax_error(__LINE__, "expected: {");
     }
     parsing_tree_st *left_bracket_tree_node = parsing_tree_new(strdup(left_bracket_data), free);
@@ -105,14 +101,11 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
     
     link_node_st *right_bracket = link_list_pop(token_list);
     char *right_bracket_data = link_node_get_data(right_bracket);
-    if (strcmp(right_bracket_data, "}")) {
-        link_node_free(right_bracket);
+    if (strcmp(right_bracket_data, "}") != 0) {
         raise_syntax_error(__LINE__, "expected: }");
     }
     parsing_tree_st *right_bracket_tree_node = parsing_tree_new(strdup(right_bracket_data), free);
     link_node_free(right_bracket);
-
-    parsing_tree_st *if_stmt_tree_node = parsing_tree_new("if_stmt", NULL);
     
     parsing_tree_set_child(if_stmt_tree_node, left_parenthesis_tree_node);
 
@@ -126,14 +119,13 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
     link_node_st *else_link_node = link_list_top(token_list);
     char *else_link_node_data = link_node_get_data(else_link_node);
     if (strcmp(else_link_node_data, "else") == 0) {
-        link_node_st *else_link_node2 = link_list_pop(token_list);
+        else_link_node = link_list_pop(token_list);
         parsing_tree_st *else_tree_node = parsing_tree_new(strdup(else_link_node_data), free);
-        link_node_free(else_link_node2);
+        link_node_free(else_link_node);
 
         link_node_st *left_bracket2 = link_list_pop(token_list);
         char *left_bracket_data2 = link_node_get_data(left_bracket2);
-        if (strcmp(left_bracket_data2, "{")) {
-            link_node_free(left_bracket2);
+        if (strcmp(left_bracket_data2, "{") != 0 ) {
             raise_syntax_error(__LINE__, "expected {");
         }
         parsing_tree_st *left_bracket_tree_node2 = parsing_tree_new(strdup(left_bracket_data2), free);
@@ -142,19 +134,16 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
     
         link_node_st *right_bracket2 = link_list_pop(token_list);
         char *right_bracket_data2 = link_node_get_data(right_bracket2);
-        if (strcmp(right_bracket_data2, "}")) {
-            link_node_free(right_bracket2);
+        if (strcmp(right_bracket_data2, "}") != 0) {
             raise_syntax_error(__LINE__, "expected }");
         }
         parsing_tree_st *right_bracket_tree_node2 = parsing_tree_new(strdup(right_bracket_data2), free);
         link_node_free(right_bracket2);
 
-        parsing_tree_set_child(if_stmt_tree_node, else_tree_node);
         parsing_tree_set_sibling(right_bracket_tree_node, else_tree_node);
         parsing_tree_set_sibling(else_tree_node, left_bracket_tree_node2);
         parsing_tree_set_sibling(left_bracket_tree_node2, stmt_list2);
         parsing_tree_set_sibling(stmt_list2, right_bracket_tree_node2);
-        
     }
 
     return if_stmt_tree_node;
@@ -171,7 +160,6 @@ static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table
     link_node_st *for_link_node = link_list_pop(token_list);
     char *for_link_node_data = link_node_get_data(for_link_node);
     if (strcmp(for_link_node_data, "for") != 0) {
-        link_node_free(for_link_node);
         raise_syntax_error(__LINE__, "expected: for");
     }
     link_node_free(for_link_node);
@@ -179,9 +167,7 @@ static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table
 
     link_node_st *id_link_node = link_list_pop(token_list);
     char *id_link_node_data = link_node_get_data(id_link_node);
-    int id_index = symbol_table_lookup(symbol_table, id_link_node_data);
-    if(id_index != IDENTIFIER) {
-        link_node_free(id_link_node);
+    if(symbol_table_lookup(symbol_table, id_link_node_data) != IDENTIFIER) {
         raise_syntax_error(__LINE__, "expected: IDENTIFIER");
     }
     parsing_tree_st *id_tree_node = parsing_tree_new(strdup(id_link_node_data), free);
@@ -190,19 +176,16 @@ static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table
     link_node_st *from_link_node = link_list_pop(token_list);
     char *from_link_node_data = link_node_get_data(from_link_node);
     if (strcmp(from_link_node_data, "from") != 0){
-        link_node_free(from_link_node);
         raise_syntax_error(__LINE__, "expected: from");
     }
     link_node_free(from_link_node);
     parsing_tree_st *from_tree_node = parsing_tree_new("from", NULL);
-
 
     parsing_tree_st *expre1 = generate_expre(token_list, symbol_table);
 
     link_node_st *to_link_node = link_list_pop(token_list);
     char *to_link_node_data = link_node_get_data(to_link_node);
     if (strcmp(to_link_node_data, "to") != 0) {
-        link_node_free(to_link_node);
         raise_syntax_error(__LINE__, "expected: to");
     } 
     
@@ -214,7 +197,6 @@ static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table
     link_node_st *step_link_node = link_list_pop(token_list);
     char *step_link_node_data = link_node_get_data(step_link_node);
     if (strcmp(step_link_node_data, "step") != 0) {
-        link_node_free(step_link_node);
         raise_syntax_error(__LINE__, "expected: step");
     }
     link_node_free(step_link_node);
@@ -225,7 +207,6 @@ static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table
     link_node_st *left_bracket_link_node = link_list_pop(token_list);
     char *left_bracket_link_node_data = link_node_get_data(left_bracket_link_node);
     if (strcmp(left_bracket_link_node_data, "{") != 0) {
-        link_node_free(left_bracket_link_node);
         raise_syntax_error(__LINE__, "expected: {");
     }
     link_node_free(left_bracket_link_node);
@@ -236,7 +217,6 @@ static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table
     link_node_st *right_bracket_link_node = link_list_pop(token_list);
     char *right_bracket_link_node_data = link_node_get_data(right_bracket_link_node);
     if (strcmp(right_bracket_link_node_data, "}") != 0) {
-        link_node_free(right_bracket_link_node);
         raise_syntax_error(__LINE__, "expected: }");
     } 
     link_node_free(right_bracket_link_node);
@@ -263,21 +243,12 @@ static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table
  * @return: the pointer to generated boolean expression
  */
 static parsing_tree_st *generate_boolean_expre(link_list_st *token_list, symbol_table_st *symbol_table) {
-    
-    #ifdef DEBUG
-    printf("This is generation of boolean_expr\n");
-    link_node_st *top = link_list_top(token_list);
-    char *top_data = link_node_get_data(top);
-    printf("The first element of boolean expression is %s\n", top_data);
-    #endif
-
     parsing_tree_st *boolean_expr = parsing_tree_new("boolean_expr", NULL);
     link_node_st *first_element = link_list_top(token_list);
     char *first_element_data = link_node_get_data(first_element);
     if (strcmp(first_element_data, "true") == 0 || strcmp(first_element_data, "false") == 0) {
         parsing_tree_st *boolean_value = generate_boolean_value(token_list, symbol_table);
         parsing_tree_set_child(boolean_expr, boolean_value);
-        return boolean_expr;
     } else {
         parsing_tree_st *left_expre = generate_expre(token_list, symbol_table);
         #ifdef DEBUG
@@ -285,13 +256,9 @@ static parsing_tree_st *generate_boolean_expre(link_list_st *token_list, symbol_
         #endif
         link_node_st *operator_link_node = link_list_pop(token_list);
         char *operator_link_node_data = link_node_get_data(operator_link_node);
-        if (strcmp(operator_link_node_data, ">") != 0 && strcmp(operator_link_node_data, "<") != 0 && strcmp(operator_link_node_data, "<>") != 0 && strcmp(operator_link_node_data, "=") != 0 && strcmp(operator_link_node_data, ">=") != 0 && strcmp(operator_link_node_data, "<=") != 0) {
-            link_node_free(operator_link_node);
-            raise_syntax_error(__LINE__, "expected: boolean_expr");
+        if (symbol_table_lookup(symbol_table, operator_link_node_data) != BOOLEAN_OP) {
+            raise_syntax_error(__LINE__, "expected: boolean operators");
         }
-        #ifdef DEBUG
-        printf("Valid boolean operator\n");
-        #endif
         parsing_tree_st *operator_tree_node = parsing_tree_new(strdup(operator_link_node_data), free);
         link_node_free(operator_link_node);
         
@@ -300,9 +267,8 @@ static parsing_tree_st *generate_boolean_expre(link_list_st *token_list, symbol_
         
         parsing_tree_set_sibling(left_expre, operator_tree_node);
         parsing_tree_set_sibling(operator_tree_node, right_expre);
-        return boolean_expr;
-
     }
+    return boolean_expr;
 }
 
 /**
