@@ -37,19 +37,17 @@ static void emit_error() {
 */
 link_list_st *lexical_analysis(symbol_table_st *symbol_table) {
 
-    if (symbol_table == NULL) {
+    if (symbol_table == NULL) 
         return NULL;
-    }
+
     char *token_buff = (char *)malloc(DEFAULT_TOKEN_BUFF_SIZE);
     int token_buff_size = DEFAULT_TOKEN_BUFF_SIZE;
     int token_length = 0;
-    int token_type = NONE;
-    char char_in = getc(stdin);
+    int char_in;
 
     link_list_st* link_list = link_list_init();
 
-    while ((char_in = getc(stdin)) != EOF) {
-
+    while ((char_in = getchar()) != EOF) {
         if (char_in == ' ' || char_in == '\t' || 
             char_in == '\r' || char_in == '\n')
             continue;
@@ -60,7 +58,7 @@ link_list_st *lexical_analysis(symbol_table_st *symbol_table) {
             // Special symbols.
             token_buff[token_length++] = char_in;
             token_buff[token_length++] = '\0';
-            token_type = symbol_table_lookup(symbol_table, token_buff);
+
             emit_token(link_list, token_buff);
         } else if (isalpha(char_in)) {
             // Starting from alpha, possible: KEYWORD or IDENTIFIER.
@@ -71,6 +69,8 @@ link_list_st *lexical_analysis(symbol_table_st *symbol_table) {
                     //todo realloc
                 }
             }
+            if (!isalpha(char_in))
+                ungetc(char_in, stdin);
             token_buff[token_length++] = '\0';
             if (symbol_table_lookup(symbol_table, token_buff) == NONE) {
                 symbol_table_insert(symbol_table, token_buff, IDENTIFIER);
@@ -97,22 +97,24 @@ link_list_st *lexical_analysis(symbol_table_st *symbol_table) {
         } else if (char_in == '-') {
             int look_ahead = getchar();
             token_buff[token_length++] = char_in;
-            if (isdigit(look_ahead)) {
-                while (isdigit(look_ahead)) {
-                    token_buff[token_length++] = look_ahead;
-                    look_ahead = getchar();
-                    if (token_length >= token_buff_size) {
-                        //todo realloc
-                    }
+            if (!isdigit(look_ahead)) {
+                token_buff[token_length++] = '\0';
+                emit_token(link_list, token_buff);
+            }
+            ungetc(look_ahead, stdin);
+        } else if (isdigit(char_in)) {
+            while (isdigit(char_in)) {
+                token_buff[token_length++] = char_in;
+                char_in = getchar();
+                if (token_length >= token_buff_size) {
+                    //todo realloc
                 }
-            } else {
-                ungetc(look_ahead, stdin);
             }
+            if (!isdigit(char_in))
+                ungetc(char_in, stdin);
             token_buff[token_length++] = '\0';
-            if (symbol_table_lookup(symbol_table, token_buff) == NONE) {
-                symbol_table_insert(symbol_table, token_buff, NUMBER);
-            }
             emit_token(link_list, token_buff);
+            symbol_table_insert(symbol_table, token_buff, NUMBER);
         }
 
         token_length = 0;
@@ -124,22 +126,29 @@ link_list_st *lexical_analysis(symbol_table_st *symbol_table) {
 
 #ifdef XTEST
 
-void test_case_one() {
+int print_list(link_node_st *node, void *cb_data) {
+    printf("%s\n", (char *)link_node_get_data(node));
+    return LINK_LIST_CONTINUE;
+}
+
+void test_case_one(char *file_name) {
 
     lexical_analysis(NULL);
 }
 
- void test_case_two() {
-
- lexical_analysis(symbol_table_init());
- }
-
-
-int main() {
+void test_case_two(char *file_name) {
+    freopen(file_name, "r", stdin);
+    link_list_st *token_list = lexical_analysis(symbol_table_init());
+    link_list_traverse(token_list, print_list, NULL);
+}
 
 
-    test_case_one();
-    test_case_two();
+int main(int argc, char *argv[]) {
+    if (argc != 2)
+        return 0;
+
+    test_case_one(argv[1]);
+    test_case_two(argv[1]);
     return 0;
 }
 #endif
