@@ -24,7 +24,7 @@
  * @return LINK_LIST_CONTINUE, next node;
  *         LINK_LIST_STOP, stop here.
  */
-int print_byte_code(link_node_st *node)
+int print_byte_code(link_node_st *node, void *cb_data)
 {
     char *str = link_node_get_data(node);
     if (str != NULL) {
