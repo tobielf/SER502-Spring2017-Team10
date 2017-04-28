@@ -1,3 +1,15 @@
+April 27(Thursday).
+Meeting input:
+Task 9, Developing phase three.
+Pull/Request related to phase three.
+Task 10, Developing phase four.
+
+Meeting output:
+All pull/requests have been reviewed and merged into the master.
+Everyone understand how lexical working progress.
+Everyone understand the parsing tree structure in child/sibling form.
+Everyone understand the video standard:
+
 April 25(Tuesday).
 No in person meeting today, everyone takes a break, and doing the code review online.
 
