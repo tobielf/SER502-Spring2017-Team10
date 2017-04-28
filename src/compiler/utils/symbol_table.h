@@ -18,6 +18,20 @@ enum type {
 typedef struct symbol_table symbol_table_st;
 struct symbol_table;
 
+enum type {
+    KEYWORD = 0,
+    IDENTIFIER = 1,
+    BIN_OP = 2,
+    NUMBER = 3,
+    DELIMITER = 4,
+    BOOLEAN_OP = 5,
+    ID = 6,
+    OPEN_PARENTHESES = 7,
+    CLOSE_PARENTHESES = 8,
+    OPEN_CURLY_BRACKETS = 9,
+    CLOSE_CURLY_BRACKETS = 10,
+};
+
 /**
  * @brief initialize the symbol table.
  * @return a valid symbol table object.
