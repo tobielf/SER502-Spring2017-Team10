@@ -403,20 +403,18 @@ static parsing_tree_st *generate_factor(link_list_st *token_list, symbol_table_s
  */
 static parsing_tree_st *generate_res1(link_list_st *token_list, symbol_table_st *symbol_table) {
     parsing_tree_st *res1 = parsing_tree_new("res1", NULL);
-    link_node_st *operator = link_list_pop(token_list);
+    link_node_st *operator = link_list_top(token_list);
     char *operator_data = link_node_get_data(operator);
     if (strcmp(operator_data, "+") == 0 || 
         strcmp(operator_data, "-") == 0){
 
+        operator = link_list_pop(token_list);
         parsing_tree_st *operator_tree_node = parsing_tree_new(strdup(operator_data), free);
         link_node_free(operator);
         parsing_tree_st *term = generate_term(token_list, symbol_table);
         parsing_tree_set_child(res1, operator_tree_node);
         parsing_tree_set_sibling(operator_tree_node, term);
-    } else {
-        raise_syntax_error(__LINE__, "expected: + or -");
     }
-    
     return res1;
 }
 
@@ -427,20 +425,19 @@ static parsing_tree_st *generate_res1(link_list_st *token_list, symbol_table_st 
  * @return: the pointer to generated res2 of the expression
  */
 static parsing_tree_st *generate_res2(link_list_st *token_list, symbol_table_st *symbol_table) {
-    link_node_st *operator = link_list_pop(token_list);
+    link_node_st *operator = link_list_top(token_list);
     char *operator_data = link_node_get_data(operator);
     parsing_tree_st *res2 = parsing_tree_new("res2", NULL);
     if (strcmp(operator_data, "*") == 0 || 
         strcmp(operator_data, "/") == 0 || 
         strcmp(operator_data, "%") == 0) {
-        
+
+        operator = link_list_pop(token_list);
         parsing_tree_st *operator_tree_node = parsing_tree_new(strdup(operator_data), free);
         link_node_free(operator);
         parsing_tree_st *factor = generate_factor(token_list, symbol_table);
         parsing_tree_set_child(res2, operator_tree_node);
         parsing_tree_set_sibling(operator_tree_node, factor);
-    } else {
-        raise_syntax_error(__LINE__, "expected: * or / or %");
     }
     return res2;
 }
