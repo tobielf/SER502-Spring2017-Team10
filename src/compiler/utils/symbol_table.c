@@ -51,14 +51,43 @@ symbol_table_st *symbol_table_init()
 
     symbol_table->table_size = 0;
 
+    //delimiter
+    symbol_table_insert(symbol_table, ";", DELIMITER);
+
+    //keywords
     symbol_table_insert(symbol_table, "is", KEYWORD);
     symbol_table_insert(symbol_table, "var", KEYWORD);
     symbol_table_insert(symbol_table, "print", KEYWORD);
+    symbol_table_insert(symbol_table, "if", KEYWORD);
+    symbol_table_insert(symbol_table, "then", KEYWORD);
+    symbol_table_insert(symbol_table, "else", KEYWORD);
+    symbol_table_insert(symbol_table, "for", KEYWORD);
+    symbol_table_insert(symbol_table, "from", KEYWORD);
+    symbol_table_insert(symbol_table, "to", KEYWORD);
+    symbol_table_insert(symbol_table, "step", KEYWORD);
+
+    //binary operations
     symbol_table_insert(symbol_table, "+", BIN_OP);
     symbol_table_insert(symbol_table, "-", BIN_OP);
     symbol_table_insert(symbol_table, "*", BIN_OP);
     symbol_table_insert(symbol_table, "/", BIN_OP);
+    symbol_table_insert(symbol_table, "%", BIN_OP);
 
+    //boolean operations
+    symbol_table_insert(symbol_table, "=", BOOLEAN_OP);
+    symbol_table_insert(symbol_table, "<>", BOOLEAN_OP);
+    symbol_table_insert(symbol_table, "<", BOOLEAN_OP);
+    symbol_table_insert(symbol_table, ">", BOOLEAN_OP);
+    symbol_table_insert(symbol_table, "<=", BOOLEAN_OP);
+    symbol_table_insert(symbol_table, ">=", BOOLEAN_OP);
+
+    //parentheses
+    symbol_table_insert(symbol_table, "(", OPEN_PARENTHESES);
+    symbol_table_insert(symbol_table, ")", CLOSE_PARENTHESES);
+
+    //curly brackets
+    symbol_table_insert(symbol_table, "{", OPEN_CURLY_BRACKETS);
+    symbol_table_insert(symbol_table, "}", CLOSE_CURLY_BRACKETS);
     return symbol_table;
 
 }
@@ -126,11 +155,10 @@ int symbol_table_insert(symbol_table_st *symbol_table, char *symbol, int token_t
         index = symbol_table->table_size;
 
         if (symbol_table->table_size >= symbol_table->array_size) {
-            symbol_st *new_symbol_array = realloc(symbol_table->symbol_array,
-                                                  symbol_table->array_size * ENLARGE_FACTOR);
-            if (new_symbol_array == NULL)
+            symbol_table->symbol_array = realloc(symbol_table->symbol_array,
+                                                  sizeof(symbol_st) * symbol_table->array_size * ENLARGE_FACTOR);
+            if (symbol_table->symbol_array == NULL)
                 exit(ENOMEM);
-            symbol_table->symbol_array = new_symbol_array;
 
             symbol_table->array_size *= ENLARGE_FACTOR;
         }
@@ -163,23 +191,23 @@ int main() {
 void test_case_one() {
 
     symbol_table_st* table = symbol_table_init();
-    printf("Index of + symbol (should return 3): %d\n", symbol_table_lookup(table,"+"));
+    printf("Index of + symbol (should return 2): %d\n", symbol_table_lookup(table,"+"));
     symbol_table_fini(table);
 }
 
 void test_case_two() {
 
     symbol_table_st* table = symbol_table_init();
-    printf("Index of 'for'(should return -1): %d\n", symbol_table_lookup(table,"for"));
+    printf("Index of 'the'(should return -1): %d\n", symbol_table_lookup(table,"the"));
     symbol_table_fini(table);
 }
 
 void test_case_three() {
 
     symbol_table_st* table = symbol_table_init();
-    printf("Table size (should be 7): %d\n",table->table_size);
+    printf("Table size (should be 26): %d\n",table->table_size);
     symbol_table_insert(table, "var", KEYWORD);
-    printf("Table size after attempt to put in 'var' again: %d",table->table_size);
+    printf("Table size after attempt to put in 'var' again: %d\n",table->table_size);
     symbol_table_fini(table);
 }
 
