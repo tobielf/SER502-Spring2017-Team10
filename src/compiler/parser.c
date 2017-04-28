@@ -15,8 +15,8 @@
 #include "utils/symbol_table.h"
 #include "utils/link_list.h"
 
-static void raise_syntax_error() {
-    fprintf(stderr, "Syntax error\n");
+static void raise_syntax_error(int line_no, char *msg) {
+    fprintf(stderr, "Syntax error: in parser line: %d\n %s\n", line_no, msg);
     exit(EINVAL);
 }
 
@@ -58,11 +58,8 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
     link_node_st *if_link_node = link_list_pop(token_list);
     char *if_link_node_data = link_node_get_data(if_link_node);
     if (strcmp(if_link_node_data, "if") != 0) {
-        #ifdef DEBUG
-        printf("The first token is not if\n");
-        #endif
         link_node_free(if_link_node);
-        raise_syntax_error();
+        raise_syntax_error(__LINE__, "expected: if");
     }
     parsing_tree_st *if_tree_node = parsing_tree_new(strdup(if_link_node_data), free);
     link_node_free(if_link_node);
@@ -70,11 +67,8 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
     link_node_st *left_parenthesis = link_list_pop(token_list);
     char *left_parenthesis_data = link_node_get_data(left_parenthesis);
     if (strcmp(left_parenthesis_data, "(")) {
-        #ifdef DEBUG
-        printf("The left paranthesis missing\n");
-        #endif
         link_node_free(left_parenthesis);
-        raise_syntax_error();
+        raise_syntax_error(__LINE__, "expected: (");
     }
     parsing_tree_st *left_parenthesis_tree_node = parsing_tree_new(strdup(left_parenthesis_data), free);
     link_node_free(left_parenthesis);
@@ -84,11 +78,8 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
     link_node_st *right_parenthesis = link_list_pop(token_list);
     char *right_parenthesis_data = link_node_get_data(right_parenthesis);
     if (strcmp(right_parenthesis_data, ")")) {
-        #ifdef DEBUG
-        printf("The right paranthesis missing\n");
-        #endif
         link_node_free(right_parenthesis);
-        raise_syntax_error();
+        raise_syntax_error(__LINE__, "expected: )");
     }
     parsing_tree_st *right_parenthesis_tree_node = parsing_tree_new(strdup(right_parenthesis_data), free);
     link_node_free(right_parenthesis);
@@ -96,11 +87,8 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
     link_node_st *then_link_node = link_list_pop(token_list);
     char *then_link_node_data = link_node_get_data(then_link_node);
     if (strcmp(then_link_node_data, "then")) {
-        #ifdef DEBUG
-        printf("Then keyword missing\n");
-        #endif
         link_node_free(then_link_node);
-        raise_syntax_error();
+        raise_syntax_error(__LINE__, "expected: then");
     }
     parsing_tree_st *then_tree_node = parsing_tree_new(strdup(then_link_node_data), free);
     link_node_free(then_link_node);
@@ -108,11 +96,8 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
     link_node_st *left_bracket = link_list_pop(token_list);
     char *left_bracket_data = link_node_get_data(left_bracket);
     if (strcmp(left_bracket_data, "{")) {
-        #ifdef DEBUG
-        printf("The left bracket missing\n");
-        #endif
         link_node_free(left_bracket);
-        raise_syntax_error();
+        raise_syntax_error(__LINE__, "expected: {");
     }
     parsing_tree_st *left_bracket_tree_node = parsing_tree_new(strdup(left_bracket_data), free);
     link_node_free(left_bracket);
@@ -121,11 +106,8 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
     link_node_st *right_bracket = link_list_pop(token_list);
     char *right_bracket_data = link_node_get_data(right_bracket);
     if (strcmp(right_bracket_data, "}")) {
-        #ifdef DEBUG
-        printf("The  right bracket missing\n");
-        #endif
         link_node_free(right_bracket);
-        raise_syntax_error();
+        raise_syntax_error(__LINE__, "expected: }");
     }
     parsing_tree_st *right_bracket_tree_node = parsing_tree_new(strdup(right_bracket_data), free);
     link_node_free(right_bracket);
@@ -152,7 +134,7 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
         char *left_bracket_data2 = link_node_get_data(left_bracket2);
         if (strcmp(left_bracket_data2, "{")) {
             link_node_free(left_bracket2);
-            raise_syntax_error();
+            raise_syntax_error(__LINE__, "expected {");
         }
         parsing_tree_st *left_bracket_tree_node2 = parsing_tree_new(strdup(left_bracket_data2), free);
         link_node_free(left_bracket2);
@@ -162,7 +144,7 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
         char *right_bracket_data2 = link_node_get_data(right_bracket2);
         if (strcmp(right_bracket_data2, "}")) {
             link_node_free(right_bracket2);
-            raise_syntax_error();
+            raise_syntax_error(__LINE__, "expected }");
         }
         parsing_tree_st *right_bracket_tree_node2 = parsing_tree_new(strdup(right_bracket_data2), free);
         link_node_free(right_bracket2);
@@ -189,11 +171,8 @@ static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table
     link_node_st *for_link_node = link_list_pop(token_list);
     char *for_link_node_data = link_node_get_data(for_link_node);
     if (strcmp(for_link_node_data, "for") != 0) {
-        #ifdef DEBUG
-        printf("for keyword missing\n");
-        #endif
         link_node_free(for_link_node);
-        raise_syntax_error();
+        raise_syntax_error(__LINE__, "expected: for");
     }
     link_node_free(for_link_node);
     parsing_tree_st *for_tree_node = parsing_tree_new("for", NULL);
@@ -202,11 +181,8 @@ static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table
     char *id_link_node_data = link_node_get_data(id_link_node);
     int id_index = symbol_table_lookup(symbol_table, id_link_node_data);
     if(id_index != IDENTIFIER) {
-        #ifdef DEBUG
-        printf("we require variable After for keyword\n");
-        #endif
         link_node_free(id_link_node);
-        raise_syntax_error();
+        raise_syntax_error(__LINE__, "expected: IDENTIFIER");
     }
     parsing_tree_st *id_tree_node = parsing_tree_new(strdup(id_link_node_data), free);
     link_node_free(id_link_node);
@@ -214,11 +190,8 @@ static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table
     link_node_st *from_link_node = link_list_pop(token_list);
     char *from_link_node_data = link_node_get_data(from_link_node);
     if (strcmp(from_link_node_data, "from") != 0){
-        #ifdef DEBUG
-        printf("from keyword missing\n");
-        #endif
         link_node_free(from_link_node);
-        raise_syntax_error();
+        raise_syntax_error(__LINE__, "expected: from");
     }
     link_node_free(from_link_node);
     parsing_tree_st *from_tree_node = parsing_tree_new("from", NULL);
@@ -229,11 +202,8 @@ static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table
     link_node_st *to_link_node = link_list_pop(token_list);
     char *to_link_node_data = link_node_get_data(to_link_node);
     if (strcmp(to_link_node_data, "to") != 0) {
-        #ifdef DEBUG
-        printf("to keyword missing\n");
-        #endif
         link_node_free(to_link_node);
-        raise_syntax_error();
+        raise_syntax_error(__LINE__, "expected: to");
     } 
     
     link_node_free(to_link_node);
@@ -244,11 +214,8 @@ static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table
     link_node_st *step_link_node = link_list_pop(token_list);
     char *step_link_node_data = link_node_get_data(step_link_node);
     if (strcmp(step_link_node_data, "step") != 0) {
-        #ifdef DEBUG
-        printf("step keyword missing\n");
-        #endif
         link_node_free(step_link_node);
-        raise_syntax_error();
+        raise_syntax_error(__LINE__, "expected: step");
     }
     link_node_free(step_link_node);
     parsing_tree_st *step_tree_node = parsing_tree_new("step", NULL);
@@ -258,11 +225,8 @@ static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table
     link_node_st *left_bracket_link_node = link_list_pop(token_list);
     char *left_bracket_link_node_data = link_node_get_data(left_bracket_link_node);
     if (strcmp(left_bracket_link_node_data, "{") != 0) {
-        #ifdef DEBUG
-        printf("left bracket missing\n");
-        #endif
         link_node_free(left_bracket_link_node);
-        raise_syntax_error();
+        raise_syntax_error(__LINE__, "expected: {");
     }
     link_node_free(left_bracket_link_node);
     parsing_tree_st *left_bracket_tree_node = parsing_tree_new("{", NULL);
@@ -272,11 +236,8 @@ static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table
     link_node_st *right_bracket_link_node = link_list_pop(token_list);
     char *right_bracket_link_node_data = link_node_get_data(right_bracket_link_node);
     if (strcmp(right_bracket_link_node_data, "}") != 0) {
-        #ifdef DEBUG
-        printf("right bracket missing\n");
-        #endif
         link_node_free(right_bracket_link_node);
-        raise_syntax_error();
+        raise_syntax_error(__LINE__, "expected: }");
     } 
     link_node_free(right_bracket_link_node);
     parsing_tree_st *right_bracket_tree_node = parsing_tree_new("}", NULL);
@@ -325,12 +286,8 @@ static parsing_tree_st *generate_boolean_expre(link_list_st *token_list, symbol_
         link_node_st *operator_link_node = link_list_pop(token_list);
         char *operator_link_node_data = link_node_get_data(operator_link_node);
         if (strcmp(operator_link_node_data, ">") != 0 && strcmp(operator_link_node_data, "<") != 0 && strcmp(operator_link_node_data, "<>") != 0 && strcmp(operator_link_node_data, "=") != 0 && strcmp(operator_link_node_data, ">=") != 0 && strcmp(operator_link_node_data, "<=") != 0) {
-            #ifdef DEBUG
-            printf("The operator we got is %s\n", operator_link_node_data);
-            printf("Invalid boolean operator\n");
-            #endif
             link_node_free(operator_link_node);
-            raise_syntax_error();
+            raise_syntax_error(__LINE__, "expected: boolean_expr");
         }
         #ifdef DEBUG
         printf("Valid boolean operator\n");
@@ -402,7 +359,7 @@ static parsing_tree_st *generate_stmt(link_list_st *token_list, symbol_table_st 
         #ifdef DEBUG
         printf("Can not generate statement\n");
         #endif
-        raise_syntax_error();
+        raise_syntax_error(__LINE__, "unsupported statement");
     }
 
     parsing_tree_set_child(stmt_tree, stmt_child);
@@ -420,14 +377,10 @@ static parsing_tree_st *generate_stmt(link_list_st *token_list, symbol_table_st 
  * @return: the pointer to generated root node of the declare statement subtree
  */
 static parsing_tree_st *generate_decl_stmt(link_list_st *token_list, symbol_table_st *symbol_table) {
-    // #ifdef DEBUG
-    // printf("Begin to generate declare statement\n");
-    // #endif
-
     link_node_st *var_node = link_list_pop(token_list);
     char *node_data = link_node_get_data(var_node);
     if (strcmp(node_data, "var") != 0)
-        raise_syntax_error();
+        raise_syntax_error(__LINE__, "expected: var");
 
     parsing_tree_st *var_tree_node = parsing_tree_new(strdup(node_data), free);
     link_node_free(var_node);
@@ -435,22 +388,15 @@ static parsing_tree_st *generate_decl_stmt(link_list_st *token_list, symbol_tabl
     link_node_st *id_node = link_list_pop(token_list);
     node_data = link_node_get_data(id_node);
 
-    // #ifdef DEBUG
-    // printf("Begin to lookup in symbol_table\n");
-    // #endif
     if (symbol_table_lookup(symbol_table, node_data) != IDENTIFIER)
-        raise_syntax_error();
-    // #ifdef DEBUG
-    // printf("End lookup in symbol_table\n");
-    // #endif
+        raise_syntax_error(__LINE__, "expected: IDENTIFIER");
+
     parsing_tree_st *id_tree_node = parsing_tree_new(strdup(node_data), free);
     parsing_tree_st *decl_stmt_tree_node = parsing_tree_new("decl_stmt", NULL);
     parsing_tree_set_child(decl_stmt_tree_node, var_tree_node);
     parsing_tree_set_sibling(var_tree_node, id_tree_node);
     link_node_free(id_node);
-    // #ifdef DEBUG
-    // printf("declare statement generated\n");
-    // #endif
+
     return var_tree_node;
 }
 
@@ -472,13 +418,8 @@ static parsing_tree_st *generate_factor(link_list_st *token_list, symbol_table_s
     char* first_element_data = link_node_get_data(first_element);
     int type_index = symbol_table_lookup(symbol_table, first_element_data);
     if (strcmp(first_element_data, "(") != 0 && type_index != IDENTIFIER && type_index != NUMBER) {
-        #ifdef DEBUG
-        printf("The first element of the fator is  %s\n", first_element_data);
-        printf(" The type index is %d\n", type_index);
-        printf("There is something wrong while generating factor\n");
-        #endif
         link_node_free(first_element);
-        raise_syntax_error();
+        raise_syntax_error(__LINE__, "expected: ( or IDENTIFIER or NUMBER");
     }
     if (strcmp(first_element_data, "(") == 0) {
         parsing_tree_st *left_parenthesis = parsing_tree_new(strdup(first_element_data), free);
@@ -488,10 +429,7 @@ static parsing_tree_st *generate_factor(link_list_st *token_list, symbol_table_s
         char* right_parenthesis_link_node_data = link_node_get_data(right_parenthesis_link_node);
         if (strcmp(right_parenthesis_link_node_data, ")") != 0) {
             link_node_free(right_parenthesis_link_node);
-            #ifdef DEBUG
-            printf("There is something wrong while generating right parenthesis\n");
-            #endif
-            raise_syntax_error();
+            raise_syntax_error(__LINE__, "expected: )");
         }
         parsing_tree_st *factor = parsing_tree_new("factor", NULL);
         parsing_tree_st *right_parnthesis = parsing_tree_new(strdup(right_parenthesis_link_node_data), free);
@@ -632,7 +570,7 @@ static parsing_tree_st *generate_print_stmt(link_list_st *token_list, symbol_tab
     link_node_st *print_node = link_list_pop(token_list);
     char *node_data = link_node_get_data(print_node);
     if (strcmp(node_data, "print") != 0)
-        raise_syntax_error();
+        raise_syntax_error(__LINE__, "expected: print");
     parsing_tree_st *print_stmt_node = parsing_tree_new("print_stmt", NULL);
     parsing_tree_st *print_tree_node = parsing_tree_new(strdup(node_data), free);
     link_node_free(print_node);
@@ -653,14 +591,14 @@ static parsing_tree_st *generate_assign_stmt(link_list_st *token_list, symbol_ta
     link_node_st *assign_node = link_list_pop(token_list);
     char *node_data = link_node_get_data(assign_node);
     if (symbol_table_lookup(symbol_table, node_data) != IDENTIFIER)
-        raise_syntax_error();
+        raise_syntax_error(__LINE__, "expected: IDENTIFIER");
 
     parsing_tree_st *id_tree_node = parsing_tree_new(strdup(node_data), free);
     link_node_free(assign_node);
     link_node_st *is_node = link_list_pop(token_list);
     node_data = link_node_get_data(is_node);
     if (strcmp(node_data, "is") != 0)
-        raise_syntax_error();
+        raise_syntax_error(__LINE__, "expected: is");
 
     parsing_tree_st *is_tree_node = parsing_tree_new(strdup(node_data), free);
     link_node_free(is_node);
