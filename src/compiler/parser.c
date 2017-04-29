@@ -545,32 +545,30 @@ parsing_tree_st *syntax_analysis(link_list_st *token_list, symbol_table_st *symb
 }
 
 static parsing_tree_st *generate_stmt_list(link_list_st *token_list, symbol_table_st *symbol_table) {
+    parsing_tree_st *root = NULL;
     parsing_tree_st *stmt_list_tree_node = parsing_tree_new("stmt_list", NULL);
-    parsing_tree_st* stmt1 = generate_stmt(token_list, symbol_table);
-    link_node_st *semicolon_link_node = link_list_pop(token_list);
-    char *semicolon_link_node_data = link_node_get_data(semicolon_link_node);
-    if (symbol_table_lookup(symbol_table, semicolon_link_node_data) != DELIMITER) {
-        link_node_free(semicolon_link_node);
-        raise_syntax_error(__LINE__, "expected: ;");
-    }
-    parsing_tree_st *semicolon_tree_node = parsing_tree_new(";", NULL);
-    link_node_free(semicolon_link_node);
-    parsing_tree_set_child(stmt_list_tree_node, stmt1);
-    parsing_tree_set_sibling(stmt1, semicolon_tree_node);
-    
-    link_node_st *first_element = link_list_top(token_list);
-    if (first_element == NULL)
-    {
-        return stmt_list_tree_node;
-    }
-    char *first_element_data = link_node_get_data(first_element);
-    if (symbol_table_lookup(symbol_table, first_element_data) == CLOSE_CURLY_BRACKETS) {
-        return stmt_list_tree_node;
-    }
+    root = stmt_list_tree_node;
+    while (1) {
+        parsing_tree_st *stmt = generate_stmt(token_list, symbol_table);
+        parsing_tree_set_child(stmt_list_tree_node, stmt);
 
-    parsing_tree_st *stmt_list_tree_node2 = generate_stmt_list(token_list, symbol_table);
-    parsing_tree_set_sibling(semicolon_tree_node, stmt_list_tree_node2);
-    return stmt_list_tree_node;
+        link_node_st *semicolon_node = link_list_pop(token_list);
+        char *node_data = link_node_get_data(semicolon_node);
+        if (symbol_table_lookup(symbol_table, node_data) != DELIMITER)
+            raise_syntax_error(__LINE__, "expected: DELIMITER");
+        link_node_free(semicolon_node);
+        parsing_tree_st *semicolon = parsing_tree_new(";", NULL);
+        parsing_tree_set_sibling(stmt, semicolon);
+
+        if (link_list_top(token_list) == NULL || 
+            symbol_table_lookup(symbol_table, 
+                                link_node_get_data(
+                                    link_list_top(token_list))) == CLOSE_CURLY_BRACKETS)
+            break;
+        stmt_list_tree_node = parsing_tree_new("stmt_list", NULL);
+        parsing_tree_set_sibling(semicolon, stmt_list_tree_node);
+    }
+    return root;
     
 }
 
