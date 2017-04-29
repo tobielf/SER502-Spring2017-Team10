@@ -966,6 +966,8 @@ void test_suite_five() {
 }
 
 void test_suite_six() {
+	printf("test suite six\n");
+
     link_list_st *byte_code = NULL;
     parsing_tree_st *root = parsing_tree_new("program", NULL);
     parsing_tree_st *node1 = parsing_tree_new("stmt_list", NULL);
@@ -1070,13 +1072,174 @@ void test_suite_six() {
     link_list_free(byte_code);
 }
 
+void test_suite_seven() {
+	printf("test suite seven\n");
+
+	link_list_st *byte_code = NULL;
+	parsing_tree_st *root = parsing_tree_new("program", NULL);
+	parsing_tree_st *node1 = parsing_tree_new("stmt_list", NULL);
+	parsing_tree_st *node2 = parsing_tree_new("stmt", NULL);
+	parsing_tree_set_child(root, node1);
+	parsing_tree_set_child(node1, node2);
+
+	node1 = node2;
+	node2 = parsing_tree_new(";", NULL);
+	parsing_tree_set_sibling(node1, node2);
+	parsing_tree_st *node3 = parsing_tree_new("stmt_list", NULL);
+	parsing_tree_set_sibling(node2, node3);
+
+	node2 = parsing_tree_new("decl_stmt", NULL);
+	parsing_tree_set_child(node1, node2);
+
+	node1 = parsing_tree_new("var", NULL);
+	parsing_tree_set_child(node2, node1);
+	node2 = parsing_tree_new("i", NULL);
+	parsing_tree_set_sibling(node1, node2);
+
+	node1 = parsing_tree_new("stmt", NULL);
+	parsing_tree_set_child(node3, node1);
+	node2 = parsing_tree_new(";", NULL);
+	parsing_tree_set_sibling(node1, node2);
+
+	node3 = parsing_tree_new("for_stmt", NULL);
+	parsing_tree_set_child(node1, node3);
+
+	node2 = parsing_tree_new("for", NULL);
+	parsing_tree_set_child(node3, node2);
+
+	node1 = parsing_tree_new("i", NULL);
+	parsing_tree_set_sibling(node2, node1);
+	node2 = parsing_tree_new("from", NULL);
+	parsing_tree_set_sibling(node1, node2);
+
+	parsing_tree_st *expr1_node = parsing_tree_new("expr", NULL);
+	parsing_tree_set_sibling(node2, expr1_node);
+
+	node2 = parsing_tree_new("term", NULL);
+	parsing_tree_set_child(expr1_node, node2);
+
+	node3 = parsing_tree_new("res1", NULL);
+	parsing_tree_set_sibling(node2, node3);
+
+	node3 = parsing_tree_new("factor", NULL);
+	parsing_tree_set_child(node2, node3);
+
+	node1 = parsing_tree_new("res2", NULL);
+	parsing_tree_set_sibling(node3, node1);
+
+	node2 = parsing_tree_new("1", NULL);
+	parsing_tree_set_child(node3, node2);
+
+	node1 = parsing_tree_new("to", NULL);
+	parsing_tree_set_sibling(expr1_node, node1);
+
+	parsing_tree_st *expr2_node = parsing_tree_new("expr", NULL);
+	parsing_tree_set_sibling(node1, expr2_node);
+
+	node2 = parsing_tree_new("term", NULL);
+	parsing_tree_set_child(expr2_node, node2);
+
+	node3 = parsing_tree_new("res1", NULL);
+	parsing_tree_set_sibling(node2, node3);
+
+	node3 = parsing_tree_new("factor", NULL);
+	parsing_tree_set_child(node2, node3);
+
+	node1 = parsing_tree_new("res2", NULL);
+	parsing_tree_set_sibling(node3, node1);
+
+	node2 = parsing_tree_new("10", NULL);
+	parsing_tree_set_child(node3, node2);
+
+	node2 = parsing_tree_new("step", NULL);
+	parsing_tree_set_sibling(expr2_node, node2);
+
+	parsing_tree_st *expr3_node = parsing_tree_new("expr", NULL);
+	parsing_tree_set_sibling(node2, expr3_node);
+
+	node2 = parsing_tree_new("term", NULL);
+	parsing_tree_set_child(expr3_node, node2);
+
+	node3 = parsing_tree_new("res1", NULL);
+	parsing_tree_set_sibling(node2, node3);
+
+	node3 = parsing_tree_new("factor", NULL);
+	parsing_tree_set_child(node2, node3);
+
+	node1 = parsing_tree_new("res2", NULL);
+	parsing_tree_set_sibling(node3, node1);
+
+	node2 = parsing_tree_new("i", NULL);
+	parsing_tree_set_child(node3, node2);
+
+	node2 = parsing_tree_new("*", NULL);
+	parsing_tree_set_child(node1, node2);
+
+	node3 = parsing_tree_new("factor", NULL);
+	parsing_tree_set_sibling(node2, node3);
+
+	node2 = parsing_tree_new("2", NULL);
+	parsing_tree_set_child(node3, node2);
+
+	node2 = parsing_tree_new("{", NULL);
+	parsing_tree_set_sibling(expr3_node, node2);
+
+	node3 = parsing_tree_new("stmt_list", NULL);
+	parsing_tree_set_sibling(node2, node3);
+
+	node1 = parsing_tree_new("stmt", NULL);
+	parsing_tree_set_child(node3, node1);
+	node2 = parsing_tree_new(";", NULL);
+	parsing_tree_set_sibling(node1, node2);
+
+	node2 = parsing_tree_new("print_stmt", NULL);
+	parsing_tree_set_child(node1, node2);
+
+	node1 = node2;
+	node2 = parsing_tree_new("print", NULL);
+	parsing_tree_set_child(node1, node2);
+
+	node1 = node2;
+	node2 = parsing_tree_new("expr", NULL);
+	parsing_tree_set_sibling(node1, node2);
+
+	node1 = node2;
+	node2 = parsing_tree_new("term", NULL);
+	parsing_tree_set_child(node1, node2);
+
+	node1 = parsing_tree_new("res1", NULL);
+	parsing_tree_set_sibling(node2, node1);
+
+	node1 = node2;
+	node2 = parsing_tree_new("factor", NULL);
+	parsing_tree_set_child(node1, node2);
+
+	node1 = parsing_tree_new("res2", NULL);
+	parsing_tree_set_sibling(node2, node1);
+
+	node1 = node2;
+	node2 = parsing_tree_new("i", NULL);
+	parsing_tree_set_child(node1, node2);
+
+	node2 = parsing_tree_new("}", NULL);
+	parsing_tree_set_sibling(node3, node2);
+
+	parsing_tree_prefix_traverse(root, print_tree, NULL);
+	byte_code = semantic_analysis(root, NULL);
+	link_list_traverse(byte_code, print_byte_code, NULL);
+
+	parsing_tree_free(root);
+	link_list_free(byte_code);
+}
+
 int main() {
-    test_suite_one();
-    test_suite_two();
-    test_suite_three();
-    test_suite_four();
-    test_suite_five();
-    test_suite_six();
+    //test_suite_one();
+    //test_suite_two();
+    //test_suite_three();
+    //test_suite_four();
+    //test_suite_five();
+    //test_suite_six();
+	test_suite_seven();
     return 0;
 }
 
