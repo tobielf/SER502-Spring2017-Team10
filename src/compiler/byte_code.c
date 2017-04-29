@@ -214,20 +214,39 @@ static void handle_if_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byt
     if_label = (char *)malloc(if_length);
     snprintf(if_label, if_length, "if%d:", if_id);
 
+    int if_end_target_len;
+    char *if_end_target;
+    if_end_target_len = strlen("if_end") + get_digits_num(if_id) + 1;
+    if_end_target = (char *)malloc(if_end_target_len);
+    snprintf(if_end_target, if_end_target_len, "if%d_end", if_id);
+
     int if_end_length;
     char *if_end_label;
-    if_end_length = strlen("if_end") + get_digits_num(if_id) + strlen(":") + 1;
+    if_end_length = strlen("if_end:") + get_digits_num(if_id) + 1;
     if_end_label = (char *)malloc(if_end_length);
-    snprintf(if_end_label, if_end_length, "if%d_end", if_id);
+    snprintf(if_end_label, if_end_length, "if%d_end:", if_id);
+
+    int else_target_len;
+    char *else_target;
+    else_target_len = strlen("else") + get_digits_num(else_id) + 1;
+    else_target = (char *)malloc(else_target_len);
+    snprintf(else_target, else_target_len, "else%d", else_id);
 
     int else_length;
     char *else_label;
     else_length = strlen("else") + get_digits_num(else_id) + strlen(":") + 1;
     else_label = (char *)malloc(else_length);
     snprintf(else_label, else_length, "else%d", else_id);
+    snprintf(else_label, else_length, "else%d:", else_id);
 
     parsing_tree_st *if_node = parsing_tree_get_child(parsing_tree_node);
     char *if_data = parsing_tree_get_data(if_node);
+#ifdef DEBUG
+    fprintf(stderr, "%s\n", if_data);
+#endif
+    if (strcmp(if_data, "if") != 0) {
+        error_msg(__LINE__, "if_stmt error");
+    }
 
     if (strcmp(if_data, "if") != 0) {
         error_msg(__LINE__, "if_stmt error");
@@ -251,9 +270,9 @@ static void handle_if_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byt
 
     int has_else = handle_if_stmt_helper(parsing_tree_get_sibling(brace_right_node));
     if (has_else) {
-        target = else_label;
+        target = else_target;
     } else {
-        target = if_end_label;
+        target = if_end_target;
     }
 
     boolean_data = handle_boolean_expr(boolean_node, byte_code);
@@ -288,9 +307,8 @@ static void handle_if_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byt
     handle_stmt_list(stmt_list_node, byte_code);
 
     if (has_else) {
-        byte_code_new(byte_code, "JMP", if_end_label, "");
+        byte_code_new(byte_code, "JMP", if_end_target, "");
 
-        snprintf(else_label, else_length, "else%d:", else_id);
         byte_code_new(byte_code, else_label, "", "");
 
         parsing_tree_st *else_node = parsing_tree_get_sibling(curlybrace_right_node);
@@ -310,7 +328,6 @@ static void handle_if_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byt
         handle_stmt_list(stmt_list_node, byte_code);
     }
 
-    snprintf(if_end_label, if_end_length, "if%d_end:", if_id);
     byte_code_new(byte_code, if_end_label, "", "");
 }
 
@@ -328,11 +345,23 @@ static void handle_for_stmt(parsing_tree_st *parsing_tree_node, link_list_st *by
     loop_string = (char *)malloc(loop_length);
     snprintf(loop_string, loop_length, "for%d:", loop_id);
 
-	int loop_end_length;
-	char *loop_end_label;
-	loop_end_length = strlen("for_end") + get_digits_num(loop_id) + strlen(":") + 1;
-	loop_end_label = (char *)malloc(loop_end_length);
-	snprintf(loop_end_label, loop_end_length, "for%d_end", loop_id);
+	int loop_end_target_len;
+	char *loop_end_target;
+	loop_end_target_len = strlen("for_end") + get_digits_num(loop_id) + strlen(":") + 1;
+	loop_end_target = (char *)malloc(loop_end_target_len);
+	snprintf(loop_end_target, loop_end_target_len, "for%d_end", loop_id);
+
+    int loop_end_len;
+    char *loop_end_label;
+    loop_end_len = strlen("for_end") + get_digits_num(loop_id) + strlen(":") + 1;
+    loop_end_label = (char *)malloc(loop_end_len);
+    snprintf(loop_end_label, loop_end_len, "for%d_end:", loop_id);
+
+    int loop_target_len;
+    char *loop_target;
+    loop_target_len = strlen("for") + get_digits_num(loop_id) + 1;
+    loop_target = (char *)malloc(loop_length);
+    snprintf(loop_target, loop_target_len, "for%d", loop_id);
 
     parsing_tree_st *for_node = parsing_tree_get_child(parsing_tree_node);
     char *for_data = parsing_tree_get_data(for_node);
@@ -374,7 +403,7 @@ static void handle_for_stmt(parsing_tree_st *parsing_tree_node, link_list_st *by
 
 	byte_code_new(byte_code, loop_string, "", "");
     byte_code_new(byte_code, "CMP", var_data, expr2_data); 
-	byte_code_new(byte_code, "JE", loop_end_label, "");
+	byte_code_new(byte_code, "JE", loop_end_target, "");
 
     parsing_tree_st *step_node = parsing_tree_get_sibling(expr2_node);
     char *step_data = parsing_tree_get_data(step_node);
@@ -404,7 +433,9 @@ static void handle_for_stmt(parsing_tree_st *parsing_tree_node, link_list_st *by
         error_msg(__LINE__, "right curlybrace error");
 
 	byte_code_new(byte_code, "MOV", var_data, expr3_data);
-	byte_code_new(byte_code, loop_end_label, "", "");
+
+	byte_code_new(byte_code, "JMP", loop_target, "");
+    byte_code_new(byte_code, loop_end_label, "", "");
 }
 
 /**
@@ -541,8 +572,6 @@ static char *handle_res1(parsing_tree_st *parsing_tree_node, link_list_st *byte_
 		error_msg(__LINE__, "res1 error");
     }
 
-    temp_id--;
-
     return temp_string;
 }
 
@@ -610,8 +639,6 @@ static char *handle_res2(parsing_tree_st *parsing_tree_node, link_list_st *byte_
     } else {
         error_msg(__LINE__, "reds2 error");
     }
-
-    temp_id--;
 
     return temp_string;
 }
