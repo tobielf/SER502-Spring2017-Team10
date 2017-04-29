@@ -66,7 +66,11 @@ link_list_st *lexical_analysis(symbol_table_st *symbol_table) {
                 token_buff[token_length++] = char_in;
                 char_in = getchar();
                 if (token_length >= token_buff_size) {
-                    //todo realloc
+                    token_buff = realloc(token_buff,
+                                        sizeof(char) * token_buff_size * ENLARGE_FACTOR);
+                    if (token_buff == NULL)
+                        exit(ENOMEM);
+                    token_buff_size *= ENLARGE_FACTOR;
                 }
             }
             if (!isalpha(char_in))
@@ -107,7 +111,11 @@ link_list_st *lexical_analysis(symbol_table_st *symbol_table) {
                 token_buff[token_length++] = char_in;
                 char_in = getchar();
                 if (token_length >= token_buff_size) {
-                    //todo realloc
+                    token_buff = realloc(token_buff,
+                                         sizeof(char) * token_buff_size * ENLARGE_FACTOR);
+                    if (token_buff == NULL)
+                        exit(ENOMEM);
+                    token_buff_size *= ENLARGE_FACTOR;
                 }
             }
             if (!isdigit(char_in))
