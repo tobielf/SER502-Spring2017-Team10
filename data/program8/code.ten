@@ -3,9 +3,9 @@ var j;
 var sum;
 var flag;
 sum is 0;
-for i from 2 to 100 step 1 {
+for i from 2 to 100 step i + 1 {
     flag is 0;
-    for j from 2 to i step 1 {
+    for j from 2 to i step j + 1 {
         if (i % j = 0) then {
             flag is 1;
         };

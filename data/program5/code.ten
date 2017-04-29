@@ -3,7 +3,7 @@ var i;
 
 sum is 0;
 
-for i from 0 to 10 step 1 {
+for i from 0 to 10 step i + 1 {
     if((i % 3) <> 0) then {
         sum is sum + i;
     };
