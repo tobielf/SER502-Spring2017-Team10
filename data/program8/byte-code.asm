@@ -2,42 +2,39 @@ DEC i
 DEC j
 DEC sum
 DEC flag
-
+MOV sum 0
 MOV i 2
-loop1:
+for1:
 CMP i 100
-JE loop1_end
+JE for1_end
     MOV flag 0
     
     MOV j 2
-    loop2:
-        DEC _temp1
-        MOV _temp1 i
-        DIV _temp1 2
-    CMP j _temp1
-    JE loop2_end
+    for2:
+    CMP j i
+    JE for2_end
         if1:
-            DEC _temp2
-            MOV _temp2 i
-            MOD _temp2 j
-        CMP _temp2 0
+            DEC _temp1
+            MOV _temp1 i
+            MOD _temp1 j
+        CMP _temp1 0
         JNE if1_end
             MOV flag 1
         if1_end:
     ADD j 1
-    JMP loop2
-    loop2_end:
+    JMP for2
+    for2_end:
     if2:
     CMP flag 0
     JNE if2_end
-        DEC _temp3
-        MOV _temp3 sum
-        ADD _temp3 i
-        MOV sum _temp3
+        DEC _temp2
+        MOV _temp2 sum
+        ADD _temp2 i
+        MOV sum _temp2
     if2_end:
 
 ADD i 1
-JMP loop1
-loop1_end:
+JMP for1
+for1_end:
 
 OUT sum

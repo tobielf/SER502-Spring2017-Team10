@@ -17,7 +17,7 @@ JE for1_end
         DEC _temp2
         MOV _temp2 even
         ADD _temp2 1
-        MOV even _temp 2
+        MOV even _temp2
         JMP if1_end
     else1:
         DEC _temp3
