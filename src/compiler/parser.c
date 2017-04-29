@@ -55,6 +55,7 @@ static parsing_tree_st *generate_stmt_list(link_list_st *, symbol_table_st *);
  * @return: the pointer to generated if statement
  */
 static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_st *symbol_table) {
+    
     link_node_st *if_link_node = link_list_pop(token_list);
     char *if_link_node_data = link_node_get_data(if_link_node);
     if (strcmp(if_link_node_data, "if") != 0) {
