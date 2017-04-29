@@ -10,6 +10,9 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include "storage.h"
 #include "instruction.h"
@@ -267,9 +270,16 @@ static void s_usage();
  */
 int main(int argc, char *argv[])
 {
+    struct stat file_stat;
+
     if (argc != 2) {
         s_usage();
         return 0;
+    }
+
+    if (stat(argv[1], &file_stat) != 0) {
+        fprintf(stderr, "%s\n", strerror(errno));
+        exit(errno);
     }
 
     s_machine_store = machine_memory_init();

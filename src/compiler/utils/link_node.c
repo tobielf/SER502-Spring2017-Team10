@@ -15,9 +15,9 @@
 
 struct link_node
 {
-    void *data;
-    free_cb free_func;
-    link_node_st *next;
+    void *data;                     /**< Data inside the node */
+    free_cb free_func;              /**< Call back function on free */
+    link_node_st *next;             /**< Pointer to the next node */
 };
 
 /**

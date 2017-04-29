@@ -14,9 +14,9 @@
 typedef struct parsing_tree parsing_tree_st;
 struct parsing_tree;
 
-typedef void (*free_treenode_cb)(void *);
+typedef void (*free_treenode_cb)(void *);                   /**< Call back function on free */
 
-typedef int (*tree_traversal_cb)(parsing_tree_st *, void *); /**< call back function */
+typedef int (*tree_traversal_cb)(parsing_tree_st *, void *);/**< call back function */
 
 /**
  * @brief create a new parsing tree node.
