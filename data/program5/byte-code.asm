@@ -3,9 +3,9 @@ DEC i
 MOV sum 0
 
   MOV i 0
-    loop1:
+    for1:
     CMP i 10
-    JE loop1_end
+    JE for1_end
 
       if1:
       DEC _temp1
@@ -18,6 +18,6 @@ MOV sum 0
 
       endif1:
     ADD i 1
-    JMP loop1
-    loop1_end:
+    JMP for1
+    for1_end:
 OUT sum
