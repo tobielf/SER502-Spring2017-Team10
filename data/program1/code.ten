@@ -3,7 +3,7 @@ var i;
 i is 1;
 var even;
 var odd;
-for x from i to 26 step 1 {
+for x from i to 26 step x + 1 {
     if ((x % 2) = 0) then {
         even is even + 1;
     }  else  {

@@ -2,7 +2,7 @@ var i;
 var num;
 num is 0;
 
-for i from 1 to 100 step 1 {
+for i from 1 to 100 step i + 1 {
 	if (i % 5 = 0) then {
 		num is num + 1;
 	};
