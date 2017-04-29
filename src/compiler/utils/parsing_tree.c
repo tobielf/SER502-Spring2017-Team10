@@ -16,10 +16,10 @@
 
 struct parsing_tree
 {
-    void *data;
-    free_treenode_cb free_func;
-    parsing_tree_st *child;
-    parsing_tree_st *sibling;
+    void *data;                         /**< Data in parsing tree node */
+    free_treenode_cb free_func;         /**< Call back function on free */
+    parsing_tree_st *child;             /**< Pointer to the child node */
+    parsing_tree_st *sibling;           /**< Pointer to the sibling node */
 };
 
 /**
@@ -162,6 +162,52 @@ int test_print_cb(parsing_tree_st *tree_node, void *cb_data) {
     return TREE_TRAVERSE_CONTINUE;
 }
 
+void test_suite_three() {
+    int counter = 0;
+    printf("test suite three\n");
+
+    parsing_tree_st *root = parsing_tree_new("program", NULL);
+    parsing_tree_st *node1 = parsing_tree_new("stmt_list", NULL);
+    parsing_tree_st *node2 = parsing_tree_new("stmt", NULL);
+    parsing_tree_set_child(root, node1);
+    parsing_tree_set_child(node1, node2);
+    node1 = node2;
+    node2 = parsing_tree_new(";", NULL);
+    parsing_tree_set_sibling(node1, node2);
+    node2 = parsing_tree_new("decl_stmt", NULL);
+    parsing_tree_set_child(node1, node2);
+    node1 = node2;
+    node2 = parsing_tree_new("var", NULL);
+    parsing_tree_set_child(node1, node2);
+    node1 = node2;
+    node2 = parsing_tree_new("i", NULL);
+    parsing_tree_set_sibling(node1, node2);
+
+    node1 = parsing_tree_get_child(root);
+    node2 = parsing_tree_get_child(node1);
+    node2 = parsing_tree_get_sibling(node2);
+    node1 = parsing_tree_new("stmt_list", NULL);
+    parsing_tree_set_sibling(node2, node1);
+    node2 = parsing_tree_new("stmt", NULL);
+    parsing_tree_set_child(node1, node2);
+    node1 = node2;
+    node2 = parsing_tree_new(";", NULL);
+    parsing_tree_set_sibling(node1, node2);
+    node2 = parsing_tree_new("decl_stmt", NULL);
+    parsing_tree_set_child(node1, node2);
+    node1 = node2;
+    node2 = parsing_tree_new("var", NULL);
+    parsing_tree_set_child(node1, node2);
+    node1 = node2;
+    node2 = parsing_tree_new("j", NULL);
+    parsing_tree_set_sibling(node1, node2);
+
+    parsing_tree_prefix_traverse(root, test_print_cb, &counter);
+    printf("Total nodes: %d\n", counter);
+    parsing_tree_free(root);
+    printf("test suite three passed!\n");
+}
+
 void test_suite_two() {
     int counter = 0;
     char *str = NULL;
@@ -222,6 +268,7 @@ void test_suite_one() {
 int main() {
     test_suite_one();
     test_suite_two();
+    test_suite_three();
     return 0;
 }
 #endif
