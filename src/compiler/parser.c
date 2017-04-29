@@ -55,7 +55,7 @@ static parsing_tree_st *generate_stmt_list(link_list_st *, symbol_table_st *);
  * @return: the pointer to generated if statement
  */
 static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_st *symbol_table) {
-    parsing_tree_st *if_stmt_tree_node = parsing_tree_new("if_stmt", NULL);
+
     link_node_st *if_link_node = link_list_pop(token_list);
     char *if_link_node_data = link_node_get_data(if_link_node);
     if (strcmp(if_link_node_data, "if") != 0) {
@@ -98,7 +98,7 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
     parsing_tree_st *left_bracket_tree_node = parsing_tree_new(strdup(left_bracket_data), free);
     link_node_free(left_bracket);
     parsing_tree_st *stmt_list = generate_stmt_list(token_list, symbol_table);
-    
+
     link_node_st *right_bracket = link_list_pop(token_list);
     char *right_bracket_data = link_node_get_data(right_bracket);
     if (strcmp(right_bracket_data, "}") != 0) {
@@ -106,8 +106,6 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
     }
     parsing_tree_st *right_bracket_tree_node = parsing_tree_new(strdup(right_bracket_data), free);
     link_node_free(right_bracket);
-    
-    parsing_tree_set_child(if_stmt_tree_node, left_parenthesis_tree_node);
 
     parsing_tree_set_sibling(if_tree_node, left_parenthesis_tree_node);
     parsing_tree_set_sibling(left_parenthesis_tree_node, boolean_expr);
@@ -147,7 +145,7 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
         parsing_tree_set_sibling(stmt_list2, right_bracket_tree_node2);
     }
 
-    return if_stmt_tree_node;
+    return if_tree_node;
 }
 
 /**
@@ -157,7 +155,6 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
  * @return: the pointer to generated for statement
  */
 static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table_st *symbol_table) {
-    parsing_tree_st *for_stmt = parsing_tree_new("for_stmt", NULL);
     link_node_st *for_link_node = link_list_pop(token_list);
     char *for_link_node_data = link_node_get_data(for_link_node);
     if (strcmp(for_link_node_data, "for") != 0) {
@@ -223,7 +220,6 @@ static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table
     link_node_free(right_bracket_link_node);
     parsing_tree_st *right_bracket_tree_node = parsing_tree_new("}", NULL);
 
-    parsing_tree_set_child(for_stmt, for_tree_node);
     parsing_tree_set_sibling(for_tree_node, id_tree_node);
     parsing_tree_set_sibling(id_tree_node, from_tree_node);
     parsing_tree_set_sibling(from_tree_node, expre1);
@@ -234,7 +230,7 @@ static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table
     parsing_tree_set_sibling(expre3, left_bracket_tree_node);
     parsing_tree_set_sibling(left_bracket_tree_node, stmt_list);
     parsing_tree_set_sibling(stmt_list, right_bracket_tree_node);
-    return for_stmt;
+    return for_tree_node;
 }
 
 /**
@@ -320,6 +316,7 @@ static parsing_tree_st *generate_stmt(link_list_st *token_list, symbol_table_st 
         #ifdef DEBUG
         printf("Can not generate statement\n");
         #endif
+        fprintf(stderr, "%s\n", node_data);
         raise_syntax_error(__LINE__, "unsupported statement");
     }
 
@@ -555,7 +552,10 @@ static parsing_tree_st *generate_stmt_list(link_list_st *token_list, symbol_tabl
         parsing_tree_st *semicolon = parsing_tree_new(";", NULL);
         parsing_tree_set_sibling(stmt, semicolon);
 
-        if (link_list_top(token_list) == NULL)
+        if (link_list_top(token_list) == NULL || 
+                        symbol_table_lookup(symbol_table,
+                                link_node_get_data(
+                                    link_list_top(token_list))) == CLOSE_CURLY_BRACKETS)
             break;
         stmt_list_tree_node = parsing_tree_new("stmt_list", NULL);
         parsing_tree_set_sibling(semicolon, stmt_list_tree_node);
