@@ -87,6 +87,8 @@ int main(int argc, char *argv[])
 
     link_list_free(byte_code);
 
+    symbol_table_fini(symbol_table);
+
     return 0;
 }
 

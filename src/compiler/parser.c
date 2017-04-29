@@ -100,9 +100,7 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
     // printf("Generate the stmt list in brackets\n");
     // #endif
     parsing_tree_st *stmt_list = generate_stmt_list(token_list, symbol_table);
-    // #ifdef DEBUG
-    // printf("End Generate the stmt list in brackets\n");
-    // #endif
+
     link_node_st *right_bracket = link_list_pop(token_list);
     char *right_bracket_data = link_node_get_data(right_bracket);
     if (strcmp(right_bracket_data, "}") != 0) {
@@ -110,7 +108,6 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
     }
     parsing_tree_st *right_bracket_tree_node = parsing_tree_new(strdup(right_bracket_data), free);
     link_node_free(right_bracket);
-    
 
     parsing_tree_set_sibling(if_tree_node, left_parenthesis_tree_node);
     parsing_tree_set_sibling(left_parenthesis_tree_node, boolean_expr);
@@ -162,7 +159,6 @@ static parsing_tree_st *generate_if_stmt(link_list_st *token_list, symbol_table_
  * @return: the pointer to generated for statement
  */
 static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table_st *symbol_table) {
-    parsing_tree_st *for_stmt = parsing_tree_new("for_stmt", NULL);
     link_node_st *for_link_node = link_list_pop(token_list);
     char *for_link_node_data = link_node_get_data(for_link_node);
     if (strcmp(for_link_node_data, "for") != 0) {
@@ -236,7 +232,6 @@ static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table
     link_node_free(right_bracket_link_node);
     parsing_tree_st *right_bracket_tree_node = parsing_tree_new("}", NULL);
 
-    parsing_tree_set_child(for_stmt, for_tree_node);
     parsing_tree_set_sibling(for_tree_node, id_tree_node);
     parsing_tree_set_sibling(id_tree_node, from_tree_node);
     parsing_tree_set_sibling(from_tree_node, expre1);
@@ -247,7 +242,7 @@ static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table
     parsing_tree_set_sibling(expre3, left_bracket_tree_node);
     parsing_tree_set_sibling(left_bracket_tree_node, stmt_list);
     parsing_tree_set_sibling(stmt_list, right_bracket_tree_node);
-    return for_stmt;
+    return for_tree_node;
 }
 
 /**
@@ -335,6 +330,7 @@ static parsing_tree_st *generate_stmt(link_list_st *token_list, symbol_table_st 
         #ifdef DEBUG
         printf("Can not generate statement\n");
         #endif
+        fprintf(stderr, "%s\n", node_data);
         raise_syntax_error(__LINE__, "unsupported statement");
     }
 
@@ -366,8 +362,6 @@ static parsing_tree_st *generate_decl_stmt(link_list_st *token_list, symbol_tabl
         raise_syntax_error(__LINE__, "expected: IDENTIFIER");
 
     parsing_tree_st *id_tree_node = parsing_tree_new(strdup(node_data), free);
-    parsing_tree_st *decl_stmt_tree_node = parsing_tree_new("decl_stmt", NULL);
-    parsing_tree_set_child(decl_stmt_tree_node, var_tree_node);
     parsing_tree_set_sibling(var_tree_node, id_tree_node);
     link_node_free(id_node);
 
@@ -504,11 +498,9 @@ static parsing_tree_st *generate_print_stmt(link_list_st *token_list, symbol_tab
     char *node_data = link_node_get_data(print_node);
     if (strcmp(node_data, "print") != 0)
         raise_syntax_error(__LINE__, "expected: print");
-    parsing_tree_st *print_stmt_node = parsing_tree_new("print_stmt", NULL);
     parsing_tree_st *print_tree_node = parsing_tree_new(strdup(node_data), free);
     link_node_free(print_node);
     parsing_tree_st *expr_tree_node = generate_expre(token_list, symbol_table);
-    parsing_tree_set_child(print_stmt_node, print_tree_node);
     parsing_tree_set_sibling(print_tree_node, expr_tree_node);
 
     return print_tree_node;
@@ -577,7 +569,7 @@ static parsing_tree_st *generate_stmt_list(link_list_st *token_list, symbol_tabl
         parsing_tree_set_sibling(stmt, semicolon);
 
         if (link_list_top(token_list) == NULL || 
-            symbol_table_lookup(symbol_table, 
+                        symbol_table_lookup(symbol_table,
                                 link_node_get_data(
                                     link_list_top(token_list))) == CLOSE_CURLY_BRACKETS)
             break;
