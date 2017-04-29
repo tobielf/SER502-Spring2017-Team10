@@ -241,12 +241,6 @@ static void handle_if_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byt
 
     parsing_tree_st *if_node = parsing_tree_get_child(parsing_tree_node);
     char *if_data = parsing_tree_get_data(if_node);
-#ifdef DEBUG
-    fprintf(stderr, "%s\n", if_data);
-#endif
-    if (strcmp(if_data, "if") != 0) {
-        error_msg(__LINE__, "if_stmt error");
-    }
 
     if (strcmp(if_data, "if") != 0) {
         error_msg(__LINE__, "if_stmt error");
@@ -326,6 +320,12 @@ static void handle_if_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byt
     }
 
     byte_code_new(byte_code, if_end_label, "", "");
+
+    free(if_label);
+    free(if_end_target);
+    free(if_end_label);
+    free(else_target);
+    free(else_label);
 }
 
 /**
@@ -433,6 +433,11 @@ static void handle_for_stmt(parsing_tree_st *parsing_tree_node, link_list_st *by
 
 	byte_code_new(byte_code, "JMP", loop_target, "");
     byte_code_new(byte_code, loop_end_label, "", "");
+
+    free(loop_string);
+    free(loop_end_target);
+    free(loop_end_label);
+    free(loop_target);
 }
 
 /**

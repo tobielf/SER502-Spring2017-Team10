@@ -348,8 +348,6 @@ static parsing_tree_st *generate_decl_stmt(link_list_st *token_list, symbol_tabl
         raise_syntax_error(__LINE__, "expected: IDENTIFIER");
 
     parsing_tree_st *id_tree_node = parsing_tree_new(strdup(node_data), free);
-    parsing_tree_st *decl_stmt_tree_node = parsing_tree_new("decl_stmt", NULL);
-    parsing_tree_set_child(decl_stmt_tree_node, var_tree_node);
     parsing_tree_set_sibling(var_tree_node, id_tree_node);
     link_node_free(id_node);
 
@@ -480,11 +478,9 @@ static parsing_tree_st *generate_print_stmt(link_list_st *token_list, symbol_tab
     char *node_data = link_node_get_data(print_node);
     if (strcmp(node_data, "print") != 0)
         raise_syntax_error(__LINE__, "expected: print");
-    parsing_tree_st *print_stmt_node = parsing_tree_new("print_stmt", NULL);
     parsing_tree_st *print_tree_node = parsing_tree_new(strdup(node_data), free);
     link_node_free(print_node);
     parsing_tree_st *expr_tree_node = generate_expre(token_list, symbol_table);
-    parsing_tree_set_child(print_stmt_node, print_tree_node);
     parsing_tree_set_sibling(print_tree_node, expr_tree_node);
 
     return print_tree_node;
