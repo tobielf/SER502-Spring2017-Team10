@@ -28,9 +28,9 @@ static void handle_stmt(parsing_tree_st *, link_list_st *);
 
 static char *handle_boolean_expr(parsing_tree_st *, link_list_st *);
 
-static void *handle_if_stmt(parsing_tree_st *, link_list_st *); 
+static void handle_if_stmt(parsing_tree_st *, link_list_st *); 
 
-static void *handle_for_stmt(parsing_tree_st *, link_list_st *); 
+static void handle_for_stmt(parsing_tree_st *, link_list_st *); 
 
 static char *handle_expr(parsing_tree_st *, link_list_st *); 
 
@@ -204,7 +204,7 @@ static void handle_assign_stmt(parsing_tree_st *parsing_tree_node, link_list_st 
 * @param node, a valid tree node.
 * @param byte_code, a valid link list.
 */
-static void *handle_if_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
+static void handle_if_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
     if_id++;
     else_id++;
 
@@ -319,20 +319,20 @@ static void *handle_if_stmt(parsing_tree_st *parsing_tree_node, link_list_st *by
 * @param node, a valid tree node.
 * @param byte_code, a valid link list.
 */
-static void *handle_for_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
+static void handle_for_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
     loop_id++;
 
     int loop_length;
     char *loop_string;
-    loop_length = strlen("loop") + get_digits_num(loop_id) + strlen(":") + 1;
+    loop_length = strlen("for") + get_digits_num(loop_id) + strlen(":") + 1;
     loop_string = (char *)malloc(loop_length);
-    snprintf(loop_string, loop_length, "loop%d:", loop_id);
+    snprintf(loop_string, loop_length, "for%d:", loop_id);
 
 	int loop_end_length;
 	char *loop_end_label;
-	loop_end_length = strlen("loop") + get_digits_num(loop_id) + strlen(":") + 1;
+	loop_end_length = strlen("for_end") + get_digits_num(loop_id) + strlen(":") + 1;
 	loop_end_label = (char *)malloc(loop_end_length);
-	snprintf(loop_end_label, loop_end_length, "loop%d_end", loop_id);
+	snprintf(loop_end_label, loop_end_length, "for%d_end", loop_id);
 
     parsing_tree_st *for_node = parsing_tree_get_child(parsing_tree_node);
     char *for_data = parsing_tree_get_data(for_node);
@@ -374,7 +374,7 @@ static void *handle_for_stmt(parsing_tree_st *parsing_tree_node, link_list_st *b
 
 	byte_code_new(byte_code, loop_string, "", "");
     byte_code_new(byte_code, "CMP", var_data, expr2_data); 
-	byte_code_new(byte_code, "JNE", loop_end_label, "");
+	byte_code_new(byte_code, "JE", loop_end_label, "");
 
     parsing_tree_st *step_node = parsing_tree_get_sibling(expr2_node);
     char *step_data = parsing_tree_get_data(step_node);
@@ -405,7 +405,6 @@ static void *handle_for_stmt(parsing_tree_st *parsing_tree_node, link_list_st *b
 
 	byte_code_new(byte_code, "MOV", var_data, expr3_data);
 	byte_code_new(byte_code, loop_end_label, "", "");
-	--loop_id;
 }
 
 /**
