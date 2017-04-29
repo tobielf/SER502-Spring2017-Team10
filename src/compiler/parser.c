@@ -381,9 +381,9 @@ static parsing_tree_st *generate_decl_stmt(link_list_st *token_list, symbol_tabl
  * @return: the pointer to generated first term of the expression
  */
 static parsing_tree_st *generate_factor(link_list_st *token_list, symbol_table_st *symbol_table) {
-    #ifdef DEBUG
-    printf("The first element of the factor is %s\n", link_node_get_data(link_list_top(token_list)));
-    #endif
+    // #ifdef DEBUG
+    // printf("The first element of the factor is %s\n", link_node_get_data(link_list_top(token_list)));
+    // #endif
     link_node_st *first_element = link_list_pop(token_list);
     char* first_element_data = link_node_get_data(first_element);
     int type_index = symbol_table_lookup(symbol_table, first_element_data);
