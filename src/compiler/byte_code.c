@@ -294,9 +294,7 @@ static void handle_if_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byt
     }
 
     parsing_tree_st *then_node = parsing_tree_get_sibling(brace_right_node);
-    char *then_data = parsing_tree_get_data(then_node);
     parsing_tree_st *curlybrace_left_node = parsing_tree_get_sibling(then_node);
-    char *curlybrace_left_data = parsing_tree_get_data(curlybrace_left_node);
     parsing_tree_st *stmt_list_node = parsing_tree_get_sibling(curlybrace_left_node);
     char *stmt_list_data = parsing_tree_get_data(stmt_list_node);
     parsing_tree_st *curlybrace_right_node = parsing_tree_get_sibling(stmt_list_node);
@@ -317,7 +315,6 @@ static void handle_if_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byt
             error_msg(__LINE__, "else_stmt error");
 
         curlybrace_left_node = parsing_tree_get_sibling(else_node);
-        curlybrace_left_data = parsing_tree_get_data(curlybrace_left_node);
         stmt_list_node = parsing_tree_get_sibling(curlybrace_left_node);
         stmt_list_data = parsing_tree_get_data(stmt_list_node);
         curlybrace_right_node = parsing_tree_get_sibling(stmt_list_node);
@@ -499,9 +496,10 @@ static char *handle_expr(parsing_tree_st *parsing_tree_node, link_list_st *byte_
     parsing_tree_st *res1_node = parsing_tree_get_sibling(term_node);
 
     char *rc;  //return code
-    if (strcmp(term_data, "term") == 0) {
-        rc = handle_term(term_node, byte_code);
-    }
+    if (strcmp(term_data, "term") != 0)
+        error_errno(EINVAL);
+
+    rc = handle_term(term_node, byte_code);
        
     if (parsing_tree_get_child(res1_node) != NULL) {
         rc = handle_res1(res1_node, byte_code, rc);
@@ -522,11 +520,10 @@ static char *handle_term(parsing_tree_st *parsing_tree_node, link_list_st *byte_
     parsing_tree_st *res2_node = parsing_tree_get_sibling(factor_node);
 
     char *rc; //return code
-    if (strcmp(factor_data, "factor") == 0) {
-        rc = handle_factor(factor_node, byte_code);
-    } else {
+    if (strcmp(factor_data, "factor") != 0)
         error_errno(EINVAL);
-    }
+    
+    rc = handle_factor(factor_node, byte_code);
 
     if (parsing_tree_get_child(res2_node) != NULL) {
         rc = handle_res2(res2_node, byte_code, rc);
