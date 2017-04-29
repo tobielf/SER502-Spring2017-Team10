@@ -216,7 +216,7 @@ static void *handle_if_stmt(parsing_tree_st *parsing_tree_node, link_list_st *by
 
     int if_end_length;
     char *if_end_label;
-    if_end_length = strlen("if") + get_digits_num(if_id) + strlen(":") + 1;
+    if_end_length = strlen("if_end") + get_digits_num(if_id) + strlen(":") + 1;
     if_end_label = (char *)malloc(if_end_length);
     snprintf(if_end_label, if_end_length, "if%d_end", if_id);
 
@@ -648,6 +648,32 @@ static int handle_if_stmt_helper(parsing_tree_st *then_node) {
 
 #ifdef XTEST
 //tree structure
+
+parsing_tree_st *setup_expr_tree_with_number() {
+    parsing_tree_st *expr_node = parsing_tree_new("expr", NULL);
+    parsing_tree_st *node1 = NULL;
+    parsing_tree_st *node2 = NULL;
+    node1 = node2;
+    node2 = parsing_tree_new("term", NULL);
+    parsing_tree_set_child(expr_node, node2);
+
+    node1 = parsing_tree_new("res1", NULL);
+    parsing_tree_set_sibling(node2, node1);
+
+    node1 = node2;
+    node2 = parsing_tree_new("factor", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = parsing_tree_new("res2", NULL);
+    parsing_tree_set_sibling(node2, node1);
+
+    node1 = node2;
+    node2 = parsing_tree_new("3", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    return expr_node;
+}
+
 int print_byte_code(link_node_st *node, void *cb_data) {
     char *str = link_node_get_data(node);
 
@@ -657,6 +683,11 @@ int print_byte_code(link_node_st *node, void *cb_data) {
     }
 
     return LINK_LIST_STOP;
+}
+
+int print_tree(parsing_tree_st *node, void *cb_data) {
+    printf("%s\n", parsing_tree_get_data(node));
+    return TREE_TRAVERSE_CONTINUE;
 }
 
 void test_suite_one() {
@@ -772,26 +803,8 @@ void test_suite_three() {
 
     node1 = parsing_tree_new("is", NULL);
     parsing_tree_set_sibling(node2, node1);
-    node2 = parsing_tree_new("expr", NULL);
+    node2 = setup_expr_tree_with_number();
     parsing_tree_set_sibling(node1, node2);
-
-    node1 = node2;
-    node2 = parsing_tree_new("term", NULL);
-    parsing_tree_set_child(node1, node2);
-
-    node1 = parsing_tree_new("res1", NULL);
-    parsing_tree_set_sibling(node2, node1);
-
-    node1 = node2;
-    node2 = parsing_tree_new("factor", NULL);
-    parsing_tree_set_child(node1, node2);
-
-    node1 = parsing_tree_new("res2", NULL);
-    parsing_tree_set_sibling(node2, node1);
-
-    node1 = node2;
-    node2 = parsing_tree_new("3", NULL);
-    parsing_tree_set_child(node1, node2);
 
     byte_code = semantic_analysis(root, NULL);
     link_list_traverse(byte_code, print_byte_code, NULL);
@@ -953,12 +966,119 @@ void test_suite_five() {
     link_list_free(byte_code);
 }
 
+void test_suite_six() {
+    link_list_st *byte_code = NULL;
+    parsing_tree_st *root = parsing_tree_new("program", NULL);
+    parsing_tree_st *node1 = parsing_tree_new("stmt_list", NULL);
+    parsing_tree_st *node2 = parsing_tree_new("stmt", NULL);
+    parsing_tree_set_child(root, node1);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new(";", NULL);
+    parsing_tree_set_sibling(node1, node2);
+    node2 = parsing_tree_new("if_stmt", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    parsing_tree_st *if_stmt = node2;
+    node1 = parsing_tree_new("if", NULL);
+    parsing_tree_set_child(if_stmt, node1);
+    node2 = parsing_tree_new("(", NULL);
+    parsing_tree_set_sibling(node1, node2);
+    parsing_tree_st *bool_expr = parsing_tree_new("boolean_expr", NULL);
+    parsing_tree_set_sibling(node2, bool_expr);
+    node1 = setup_expr_tree_with_number();
+    parsing_tree_set_child(bool_expr, node1);
+    node2 = parsing_tree_new("=", NULL);
+    parsing_tree_set_sibling(node1, node2);
+    node1 = setup_expr_tree_with_number();
+    parsing_tree_set_sibling(node2, node1);
+    node2 = parsing_tree_new(")", NULL);
+    parsing_tree_set_sibling(bool_expr, node2);
+    node1 = parsing_tree_new("then", NULL);
+    parsing_tree_set_sibling(node2, node1);
+    node2 = parsing_tree_new("{", NULL);
+    parsing_tree_set_sibling(node1, node2);
+
+    parsing_tree_st *then_stmt = parsing_tree_new("stmt_list", NULL);
+    parsing_tree_set_sibling(node2, then_stmt);
+    node1 = parsing_tree_new("}", NULL);
+    parsing_tree_set_sibling(then_stmt, node1);
+    node2 = parsing_tree_new("stmt", NULL);
+    parsing_tree_set_child(then_stmt, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new(";", NULL);
+    parsing_tree_set_sibling(node1, node2);
+    node2 = parsing_tree_new("assign_stmt", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new("i", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = parsing_tree_new("is", NULL);
+    parsing_tree_set_sibling(node2, node1);
+    node2 = parsing_tree_new("expr", NULL);
+    parsing_tree_set_sibling(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new("term", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    parsing_tree_st *node3 = parsing_tree_new("res1", NULL);
+    parsing_tree_set_sibling(node2, node3);
+
+    node1 = node2;
+    node2 = parsing_tree_new("factor", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = parsing_tree_new("res2", NULL);
+    parsing_tree_set_sibling(node2, node1);
+
+    node1 = node2;
+    node2 = parsing_tree_new("i", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node1 = parsing_tree_new("+", NULL);
+    parsing_tree_set_child(node3, node1);
+    node2 = parsing_tree_new("term", NULL);
+    parsing_tree_set_sibling(node1, node2);
+
+    node1 = node2;
+    node2 = parsing_tree_new("factor", NULL);
+    parsing_tree_set_child(node1, node2);
+    node3 = parsing_tree_new("res2", NULL);
+    parsing_tree_set_sibling(node2, node3);
+
+    node1 = node2;
+    node2 = parsing_tree_new("10", NULL);
+    parsing_tree_set_child(node1, node2);
+
+    node2 = parsing_tree_new("%", NULL);
+    parsing_tree_set_child(node3, node2);
+    node3 = parsing_tree_new("factor", NULL);
+    parsing_tree_set_sibling(node2, node3);
+
+    node1 = parsing_tree_new("i", NULL);
+    parsing_tree_set_child(node3, node1);
+
+    parsing_tree_prefix_traverse(root, print_tree, NULL);
+    byte_code = semantic_analysis(root, NULL);
+    link_list_traverse(byte_code, print_byte_code, NULL);
+
+    parsing_tree_free(root);
+    link_list_free(byte_code);
+}
+
 int main() {
     test_suite_one();
     test_suite_two();
     test_suite_three();
     test_suite_four();
     test_suite_five();
+    test_suite_six();
+    return 0;
 }
 
 #endif // XTEST
