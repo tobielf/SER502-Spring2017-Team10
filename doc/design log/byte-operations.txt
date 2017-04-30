@@ -12,7 +12,7 @@ DIV var1, var2/value		; div var2/value from var1
 MOD var1, var2/value		; mod var1 with var2/value
 
 Type 4: compare and jump operation
-CMP var1, var2/value		; CMP var1 and var2/value, set $flag = var1 - var2/value.
+CMP var1/value, var2/value	; CMP var1/value and var2/value, set $flag = var1 - var2/value.
 JE  label			; Jump to label if $flag Equal to zero.
 JNE label			; Jump to label if $flag Not Equal to zero.
 JL  label			; Jump to label if $flag Less than zero.
