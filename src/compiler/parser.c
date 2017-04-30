@@ -198,12 +198,13 @@ static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table
 #endif
     link_node_st *to_link_node = link_list_pop(token_list);
     char *to_link_node_data = link_node_get_data(to_link_node);
-    if (strcmp(to_link_node_data, "to") != 0) {
-        raise_syntax_error(__LINE__, "expected: to");
+    if (strcmp(to_link_node_data, "to") != 0 && strcmp(to_link_node_data, "downto") != 0) {
+        raise_syntax_error(__LINE__, "expected: to or downto");
     } 
     
+    
+    parsing_tree_st *to_tree_node = parsing_tree_new(strdup(to_link_node_data), NULL);
     link_node_free(to_link_node);
-    parsing_tree_st *to_tree_node = parsing_tree_new("to", NULL);
 
     parsing_tree_st *expre2 = generate_expre(token_list, symbol_table);
 #ifdef DEBUG
