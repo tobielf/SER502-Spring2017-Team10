@@ -396,7 +396,7 @@ static void eval_out(void *first_operand, void *second_operand) {
 
     var_one = (char *)first_operand;
 
-    if (isalpha(var_one[0])) {
+    if (isalpha(var_one[0]) || var_one[0] == '_') {
         // check var_one on ALL scope, if doesn't exist, warning and exit.
         variable_memory = machine_memory_get_variable(s_machine_store, 
                                                       var_one, 
@@ -501,13 +501,13 @@ static void eval_bin_op_helper(void *first_operand,
     // value_one = from var_one on the storage.
     value_one = memory_get_value(var_mem_one);
 
-    if (!isdigit(var_two[0])) {
+    if (isalpha(var_two[0]) || var_two[0] == '_') {
         // check var_two on ALL scope, if doesn't exist, warning and exit.
         var_mem_two = machine_memory_get_variable(s_machine_store, 
                                                   var_two, 
                                                   MEMORY_ALL_SCOPE);
         if (var_mem_two == NULL) {
-            fprintf(stderr, "Using undeclared variables %s! Exit\n", var_one);
+            fprintf(stderr, "Using undeclared variables %s! Exit\n", var_two);
             exit(EINVAL);
         }
         // value_two = from var_two on the storage.
@@ -563,7 +563,7 @@ static void eval_cmp(void *first_operand, void *second_operand) {
     var_one = (char *)first_operand;
     var_two = (char *)second_operand;
 
-    if (!isdigit(var_one[0])) {
+    if (isalpha(var_one[0]) || var_one[0] == '_') {
         // check var_one on ALL scope, if doesn't exist, warning and exit.
         var_mem_one = machine_memory_get_variable(s_machine_store, 
                                                   var_one, 
@@ -578,13 +578,13 @@ static void eval_cmp(void *first_operand, void *second_operand) {
         value_one = atoi(var_one);
     }
 
-    if (!isdigit(var_two[0])) {
+    if (isalpha(var_two[0]) || var_two[0] == '_') {
         // check var_two on ALL scope, if doesn't exist, warning and exit.
         var_mem_two = machine_memory_get_variable(s_machine_store, 
                                                   var_two, 
                                                   MEMORY_ALL_SCOPE);
         if (var_mem_two == NULL) {
-            fprintf(stderr, "Using undeclared variables %s! Exit\n", var_one);
+            fprintf(stderr, "Using undeclared variables %s! Exit\n", var_two);
             exit(EINVAL);
         }
         // value_two = from var_two on the storage.
