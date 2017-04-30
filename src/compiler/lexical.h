@@ -1,7 +1,7 @@
 /**
  * @file lexical.h
  * @brief Purpose: Interface for the lexical analysis for the code
- * @version 0.2
+ * @version 1.0
  * @date 04.20.2017
  * @author Katie MacArthur
  */

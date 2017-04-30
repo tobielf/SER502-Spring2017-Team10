@@ -1,7 +1,7 @@
 /**
  * @file lexical.c
  * @brief Purpose: provide the lexical analysis for the code
- * @version 0.3
+ * @version 1.0
  * @date 04.27.2017
  * @author Katie MacArthur
  */
@@ -66,7 +66,11 @@ link_list_st *lexical_analysis(symbol_table_st *symbol_table) {
                 token_buff[token_length++] = char_in;
                 char_in = getchar();
                 if (token_length >= token_buff_size) {
-                    //todo realloc
+                    token_buff = realloc(token_buff,
+                                        sizeof(char) * token_buff_size * ENLARGE_FACTOR);
+                    if (token_buff == NULL)
+                        exit(ENOMEM);
+                    token_buff_size *= ENLARGE_FACTOR;
                 }
             }
             if (!isalpha(char_in))
@@ -107,7 +111,11 @@ link_list_st *lexical_analysis(symbol_table_st *symbol_table) {
                 token_buff[token_length++] = char_in;
                 char_in = getchar();
                 if (token_length >= token_buff_size) {
-                    //todo realloc
+                    token_buff = realloc(token_buff,
+                                         sizeof(char) * token_buff_size * ENLARGE_FACTOR);
+                    if (token_buff == NULL)
+                        exit(ENOMEM);
+                    token_buff_size *= ENLARGE_FACTOR;
                 }
             }
             if (!isdigit(char_in))
@@ -137,9 +145,13 @@ void test_case_one(char *file_name) {
 }
 
 void test_case_two(char *file_name) {
+    symbol_table_st *symbol_table;
     freopen(file_name, "r", stdin);
-    link_list_st *token_list = lexical_analysis(symbol_table_init());
+    symbol_table = symbol_table_init();
+    link_list_st *token_list = lexical_analysis(symbol_table);
     link_list_traverse(token_list, print_list, NULL);
+    symbol_table_fini(symbol_table);
+    link_list_free(token_list);
 }
 
 

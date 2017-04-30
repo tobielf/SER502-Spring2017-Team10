@@ -2,7 +2,7 @@
  * @file parser.c
  * @brief Purpose: implementation of parser.h 
     which generate a parsing tree using token list and symbol table 
- * @version 0.5
+ * @version 1.0
  * @date 04.18.2017
  * @author Ximing
  */
@@ -765,14 +765,9 @@ void test_case_five() {
     link_node_st *i_node1 = link_node_new("i", NULL);
     link_node_st *from_node = link_node_new("from", NULL);
     link_node_st *i_node2 = link_node_new("i", NULL);
-    link_node_st *plus_node = link_node_new("+", NULL);
-    link_node_st *one_node = link_node_new("1", NULL);
     link_node_st *to_node = link_node_new("to", NULL);
-    link_node_st *one_node2 = link_node_new("1", NULL);
     link_node_st *step_node = link_node_new("step", NULL);
-    link_node_st *one_node3 = link_node_new("1", NULL);
     link_node_st *mul_node = link_node_new("*", NULL);
-    link_node_st *one_node4 = link_node_new("1", NULL);
     link_node_st *left_bracket_node = link_node_new("{", NULL);
     link_node_st *var_node = link_node_new("var", NULL);
     link_node_st *i_node3 = link_node_new("i", NULL);
@@ -790,8 +785,6 @@ void test_case_five() {
     link_list_append(token_list, i_node1);
     link_list_append(token_list, from_node);
     link_list_append(token_list, i_node2);
-    // link_list_append(token_list, plus_node);
-    // link_list_append(token_list, one_node);
     
 
     link_list_append(token_list, to_node);

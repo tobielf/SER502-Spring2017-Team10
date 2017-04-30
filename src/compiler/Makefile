@@ -29,8 +29,11 @@ BINS	=	compiler
 
 all: compiler
 
-debug: CFLAGS += -DXTEST -DDEBUG -g
-debug: unittest
+debug: CFLAGS += -DDEBUG -g
+debug: compiler
+
+test: CFLAGS += -DXTEST -DDEBUG -g
+test: unittest
 
 compiler: $(UTILS_OBJ) $(OBJ)
 	$Q echo [linking compiler]

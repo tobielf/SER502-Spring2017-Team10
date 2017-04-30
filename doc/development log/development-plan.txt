@@ -3,10 +3,10 @@ Tuesday  12:30-13:30
 Thursday 12:30-13:30
 
 Dev phases:
-Dev1: April 15(Sat)-17(Mon)
-Dev2: April 18(Tue)-21(Fri)
-Dev3: April 22(Sat)-24(Mon)
-Dev4: April 25(Tue)-28(Mon)
+Dev1: April 15(Sat)-17(Mon), layout the interfaces between components.
+Dev2: April 18(Tue)-21(Fri), implement basic data structure and simple statement.
+Dev3: April 22(Sat)-24(Mon), implement lexical analysis and complex statement.
+Dev4: April 25(Tue)-28(Mon), integrated all parts, testing and fixing bug.
 
 Two phases per week.
 
@@ -19,3 +19,9 @@ Tuesday - Thursday: developing the code.
 Thursday noon     : resolving problems (meeting time)
 Thursday night    : send out the Pull/Request.
 Friday            : review/change & merge
+
+Component assignment result of each members:
+Katie, Lexical analysis, Symbol Table.
+Ximing, Syntax analysis.
+Rundong, Semantic analysis.
+Xiangyu, Runtime environment, Linked List and Parsing Tree.
