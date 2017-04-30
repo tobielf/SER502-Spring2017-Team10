@@ -6,7 +6,7 @@ decl_stmt : 'var' ID ;
 assign_stmt : ID 'is' expr ;
 if_stmt : 'if' '(' boolean_expr ')' 'then' '{' stmt_list '}' | 
           'if' '(' boolean_expr ')' 'then' '{' stmt_list '}' 'else' '{' stmt_list '}' ;
-for_stmt : 'for' ID 'from' expr 'to' expr 'step' expr '{' stmt_list '}' ;
+for_stmt : 'for' ID 'from' expr 'to' expr 'step' expr '{' stmt_list '}' | 'for' ID 'from' expr 'downto' expr 'step' expr '{' stmt_list '}' ;
 print_stmt : 'print' expr ;
 boolean_expr : expr '=' expr | expr '<>' expr |
                expr '<' expr | expr '<=' expr | 
