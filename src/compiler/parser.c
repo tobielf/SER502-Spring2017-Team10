@@ -594,13 +594,13 @@ static parsing_tree_st *generate_stmt_list(link_list_st *token_list, symbol_tabl
  */
 int print_data(parsing_tree_st *parsing_tree_node, void *cb_data){
     if (parsing_tree_node != NULL)
-        printf("%s\n", parsing_tree_get_data(parsing_tree_node));
+        printf("%s\n", (char *)parsing_tree_get_data(parsing_tree_node));
     return TREE_TRAVERSE_CONTINUE;
 }
 
 int print_list_data(link_node_st *node, void *cb_data) {
     if (node != NULL)
-        printf("%s\n", link_node_get_data(node));
+        printf("%s\n", (char *)link_node_get_data(node));
     return LINK_LIST_CONTINUE;
 }
 
@@ -827,6 +827,8 @@ int main()
     test_case_three();
     test_case_four();
     test_case_five();
+
+    return 0;
 }
 
 #endif

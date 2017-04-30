@@ -753,7 +753,7 @@ int print_byte_code(link_node_st *node, void *cb_data) {
 }
 
 int print_tree(parsing_tree_st *node, void *cb_data) {
-    printf("%s\n", parsing_tree_get_data(node));
+    printf("%s\n", (char *)parsing_tree_get_data(node));
     return TREE_TRAVERSE_CONTINUE;
 }
 
