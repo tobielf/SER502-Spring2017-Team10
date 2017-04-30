@@ -553,6 +553,9 @@ static char *handle_res1(parsing_tree_st *parsing_tree_node, link_list_st *byte_
     snprintf(temp_string, temp_length, "_temp%d", temp_id);
 
     parsing_tree_st *operator_node = parsing_tree_get_child(parsing_tree_node);
+    if (operator_node == NULL)
+        return NULL;
+
     parsing_tree_st *term_node = parsing_tree_get_sibling(operator_node);
     char *operator_data = parsing_tree_get_data(operator_node);
     char *term_data = parsing_tree_get_data(term_node);
@@ -572,6 +575,14 @@ static char *handle_res1(parsing_tree_st *parsing_tree_node, link_list_st *byte_
         byte_code_new(byte_code, "SUB", temp_string, term_data);
     } else {
         error_msg(__LINE__, "res1 error");
+    }
+
+    parsing_tree_st *res1_node = parsing_tree_get_sibling(term_node);
+    char *ret_res1 = handle_res1(res1_node, byte_code, temp_string);
+
+    if (ret_res1 != NULL) {
+        free(temp_string);
+        temp_string = ret_res1;
     }
 
     return temp_string;
@@ -618,6 +629,9 @@ static char *handle_res2(parsing_tree_st *parsing_tree_node, link_list_st *byte_
     snprintf(temp_string, temp_length, "_temp%d", temp_id);
 
     parsing_tree_st *operator_node = parsing_tree_get_child(parsing_tree_node);
+    if (operator_node == NULL)
+        return NULL;
+
     parsing_tree_st *factor_node = parsing_tree_get_sibling(operator_node);
     char *operator_data = parsing_tree_get_data(operator_node);
     char *factor_data = parsing_tree_get_data(factor_node);
@@ -640,6 +654,14 @@ static char *handle_res2(parsing_tree_st *parsing_tree_node, link_list_st *byte_
         byte_code_new(byte_code, "MOD", temp_string, factor_data);
     } else {
         error_msg(__LINE__, "reds2 error");
+    }
+
+    parsing_tree_st *res2_node = parsing_tree_get_sibling(factor_node);
+    char *ret_res2 = handle_res2(res2_node, byte_code, temp_string);
+
+    if (ret_res2 != NULL) {
+        free(temp_string);
+        temp_string = ret_res2;
     }
 
     return temp_string;
