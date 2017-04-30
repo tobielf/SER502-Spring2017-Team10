@@ -391,7 +391,7 @@ static void handle_for_stmt(parsing_tree_st *parsing_tree_node, link_list_st *by
 
     parsing_tree_st *to_node = parsing_tree_get_sibling(expr1_node);
     char *to_data = parsing_tree_get_data(to_node);
-    if (strcmp(to_data, "to") != 0)
+    if (strcmp(to_data, "to") != 0 && strcmp(to_data, "downto") != 0)
         error_msg(__LINE__, "to error");
 
     parsing_tree_st *expr2_node = parsing_tree_get_sibling(to_node);
@@ -402,8 +402,11 @@ static void handle_for_stmt(parsing_tree_st *parsing_tree_node, link_list_st *by
     expr2_data = handle_expr(expr2_node, byte_code);
 
     byte_code_new(byte_code, loop_string, "", "");
-    byte_code_new(byte_code, "CMP", var_data, expr2_data); 
-    byte_code_new(byte_code, "JGE", loop_end_target, "");
+    byte_code_new(byte_code, "CMP", var_data, expr2_data);
+    if (strcmp(to_data, "to") == 0)
+        byte_code_new(byte_code, "JGE", loop_end_target, "");
+    else
+        byte_code_new(byte_code, "JLE", loop_end_target, "");
 
     parsing_tree_st *step_node = parsing_tree_get_sibling(expr2_node);
     char *step_data = parsing_tree_get_data(step_node);
