@@ -21,19 +21,25 @@ JE for1_end
         JNE if1_end
             MOV flag 1
         if1_end:
-    ADD j 1
+    DEC _temp2 
+    MOV _temp2 j
+    ADD _temp2 1
+    MOV j _temp2
     JMP for2
     for2_end:
     if2:
     CMP flag 0
     JNE if2_end
-        DEC _temp2
-        MOV _temp2 sum
-        ADD _temp2 i
-        MOV sum _temp2
+        DEC _temp3
+        MOV _temp3 sum
+        ADD _temp3 i
+        MOV sum _temp3
     if2_end:
 
-ADD i 1
+DEC _temp4 
+MOV _temp4 i
+ADD _temp4 1
+MOV i _temp4
 JMP for1
 for1_end:
 

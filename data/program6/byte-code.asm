@@ -17,11 +17,17 @@ DEC j
           ADD _temp1 1
           MOV count _temp1
 
-        ADD j 1
+        DEC _temp2 
+        MOV _temp2 j
+        ADD _temp2 1
+        MOV j _temp2
         JMP for2
         for2_end:
 
     OUT count
-    ADD i 1
+    DEC _temp3 
+    MOV _temp3 i
+    ADD _temp3 1
+    MOV i _temp3
     JMP for1
     for1_end:

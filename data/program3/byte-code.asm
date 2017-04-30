@@ -12,11 +12,17 @@ for1:
 			MOD _temp1 5
 			CMP _temp1 0
 			JNE	if1_end
-			ADD num 1
+			DEC _temp2 
+			MOV _temp2 num
+			ADD _temp2 1
+			MOV num _temp2
 		
 		if1_end:
 
-		ADD i 1
+		DEC _temp3 
+		MOV _temp3 i
+		ADD _temp3 1
+		MOV i _temp3
 		JMP for1
 
 for1_end:

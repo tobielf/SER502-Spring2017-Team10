@@ -17,6 +17,9 @@ JE for1_end
     ADD _temp1 b
     MOV b _temp1
     MOV a temp
-ADD i 1
+DEC _temp2 
+MOV _temp2 i
+ADD _temp2 1
+MOV i _temp2
 JMP for1
 for1_end:

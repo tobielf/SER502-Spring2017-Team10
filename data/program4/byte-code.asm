@@ -17,10 +17,16 @@ for1:
 			MOD _temp2 3
 			CMP _temp2 0
 			JNE if2_end
-				ADD sum i
+				DEC _temp3 
+				MOV _temp3 i
+				ADD _temp3 sum
+				MOV sum _temp3
 		if2_end:
 	if1_end:
-    ADD i 1
+    DEC _temp4 
+    MOV _temp4 i
+    ADD _temp4 1
+    MOV i _temp4
     JMP for1
 for1_end:
 	OUT sum

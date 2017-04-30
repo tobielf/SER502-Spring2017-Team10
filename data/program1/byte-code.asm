@@ -25,7 +25,10 @@ JE for1_end
         ADD _temp3 1
         MOV odd _temp3
     if1_end:
-        ADD x 1
+        DEC _temp4 
+        MOV _temp4 x
+        ADD _temp4 1
+        MOV x _temp4
         JMP for1
 for1_end:
     OUT even
