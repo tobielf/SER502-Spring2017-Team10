@@ -270,11 +270,9 @@ You can use `stream redirect` to output these debugging message into a file, lik
 	```
 the output will be 
 
-	```
-	-1
-	3
-	1
-	```
+		-1
+		3
+		1
 
 2. We implemented `variable scope` in our runtime environment. So you can declare the variable with same name in different scope:
 	
@@ -290,14 +288,11 @@ the output will be
 	};
 	print i;
 	```
-
 the output will be
-	
-	```
-	0
-	1
-	2
-	3
-	4
-	10
-	```
+
+		0
+		1
+		2
+		3
+		4
+		10
