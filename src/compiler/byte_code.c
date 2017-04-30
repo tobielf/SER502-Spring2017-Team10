@@ -403,7 +403,7 @@ static void handle_for_stmt(parsing_tree_st *parsing_tree_node, link_list_st *by
 
     byte_code_new(byte_code, loop_string, "", "");
     byte_code_new(byte_code, "CMP", var_data, expr2_data); 
-    byte_code_new(byte_code, "JE", loop_end_target, "");
+    byte_code_new(byte_code, "JGE", loop_end_target, "");
 
     parsing_tree_st *step_node = parsing_tree_get_sibling(expr2_node);
     char *step_data = parsing_tree_get_data(step_node);
