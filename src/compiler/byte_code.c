@@ -26,6 +26,8 @@ static void handle_stmt_list(parsing_tree_st *, link_list_st *);
 
 static void handle_stmt(parsing_tree_st *, link_list_st *); 
 
+static char *handle_boolean_value(parsing_tree_st *, link_list_st *);
+
 static char *handle_boolean_expr(parsing_tree_st *, link_list_st *);
 
 static void handle_if_stmt(parsing_tree_st *, link_list_st *); 
@@ -201,10 +203,10 @@ static void handle_assign_stmt(parsing_tree_st *parsing_tree_node, link_list_st 
 }
 
 /**
-* @brief generate if_stmt byte code from parsing tree.
-* @param node, a valid tree node.
-* @param byte_code, a valid link list.
-*/
+ * @brief generate if_stmt byte code from parsing tree.
+ * @param node, a valid tree node.
+ * @param byte_code, a valid link list.
+ */
 static void handle_if_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
     if_id++;
     else_id++;
@@ -330,10 +332,10 @@ static void handle_if_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byt
 }
 
 /**
-* @brief generate for_stmt byte code from parsing tree.
-* @param node, a valid tree node.
-* @param byte_code, a valid link list.
-*/
+ * @brief generate for_stmt byte code from parsing tree.
+ * @param node, a valid tree node.
+ * @param byte_code, a valid link list.
+ */
 static void handle_for_stmt(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
     loop_id++;
 
@@ -468,26 +470,50 @@ static void handle_print_stmt(parsing_tree_st *parsing_tree_node, link_list_st *
 }
 
 /**
-* @brief generate boolean_expr byte code from parsing tree.
-* @param node, a valid tree node.
-* @param byte_code, a valid link list.
-*/
+ * @brief generate boolean_value byte code from parsing tree.
+ * @param node, a valid tree node.
+ * @param byte_code, a valid link list.
+ * @return boolean value, "1" for true, "0" for false.
+ */
+static char *handle_boolean_value(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
+    parsing_tree_st *value_node = parsing_tree_get_child(parsing_tree_node);
+    char *bool_value = parsing_tree_get_data(value_node);
+    if (strcmp(bool_value, "true") == 0)
+        return strdup("1");
+    return strdup("0");
+}
+
+/**
+ * @brief generate boolean_expr byte code from parsing tree.
+ * @param node, a valid tree node.
+ * @param byte_code, a valid link list.
+ * @return boolean operator.
+ */
 static char *handle_boolean_expr(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
     parsing_tree_st *expr1_node = parsing_tree_get_child(parsing_tree_node);
     char *expr1_data = parsing_tree_get_data(expr1_node);
+    char *operator_data = NULL;
+    char *expr2_data = NULL;
 
-    if (strcmp(expr1_data, "expr") != 0)
+    if (strcmp(expr1_data, "expr") != 0 && strcmp(expr1_data, "boolean_value") != 0)
         error_msg(__LINE__, "boolean_expr error");
 
-    expr1_data = handle_expr(expr1_node, byte_code);
-    parsing_tree_st *operator_node = parsing_tree_get_sibling(expr1_node);
-    char *operator_data = parsing_tree_get_data(operator_node);
-    parsing_tree_st *expr2_node = parsing_tree_get_sibling(operator_node);
-    char *expr2_data = parsing_tree_get_data(expr2_node);
-    if (strcmp(expr2_data, "expr") != 0)
-        error_msg(__LINE__, "boolean_expr error");
-        
-    expr2_data = handle_expr(expr2_node, byte_code);
+    if (strcmp(expr1_data, "boolean_value") == 0) {
+        expr1_data = handle_boolean_value(expr1_node, byte_code);
+        operator_data = "=";
+        expr2_data = strdup("1");
+    } else {
+        expr1_data = handle_expr(expr1_node, byte_code);
+        parsing_tree_st *operator_node = parsing_tree_get_sibling(expr1_node);
+        operator_data = parsing_tree_get_data(operator_node);
+        parsing_tree_st *expr2_node = parsing_tree_get_sibling(operator_node);
+        expr2_data = parsing_tree_get_data(expr2_node);
+        if (strcmp(expr2_data, "expr") != 0)
+            error_msg(__LINE__, "boolean_expr error");
+            
+        expr2_data = handle_expr(expr2_node, byte_code);
+    }
+
     byte_code_new(byte_code, "CMP", expr1_data, expr2_data);
 
     free(expr1_data);
