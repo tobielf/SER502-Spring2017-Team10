@@ -23,11 +23,11 @@ all: runtime
 debug: CFLAGS += -DXTEST -DDEBUG -g
 debug: unittest
 
-runtime: $(OBJ) runtime.o
+runtime: clean $(OBJ) runtime.o
 	$Q echo [linking runtime]
 	$Q $(CC) -o $@ $(OBJ) $(LDFLAGS) $(LDLIBS)
 
-unittest: instruction.o storage.o runtime.o
+unittest: clean instruction.o storage.o runtime.o
 	$Q echo [build unittest]
 	$Q $(CC) -o test_runtime $(OBJ) $(LDFLAGS) $(LDLIBS)
 
