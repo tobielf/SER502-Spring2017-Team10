@@ -191,12 +191,13 @@ static void handle_assign_stmt(parsing_tree_st *parsing_tree_node, link_list_st 
 
     char *expr_data = parsing_tree_get_data(expr_node);
     if (strcmp(expr_data, "expr") == 0) {
-       expr_data = handle_expr(expr_node, byte_code);
+        expr_data = handle_expr(expr_node, byte_code);
     } else {
         error_msg(__LINE__, "assign_stmt error");
     }
 
     byte_code_new(byte_code, "MOV", id_data, expr_data);
+    free(expr_data);
 }
 
 /**
@@ -433,6 +434,9 @@ static void handle_for_stmt(parsing_tree_st *parsing_tree_node, link_list_st *by
     byte_code_new(byte_code, "JMP", loop_target, "");
     byte_code_new(byte_code, loop_end_label, "", "");
 
+    free(expr1_data);
+    free(expr2_data);
+    free(expr3_data);
     free(loop_string);
     free(loop_end_target);
     free(loop_end_label);
@@ -460,6 +464,7 @@ static void handle_print_stmt(parsing_tree_st *parsing_tree_node, link_list_st *
     operand = handle_expr(operand_node, byte_code);
 
     byte_code_new(byte_code, "OUT", operand, "");
+    free(operand);
 }
 
 /**
@@ -485,6 +490,8 @@ static char *handle_boolean_expr(parsing_tree_st *parsing_tree_node, link_list_s
     expr2_data = handle_expr(expr2_node, byte_code);
     byte_code_new(byte_code, "CMP", expr1_data, expr2_data);
 
+    free(expr1_data);
+    free(expr2_data);
     return operator_data;
 }
 
@@ -570,7 +577,7 @@ static char *handle_res1(parsing_tree_st *parsing_tree_node, link_list_st *byte_
 
     byte_code_new(byte_code, "MOV", temp_string, terms_data);
 
-
+    free(terms_data);
     if (strcmp(operator_data, "+") == 0) {
         byte_code_new(byte_code, "ADD", temp_string, term_data);
     } else if (strcmp(operator_data, "-") == 0) {
@@ -579,11 +586,12 @@ static char *handle_res1(parsing_tree_st *parsing_tree_node, link_list_st *byte_
         error_msg(__LINE__, "res1 error");
     }
 
+    free(term_data);
+
     parsing_tree_st *res1_node = parsing_tree_get_sibling(term_node);
     char *ret_res1 = handle_res1(res1_node, byte_code, temp_string);
 
     if (ret_res1 != NULL) {
-        free(temp_string);
         temp_string = ret_res1;
     }
 
@@ -599,7 +607,7 @@ static char *handle_res1(parsing_tree_st *parsing_tree_node, link_list_st *byte_
 static char *handle_factor(parsing_tree_st *parsing_tree_node, link_list_st *byte_code) {
 
     parsing_tree_st *operand_node = parsing_tree_get_child(parsing_tree_node);
-    char *operand_data = parsing_tree_get_data(operand_node);
+    char *operand_data = strdup(parsing_tree_get_data(operand_node));
 
     if (strcmp(operand_data, "(") == 0) {
         parsing_tree_st *expr_node = parsing_tree_get_sibling(operand_node);
@@ -607,6 +615,7 @@ static char *handle_factor(parsing_tree_st *parsing_tree_node, link_list_st *byt
         parsing_tree_st *brace_node = parsing_tree_get_sibling(expr_node);
         char *brace_data = parsing_tree_get_data(brace_node);
         if (strcmp(expr_data, "expr") == 0 && strcmp(brace_data, ")") == 0) {
+            free(operand_data);
             operand_data = handle_expr(expr_node, byte_code);
         }
     }
@@ -651,6 +660,8 @@ static char *handle_res2(parsing_tree_st *parsing_tree_node, link_list_st *byte_
 
     byte_code_new(byte_code, "MOV", temp_string, factors_data);
 
+    free(factors_data);
+
     if (strcmp(operator_data, "*") == 0) {
         byte_code_new(byte_code, "MUL", temp_string, factor_data);
     } else if (strcmp(operator_data, "/") == 0) {
@@ -661,11 +672,12 @@ static char *handle_res2(parsing_tree_st *parsing_tree_node, link_list_st *byte_
         error_msg(__LINE__, "reds2 error");
     }
 
+    free(factor_data);
+
     parsing_tree_st *res2_node = parsing_tree_get_sibling(factor_node);
     char *ret_res2 = handle_res2(res2_node, byte_code, temp_string);
 
     if (ret_res2 != NULL) {
-        free(temp_string);
         temp_string = ret_res2;
     }
 
