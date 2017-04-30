@@ -14,9 +14,9 @@ boolean_expr : expr '=' expr | expr '<>' expr |
                boolean_val ;
 boolean_val : 'true' | 'false' ;
 expr : term res1;
-res1 : '+' term | '-' term | ;
+res1 : '+' term res1 | '-' term res1 | ;
 term : factor res2;
-res2 : '*' factor | '/' factor | '%' factor |  ;
+res2 : '*' factor res2 | '/' factor res2 | '%' factor res2 |  ;
 factor : '(' expr ')' | NUMBER | ID ;
 NUMBER : [0-9]+ ;
 ID : [a-z|A-Z]+ ;
