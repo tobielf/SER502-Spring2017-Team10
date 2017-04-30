@@ -202,8 +202,7 @@ static parsing_tree_st *generate_for_stmt(link_list_st *token_list, symbol_table
         raise_syntax_error(__LINE__, "expected: to or downto");
     } 
     
-    
-    parsing_tree_st *to_tree_node = parsing_tree_new(strdup(to_link_node_data), NULL);
+    parsing_tree_st *to_tree_node = parsing_tree_new(strdup(to_link_node_data), free);
     link_node_free(to_link_node);
 
     parsing_tree_st *expre2 = generate_expre(token_list, symbol_table);
