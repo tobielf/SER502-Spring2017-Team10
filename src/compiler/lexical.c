@@ -60,6 +60,7 @@ link_list_st *lexical_analysis(symbol_table_st *symbol_table) {
             token_buff[token_length++] = '\0';
 
             emit_token(link_list, token_buff);
+            token_length = 0;
         } else if (isalpha(char_in)) {
             // Starting from alpha, possible: KEYWORD or IDENTIFIER.
             while (isalpha(char_in)) {
@@ -80,6 +81,7 @@ link_list_st *lexical_analysis(symbol_table_st *symbol_table) {
                 symbol_table_insert(symbol_table, token_buff, IDENTIFIER);
             }
             emit_token(link_list, token_buff);
+            token_length = 0;
         } else if (char_in == '=' || char_in == '<' || char_in == '>') {
             token_buff[token_length++] = char_in;
             char_in = getchar();
@@ -93,17 +95,20 @@ link_list_st *lexical_analysis(symbol_table_st *symbol_table) {
                 emit_error();
             }
             emit_token(link_list, token_buff);
+            token_length = 0;
         } else if (char_in == '+' || char_in == '%' || 
                    char_in == '*' || char_in == '/' ) {
             token_buff[token_length++] = char_in;
             token_buff[token_length++] = '\0';
             emit_token(link_list, token_buff);
+            token_length = 0;
         } else if (char_in == '-') {
             int look_ahead = getchar();
             token_buff[token_length++] = char_in;
             if (!isdigit(look_ahead)) {
                 token_buff[token_length++] = '\0';
                 emit_token(link_list, token_buff);
+                token_length = 0;
             }
             ungetc(look_ahead, stdin);
         } else if (isdigit(char_in)) {
@@ -123,9 +128,8 @@ link_list_st *lexical_analysis(symbol_table_st *symbol_table) {
             token_buff[token_length++] = '\0';
             emit_token(link_list, token_buff);
             symbol_table_insert(symbol_table, token_buff, NUMBER);
+            token_length = 0;
         }
-
-        token_length = 0;
     }
     free(token_buff);
 
