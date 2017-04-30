@@ -64,7 +64,10 @@ symbol_table_st *symbol_table_init()
     symbol_table_insert(symbol_table, "for", KEYWORD);
     symbol_table_insert(symbol_table, "from", KEYWORD);
     symbol_table_insert(symbol_table, "to", KEYWORD);
+    symbol_table_insert(symbol_table, "downto", KEYWORD);    
     symbol_table_insert(symbol_table, "step", KEYWORD);
+    symbol_table_insert(symbol_table, "true", KEYWORD);
+    symbol_table_insert(symbol_table, "false", KEYWORD);
 
     //binary operations
     symbol_table_insert(symbol_table, "+", BIN_OP);
