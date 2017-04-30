@@ -51,7 +51,7 @@ We heavily relied on Slack to communicate between team members.
 
 [Cygwin](https://www.cygwin.com) is: a large collection of GNU and Open Source tools which provide functionality similar to a Linux distribution on Windows. A DLL (cygwin1.dll) which provides substantial POSIX API functionality.
 
-We use `cygwin` to compatible with `Windows` platform.
+We use `Cygwin` to compatible with `Windows` platform.
 
 ## Install Directions
 
@@ -92,7 +92,7 @@ The presentation video about this project is [here](https://youtu.be/k2Z7eETJ198
 
 ## Language Name
 
-**TEN** will be our language name, since we are team **TEN**. 
+**TEN** will be our language name since we are team **TEN**. 
 
 Also, in Chinese "ten" means perfect, we will try to make this small language project as perfect as possible in the limited time.
 
@@ -192,12 +192,12 @@ OUT var1/value			; Output var1/value.
 	1. No dynamic memory allocation and function call in our language to keep it as simple as possible.
 	2. Only support one primitive type(integer), so we don't need to do the type checking in our compiler.
 	3. Ambiguous in "Dangling else". This ambiguity is resolved by forcing the user to use `{` and `}` to incorporating a statement list.
-	4. For virtual machine(runtime environment), we didn't limited the number of registers. So the intermediate code can use DEC var to declare as many variables as it need.
-	5. Also in the virtual machine, it provided an OUT instruction to allow user to print the value inside the store.
+	4. For virtual machine(runtime environment), we didn't limit the number of registers. So the intermediate code can use DEC var to declare as many variables as it needs.
+	5. Also in the virtual machine, it provided an OUT instruction to allow the user to print the value inside the store.
 * Data Structure
 
-		ArrayList for symbol table.
-		Left-child right-sibling binary tree for syntax tree.
+		ArrayList for the symbol table.
+		Left-child right-sibling binary tree for the syntax tree.
 * Recursion method in the grammar
 
 		Right Recursion
@@ -206,24 +206,24 @@ OUT var1/value			; Output var1/value.
 		C programming as the developing language
 		ANTLR helping verify the grammar rule
 		Valgrind checking memory leaks in the code
-* Runtime Environement
+* Runtime Environment
 
 	It will be a virtual machine, changing the storage state by executing the byte-code command in sequence.
 
 ##Highlights##
 
-Now, we are going to introduce the highlights in our project. One aspect is how the software has been developed, and the other aspect is what's the extra feature we implemented beyond the minimum requirement.
+Now, we are going to introduce the highlights of our project. One aspect is how the software has been developed, and the other aspect is what's the extra feature we implemented beyond the minimum requirement.
 
 ### Development strategy ###
 
-We divided the two weeks development time into four phases, and using Agile method with Test Driven Development:
+We divided the two weeks development time into four phases, and using the Agile method with Test Driven Development:
 
 ```
 Dev phases:
 Dev1: April 15(Sat)-17(Mon), layout the interfaces between components.
 Dev2: April 18(Tue)-21(Fri), implement basic data structure and simple statement.
 Dev3: April 22(Sat)-24(Mon), implement lexical analysis and complex statement.
-Dev4: April 25(Tue)-28(Mon), integrated all parts, testing and fixing bug.
+Dev4: April 25(Tue)-28(Mon), integrated all parts, testing and fixing the bug.
 ```
 
 All detail description of four phases can track on these issues:
@@ -238,13 +238,13 @@ All detail description of four phases can track on these issues:
 
 
 **Before we start**
-We unified the coding style in [Task 5: Coding Style.](https://github.com/tobielf/SER502-Spring2017-Team10/issues/14), so that the code wrote by diffrent members will looks like the same. Also, we manually wrote eight test program and corresponding bytecode under `data` folder, two tests per person in [Task 6: Testing Data](https://github.com/tobielf/SER502-Spring2017-Team10/issues/17). By doing so we can compare them with the compiler actually generate in the final release to verify it works properly.
+We unified the coding style in [Task 5: Coding Style.](https://github.com/tobielf/SER502-Spring2017-Team10/issues/14) so that the code wrote by different members will look like the same. Also, we manually wrote eight test program and corresponding bytecode under `data` folder, two tests per person in [Task 6: Testing Data](https://github.com/tobielf/SER502-Spring2017-Team10/issues/17). By doing so we can compare them with the compiler actually generate in the final release to verify it works properly.
 
 **During the coding**
-Everyone developed his/her code under his/her branch, and performed unit test in their code. You can type `make test_link_node` `make test_symbol_table` `make test_link_list` `make test_parsing_tree` to generate an independent program to run the unit test for basic data structures, and you can type `make test` to generate three programs to run the unit test for `lexical` `parser` and `bytecode`. 
+Everyone developed his/her code under his/her branch and performed the unit test in their code. You can type `make test_link_node` `make test_symbol_table` `make test_link_list` `make test_parsing_tree` to generate an independent program to run the unit test for basic data structures, and you can type `make test` to generate three programs to run the unit test for `lexical` `parser` and `bytecode`. 
 
 **After the coding**
- We performed code review activity on each members code. At the end of each phases, everyone sent out a Pull/Request to request others review his/her code. Only the code has been thoroughly reviewed, it can merge into the master branch. All Pull/Request and reviewing activity can track on these P/Rs:
+ We performed code review activity on each members code. At the end of each phase, everyone sent out a Pull/Request to request others review his/her code. Only the code has been thoroughly reviewed, it can merge into the master branch. All Pull/Request and reviewing activity can track on these P/Rs:
 
 Katie {[Dev1](https://github.com/tobielf/SER502-Spring2017-Team10/pull/27), [Dev2](https://github.com/tobielf/SER502-Spring2017-Team10/pull/31), [Dev3](https://github.com/tobielf/SER502-Spring2017-Team10/pull/45), [Dev4](https://github.com/tobielf/SER502-Spring2017-Team10/pull/50)}
 
@@ -254,9 +254,9 @@ Rundong {[Dev1](https://github.com/tobielf/SER502-Spring2017-Team10/pull/26), [D
 
 Xiangyu {[Dev1](https://github.com/tobielf/SER502-Spring2017-Team10/pull/25), [Dev2](https://github.com/tobielf/SER502-Spring2017-Team10/pull/32), [Dev3](https://github.com/tobielf/SER502-Spring2017-Team10/pull/38), [Dev4](https://github.com/tobielf/SER502-Spring2017-Team10/pull/47)}
 
-**Integrated Testing** You can use `make debug` for compiler and runtime, it will generate a debug version of our compiler and runtime. In the debug mode, it will produce extra debugging info on `stderr` to help you pinpoint the bug. For example, the debug version of the runtime called `test_runtime`, you can run it with a byte code file then it will output the instructions loaded into the virtual machine, and the execution sequence of the runtime. 
+**Integrated Testing** You can use `make debug` for compiler and runtime, it will generate a debug version of our compiler and runtime. In the debug mode, it will produce extra debugging info on `stderr` to help you pinpoint the bug. For example, the debug version of the runtime called `test_runtime`, you can run it with a byte code file then it will output the instructions loaded into the virtual machine and the execution sequence of the runtime. 
 
-You can use `stream redirect` to output these debugging message into a file, like `./test_runtime demo.asm 2>debug.txt` the output of the runtime will remain on the terminal, but the debugging message will goes into `debug.txt`. You can also redirect this info, like `./test_runtime demo.asm >result.txt 2>debug.txt`, so the result will goes into `result.txt`.
+You can use `stream redirect` to output these debugging message into a file, like `./test_runtime demo.asm 2>debug.txt` the output of the runtime will remain on the terminal, but the debugging message will go into `debug.txt`. You can also redirect this info, like `./test_runtime demo.asm >result.txt 2>debug.txt`, so the result will go into `result.txt`.
 
 ### Bonus Point ###
 1. We implemented `print` statment in our language to output the variable or value. So you can:
