@@ -428,8 +428,10 @@ static parsing_tree_st *generate_res1(link_list_st *token_list, symbol_table_st 
         parsing_tree_st *operator_tree_node = parsing_tree_new(strdup(operator_data), free);
         link_node_free(operator);
         parsing_tree_st *term = generate_term(token_list, symbol_table);
+        parsing_tree_st *res1_second = generate_res1(token_list, symbol_table);
         parsing_tree_set_child(res1, operator_tree_node);
         parsing_tree_set_sibling(operator_tree_node, term);
+        parsing_tree_set_sibling(term, res1_second);
     }
     return res1;
 }
@@ -452,8 +454,11 @@ static parsing_tree_st *generate_res2(link_list_st *token_list, symbol_table_st 
         parsing_tree_st *operator_tree_node = parsing_tree_new(strdup(operator_data), free);
         link_node_free(operator);
         parsing_tree_st *factor = generate_factor(token_list, symbol_table);
+        parsing_tree_st *res2_second = generate_res2(token_list, symbol_table);
         parsing_tree_set_child(res2, operator_tree_node);
         parsing_tree_set_sibling(operator_tree_node, factor);
+        parsing_tree_set_sibling(factor, res2_second);
+
     }
     return res2;
 }
