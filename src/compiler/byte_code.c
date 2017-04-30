@@ -412,8 +412,6 @@ static void handle_for_stmt(parsing_tree_st *parsing_tree_node, link_list_st *by
     char *expr3_data = parsing_tree_get_data(expr3_node);
     if (strcmp(expr3_data, "expr") != 0)
         error_msg(__LINE__, "expr3 error");
-       
-    expr3_data = handle_expr(expr3_node, byte_code);
 
     parsing_tree_st *curlybrace_left_node = parsing_tree_get_sibling(expr3_node);
     char *curlybrace_left_data = parsing_tree_get_data(curlybrace_left_node);
@@ -429,8 +427,9 @@ static void handle_for_stmt(parsing_tree_st *parsing_tree_node, link_list_st *by
     if (strcmp(curlybrace_right_data, "}") != 0)
         error_msg(__LINE__, "right curlybrace error");
 
-    byte_code_new(byte_code, "MOV", var_data, expr3_data);
+    expr3_data = handle_expr(expr3_node, byte_code);
 
+    byte_code_new(byte_code, "MOV", var_data, expr3_data);
     byte_code_new(byte_code, "JMP", loop_target, "");
     byte_code_new(byte_code, loop_end_label, "", "");
 
@@ -553,8 +552,11 @@ static char *handle_res1(parsing_tree_st *parsing_tree_node, link_list_st *byte_
     snprintf(temp_string, temp_length, "_temp%d", temp_id);
 
     parsing_tree_st *operator_node = parsing_tree_get_child(parsing_tree_node);
-    if (operator_node == NULL)
+    if (operator_node == NULL) {
+        free(temp_string);
+        temp_id--;
         return NULL;
+    }
 
     parsing_tree_st *term_node = parsing_tree_get_sibling(operator_node);
     char *operator_data = parsing_tree_get_data(operator_node);
@@ -629,8 +631,11 @@ static char *handle_res2(parsing_tree_st *parsing_tree_node, link_list_st *byte_
     snprintf(temp_string, temp_length, "_temp%d", temp_id);
 
     parsing_tree_st *operator_node = parsing_tree_get_child(parsing_tree_node);
-    if (operator_node == NULL)
+    if (operator_node == NULL) {
+        free(temp_string);
+        temp_id--;
         return NULL;
+    }
 
     parsing_tree_st *factor_node = parsing_tree_get_sibling(operator_node);
     char *operator_data = parsing_tree_get_data(operator_node);
