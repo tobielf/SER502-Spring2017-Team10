@@ -111,3 +111,25 @@ Katie MacArthur:
     Reviewed the phase-two code wrote by Xiangyu.
     Still working on phase-three, lexical analysis.
     (She didn’t publish her branch, so I can’t evaluate her progress accurately, right now she has 1 day delay[2 hours] on phase-three).
+
+Meeting 2(April 27)
+Ximing Feng:
+    Reviewed the phase-three code wrote by Xiangyu.
+    Finished working on phase-three. `generate_expr_stmt`, `generate_for_stmt` and `generate_if_stmt`.
+    Finished working on phase-four. unit test on parser.
+    Participated in the Presentation activities, recording video, review the PPT, README.
+Xiangyu Guo:
+    Reviewed the phase-three code wrote by Katie, Ximing and Rundong.
+    Explain how to lexical works to Katie.
+    Explain how parsing tree works to Ximing.
+    Finished working on phase-four (code refine, bug fixing on integrated testing)
+    Participated in the Presentation activities, recording video, review the PPT, README.
+Rundong Zhu:
+    Reviewed the phase-three code wrote by Xiangyu.
+    Finished working on phase-four. `handle_for_stmt`, `handle_if_stmt`.
+    Participated in the Presentation activities, recording video, review the PPT, README.
+Katie MacArthur:
+    Reviewed the phase-three code wrote by Xiangyu.
+    Finished working on phase-three, lexical analysis.
+    Finished working on phase-four (code refine, bug fixing on integrated testing)
+    Participated in the Presentation activities, recording video, review the PPT, README.
