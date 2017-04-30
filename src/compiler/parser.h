@@ -1,7 +1,7 @@
 /**
  * @file parser.h
  * @brief Purpose: generate a parsing tree using token list and symbol table 
- * @version 0.1
+ * @version 1.0
  * @date 04.18.2017
  * @author Ximing
  */

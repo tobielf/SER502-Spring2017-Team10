@@ -1,7 +1,7 @@
 /**
  * @file byte_code.c
  * @brief Purpose: byte code operation
- * @version 0.9
+ * @version 1.0
  * @date 04.18.2017
  * @author Rundong Zhu
  */
@@ -719,7 +719,6 @@ int print_tree(parsing_tree_st *node, void *cb_data) {
 }
 
 void test_suite_one() {
-    int counter = 0;
     link_list_st *byte_code = NULL;
 
     printf("test suite one\n");
@@ -753,7 +752,6 @@ void test_suite_one() {
 }
 
 void test_suite_two() {
-    int counter = 0;
     link_list_st *byte_code = NULL;
 
     printf("test suite two\n");
@@ -806,7 +804,6 @@ void test_suite_two() {
 }
 
 void test_suite_three() {
-    int counter = 0;
     link_list_st *byte_code = NULL;
 
     printf("test suite three\n");
@@ -842,7 +839,6 @@ void test_suite_three() {
 }
 
 void test_suite_four() {
-    int counter = 0;
     link_list_st *byte_code = NULL;
 
     printf("test suite four\n");
@@ -918,7 +914,6 @@ void test_suite_four() {
 }
 
 void test_suite_five() {
-    int counter = 0;
     link_list_st *byte_code = NULL;
 
     printf("test suite five\n");
@@ -1253,8 +1248,10 @@ void test_suite_seven() {
     node2 = parsing_tree_new("}", NULL);
     parsing_tree_set_sibling(node3, node2);
 
+    fprintf(stderr, "This is the mocking input parsing tree: \n");
     parsing_tree_prefix_traverse(root, print_tree, NULL);
     byte_code = semantic_analysis(root, NULL);
+    fprintf(stderr, "This is the output byte code: \n");
     link_list_traverse(byte_code, print_byte_code, NULL);
 
     parsing_tree_free(root);

@@ -1,7 +1,7 @@
 /**
  * @file symbol_table.h
  * @brief Purpose: symbol table data structure
- * @version 0.1
+ * @version 1.0
  * @date 04.15.2017
  * @author Xiangyu Guo
  */

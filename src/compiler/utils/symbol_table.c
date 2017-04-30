@@ -1,7 +1,7 @@
 /**
  * @file symboltable.c
  * @brief purpose: to initialize and edit symbol table
- * @version 0.2
+ * @version 1.0
  * @date 04.23.2017
  * @author Katie MacArthur
  */

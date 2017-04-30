@@ -1,7 +1,7 @@
 /**
  * @file lexical.c
  * @brief Purpose: provide the lexical analysis for the code
- * @version 0.3
+ * @version 1.0
  * @date 04.27.2017
  * @author Katie MacArthur
  */
@@ -145,9 +145,13 @@ void test_case_one(char *file_name) {
 }
 
 void test_case_two(char *file_name) {
+    symbol_table_st *symbol_table;
     freopen(file_name, "r", stdin);
-    link_list_st *token_list = lexical_analysis(symbol_table_init());
+    symbol_table = symbol_table_init();
+    link_list_st *token_list = lexical_analysis(symbol_table);
     link_list_traverse(token_list, print_list, NULL);
+    symbol_table_fini(symbol_table);
+    link_list_free(token_list);
 }
 
 

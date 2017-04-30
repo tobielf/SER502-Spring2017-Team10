@@ -1,7 +1,7 @@
 /**
  * @file compiler.c
  * @brief Purpose: main entrance of the compiler
- * @version 0.1
+ * @version 1.0
  * @date 04.16.2017
  * @author Xiangyu Guo
  */
