@@ -6,13 +6,13 @@ MOV sum 0
 MOV i 2
 for1:
 CMP i 100
-JE for1_end
+JGE for1_end
     MOV flag 0
     
     MOV j 2
     for2:
     CMP j i
-    JE for2_end
+    JGE for2_end
         if1:
             DEC _temp1
             MOV _temp1 i

@@ -4,7 +4,7 @@ MOV i 0
 
 for1:
 CMP x 101
-JE for1_end
+JGE for1_end
     if1:
         DEC _temp1
         MOV _temp1 x
@@ -18,7 +18,7 @@ JE for1_end
             DIV _temp2 10
         for2:
           CMP y _temp2
-          JE for2_end
+          JGE for2_end
             OUT 1
             DEC _temp3 
             MOV _temp3 y

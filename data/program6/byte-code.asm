@@ -5,13 +5,13 @@ DEC j
   MOV i 0
     for1:
     CMP i 5
-    JE for1_end
+    JGE for1_end
     MOV count 0
 
       MOV j i
         for2:
         CMP j 5
-        JE for2_end
+        JGE for2_end
           DEC _temp1
           MOV _temp1 count
           ADD _temp1 1

@@ -7,7 +7,7 @@ DEC odd
 MOV x i
 for1:
 CMP x 26
-JE for1_end
+JGE for1_end
     if1:
         DEC _temp1
         MOV _temp1 x

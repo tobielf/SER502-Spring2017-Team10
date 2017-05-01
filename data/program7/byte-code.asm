@@ -8,7 +8,7 @@ MOV b 1
 MOV i 1
 for1:
 CMP i 7
-JE for1_end
+JGE for1_end
     DEC temp
     OUT b
     MOV temp b

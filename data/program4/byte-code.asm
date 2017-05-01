@@ -4,7 +4,7 @@ DEC sum
 MOV i 1
 for1:
 	CMP i 100
-	JE for1_end
+	JGE for1_end
 	if1:
 		DEC _temp1 
 		MOV _temp1 i

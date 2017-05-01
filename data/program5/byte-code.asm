@@ -5,7 +5,7 @@ MOV sum 0
   MOV i 0
     for1:
     CMP i 10
-    JE for1_end
+    JGE for1_end
 
       if1:
       DEC _temp1
