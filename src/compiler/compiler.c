@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 
     link_list_free(token_list);
 
-    link_list_st *byte_code = semantic_analysis(parse_tree, symbol_table);
+    link_list_st *byte_code = semantic_analysis(parse_tree);
     if (byte_code == NULL)
         return ENOMEM;
 
