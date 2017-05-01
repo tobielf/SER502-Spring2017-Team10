@@ -419,6 +419,7 @@ static void handle_for_stmt(parsing_tree_st *parsing_tree_node, link_list_st *by
     if (strcmp(expr3_data, "expr") != 0)
         error_msg(__LINE__, "expr3 error");
 
+    byte_code_new(byte_code, "stmt_list:", "", "");
     parsing_tree_st *curlybrace_left_node = parsing_tree_get_sibling(expr3_node);
     char *curlybrace_left_data = parsing_tree_get_data(curlybrace_left_node);
     parsing_tree_st *stmt_list_node = parsing_tree_get_sibling(curlybrace_left_node);
@@ -432,6 +433,8 @@ static void handle_for_stmt(parsing_tree_st *parsing_tree_node, link_list_st *by
     char *curlybrace_right_data = parsing_tree_get_data(curlybrace_right_node);
     if (strcmp(curlybrace_right_data, "}") != 0)
         error_msg(__LINE__, "right curlybrace error");
+
+    byte_code_new(byte_code, "stmt_list_end:", "", "");
 
     expr3_data = handle_expr(expr3_node, byte_code);
 
