@@ -1,7 +1,7 @@
 DEC x
 DEC i
 MOV i 0
-
+MOV x i
 for1:
 CMP x 101
 JGE for1_end
