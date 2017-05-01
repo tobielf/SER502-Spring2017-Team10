@@ -1,0 +1,28 @@
+digraph "src/compiler/utils/symbol_table.h"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="src/compiler/utils\l/symbol_table.h",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="src/compiler/byte_code.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d3/d98/byte__code_8c.html",tooltip="Purpose: byte code operation. "];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="src/compiler/byte_code.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d7/d6f/byte__code_8h.html",tooltip="Purpose: byte code operation. "];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="src/compiler/compiler.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d6/d0e/compiler_8c.html",tooltip="Purpose: main entrance of the compiler. "];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="src/compiler/lexical.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$db/db7/lexical_8h.html",tooltip="Purpose: Interface for the lexical analysis for the code. "];
+  Node5 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="src/compiler/lexical.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$dd/d3a/lexical_8c.html",tooltip="Purpose: provide the lexical analysis for the code. "];
+  Node1 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="src/compiler/parser.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d5/d36/parser_8h.html",tooltip="Purpose: generate a parsing tree using token list and symbol table. "];
+  Node7 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="src/compiler/parser.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d2/d72/parser_8c.html",tooltip="Purpose: implementation of parser.h which generate a parsing tree using token list and symbol table..."];
+  Node1 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="src/compiler/utils\l/symbol_table.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d0/d9d/symbol__table_8c.html"];
+}

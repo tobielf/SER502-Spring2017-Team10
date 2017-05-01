@@ -1,0 +1,43 @@
+digraph "src/compiler/compiler.c"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node0 [label="src/compiler/compiler.c",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node0 -> Node1 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 [label="stdio.h",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+  Node0 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="errno.h",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+  Node0 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="unistd.h",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+  Node0 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="sys/types.h",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+  Node0 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="sys/stat.h",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+  Node0 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="utils/link_list.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d4/d51/link__list_8h.html",tooltip="Purpose: link_list data structure. "];
+  Node6 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="link_node.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d9/d56/link__node_8h.html",tooltip="Purpose: link_node data structure. "];
+  Node0 -> Node8 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="utils/symbol_table.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d2/dd5/symbol__table_8h.html",tooltip="Purpose: symbol table data structure. "];
+  Node0 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="utils/parsing_tree.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d4/da2/parsing__tree_8h.html",tooltip="Purpose: the node of parsing tree data structure. "];
+  Node0 -> Node10 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="utils/error.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$da/d41/error_8h.html",tooltip="dealing with compiler error "];
+  Node0 -> Node11 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="lexical.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$db/db7/lexical_8h.html",tooltip="Purpose: Interface for the lexical analysis for the code. "];
+  Node11 -> Node1 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 -> Node8 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node0 -> Node12 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 [label="parser.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d5/d36/parser_8h.html",tooltip="Purpose: generate a parsing tree using token list and symbol table. "];
+  Node12 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 -> Node8 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node0 -> Node13 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node13 [label="byte_code.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$d7/d6f/byte__code_8h.html",tooltip="Purpose: byte code operation. "];
+  Node13 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node13 -> Node8 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node13 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node13 -> Node10 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+}
