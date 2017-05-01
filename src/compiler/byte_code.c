@@ -78,7 +78,7 @@ int get_digits_num(int int_num) {
  * @param table, a valid symbol table object
  * @return NULL on failed, otherwise a valid link list.
  */
-link_list_st *semantic_analysis(parsing_tree_st *parsing_tree_node, symbol_table_st *symbol_table) {
+link_list_st *semantic_analysis(parsing_tree_st *parsing_tree_node) {
     link_list_st *byte_code = NULL;
 
     char *program_data = NULL;
