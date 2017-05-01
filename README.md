@@ -63,16 +63,19 @@ We use `Cygwin` to compatible with `Windows` platform.
 ```
 
 ## Build and Run Directions
-Build compiler and runtime.
+Build compiler and runtime. The build script under the project folder will build the compiler and runtime, copy them to "bin" folder.
 
 ```
-~$ cd src/compiler
-~$ make
-~$ cd ../runtime
-~$ make
+~$ ./build.sh
 ```
 
-Run the compiler and runtime.
+Run the compiler and runtime. The run script under the project folder will run the compiler and runtime on the testing program we wrote under "data" folder.
+
+```
+~$ ./run.sh
+```
+
+Or you can write some test code in our language and  run the compiler and runtime by yourself.
 
 ```
 Usage:
