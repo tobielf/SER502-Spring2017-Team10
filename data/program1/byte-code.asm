@@ -7,6 +7,7 @@ MOV x i
 for1:  
 CMP x 26
 JGE for1_end 
+stmt_list:  
 if1:  
 DEC _temp1 
 MOV _temp1 x
@@ -24,6 +25,7 @@ MOV _temp3 odd
 ADD _temp3 1
 MOV odd _temp3
 if1_end:  
+stmt_list_end:  
 DEC _temp4 
 MOV _temp4 x
 ADD _temp4 1

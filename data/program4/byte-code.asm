@@ -4,6 +4,7 @@ MOV i 1
 for1:  
 CMP i 100
 JGE for1_end 
+stmt_list:  
 if1:  
 DEC _temp1 
 MOV _temp1 i
@@ -22,6 +23,7 @@ ADD _temp3 sum
 MOV sum _temp3
 if2_end:  
 if1_end:  
+stmt_list_end:  
 DEC _temp4 
 MOV _temp4 i
 ADD _temp4 1

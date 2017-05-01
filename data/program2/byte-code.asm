@@ -5,6 +5,7 @@ MOV x i
 for1:  
 CMP x 101
 JGE for1_end 
+stmt_list:  
 if1:  
 DEC _temp1 
 MOV _temp1 x
@@ -19,7 +20,9 @@ DIV _temp2 10
 for2:  
 CMP y _temp2
 JGE for2_end 
+stmt_list:  
 OUT 1 
+stmt_list_end:  
 DEC _temp3 
 MOV _temp3 y
 ADD _temp3 1
@@ -30,6 +33,7 @@ JMP if1_end
 else1:  
 OUT 0 
 if1_end:  
+stmt_list_end:  
 DEC _temp4 
 MOV _temp4 x
 ADD _temp4 1
