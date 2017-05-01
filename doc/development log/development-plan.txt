@@ -6,7 +6,7 @@ Dev phases:
 Dev1: April 15(Sat)-17(Mon), layout the interfaces between components.
 Dev2: April 18(Tue)-21(Fri), implement basic data structure and simple statement.
 Dev3: April 22(Sat)-24(Mon), implement lexical analysis and complex statement.
-Dev4: April 25(Tue)-28(Mon), integrated all parts, testing and fixing bug.
+Dev4: April 25(Tue)-28(Fri), integrated all parts, testing and fixing bug.
 
 Two phases per week.
 
