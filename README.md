@@ -58,7 +58,7 @@ We use `Cygwin` to compatible with `Windows` platform.
 ```
 ~$ mkdir SER502-Team10
 ~$ cd SER502-Team10 
-~$ curl -H "Authorization: token 534d044005ad35975697cb3403a7bf56b49a89ee" -L https://api.github.com/repos/tobielf/SER502-Spring2017-Team10/tarball/master > master.tar.gz
+~$ wget https://github.com/tobielf/SER502-Spring2017-Team10/archive/master.zip
 ~$ tar xvf master.tar.gz --strip 1
 ```
 
